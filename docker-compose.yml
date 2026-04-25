@@ -2,6 +2,7 @@
 services:
   web:
     build: .
+   # '--use-polling' se auto-refresh fix ho jayega
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app

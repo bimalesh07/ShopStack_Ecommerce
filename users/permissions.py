@@ -9,7 +9,6 @@ class isVendor(BasePermission):
             and request.user.is_vendor
         )
         
-
 class IsCustomer(BasePermission):
     message ="Only Customers can perform this action"
     def has_permission(self, request, view):

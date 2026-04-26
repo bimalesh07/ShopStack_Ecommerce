@@ -70,6 +70,7 @@ class VendorRegisterSeralizer(serializers.ModelSerializer):
             raise serializers.ValidationError({"message":"Password do not match"})
         if attrs["invite_code"]!=config("ADMIN_INVITE_CODE"):
             raise serializers.ValidationError({"invite_code":" invalid invite_code."})
+        return attrs
     
     def create(self, validated_data):
         validated_data.pop("password2")

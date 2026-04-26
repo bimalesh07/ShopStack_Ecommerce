@@ -19,7 +19,7 @@ def get_token_for_user(user):
     }
 
 class CustomerRegisterView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = CustomerRegisterSerializer(data= request.data)
@@ -34,7 +34,7 @@ class CustomerRegisterView(APIView):
 
 
 class VenderRegisterView(APIView):
-    permission_classes =(AllowAny)
+    permission_classes =(AllowAny,)
 
     def post(self, request):
         seralizer = VendorRegisterSeralizer(data= request.data)
@@ -49,7 +49,7 @@ class VenderRegisterView(APIView):
         return Response(seralizer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
-    permission_classes = AllowAny
+    permission_classes = (AllowAny,)
     def post(self, request):
         serializer = LoginSerializers(data= request.data)
         if serializer.is_valid():
@@ -62,7 +62,7 @@ class LoginView(APIView):
         
 
 class LogoutView(APIView):
-    permission_classes = (IsAuthenticated)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         try :
@@ -82,7 +82,7 @@ class LogoutView(APIView):
             )
         
 class ProfileView(APIView):
-    permission_classes =(IsAuthenticated)
+    permission_classes =(IsAuthenticated,)
 
     def get(self, request):
         serializer = UserSerializer(request.user)
@@ -97,7 +97,7 @@ class ProfileView(APIView):
 
 
 class ChangePasswordView(APIView):
-    permission_classes = (IsAuthenticated)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data= request.data)

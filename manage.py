@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
+
 import os
 import sys
-
+# from rich.traceback import install
+# install(show_locals=True)
 
 def main():
     """Run administrative tasks."""

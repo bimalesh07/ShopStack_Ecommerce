@@ -25,7 +25,7 @@ class Category(models.Model):
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name="products")
-    Category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
 
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)

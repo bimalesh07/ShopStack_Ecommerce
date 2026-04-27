@@ -154,7 +154,7 @@ class VendorProductDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk):
-        product = self.get_object(pk, request.user.vedor):
+        product = self.get_object(pk, request.user.vedor)
         if not product:
             return Response(
                 {"error":"Product not found"}

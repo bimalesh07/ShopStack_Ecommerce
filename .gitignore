@@ -21,8 +21,9 @@ db.sqlite3
 env/
 
 # Temporary ignore apps
+users/
 vendors/
-products/
+# products/
 wishlist/
 address/
 cart/

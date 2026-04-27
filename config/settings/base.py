@@ -29,8 +29,8 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "users",
-    "vendors"
-    # "products",
+    "vendors",
+    "products",
     # "wishlist",
     # "address",
     # "cart",
@@ -114,6 +114,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
+
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",

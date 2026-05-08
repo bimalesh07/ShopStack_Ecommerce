@@ -31,16 +31,18 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
-    full_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, blank=True, null=True)
+
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CUSTOMER)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["full_name"]
+    REQUIRED_FIELDS = ["name"]
+
 
     objects = UserManager()
 
@@ -61,4 +63,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-    
+class UserDevice(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="devices")
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.TextField() # Browser/OS ki details
+    is_trusted = models.BooleanField(default=False)
+    last_login = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.ip_address}"

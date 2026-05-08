@@ -10,7 +10,8 @@ class CustomerRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "full_name", "phone", "password","password2")
+        fields = ("email", "name", "phone", "password","password2")
+
     
     def validate_email(self, value):
         if User.objects.filter(email=value).exists():
@@ -44,16 +45,17 @@ class CustomerRegisterSerializer(serializers.ModelSerializer):
 
         email = validated_data.get('email')
         password = validated_data.get('password')
-        full_name = validated_data.get('full_name')
+        name = validated_data.get('name')
         phone = validated_data.get('phone')
 
         validated_data.pop('password2', None)
         user = User.objects.create_users(
             email = email,
             password = password,
-            full_name = full_name,
+            name = name,
             phone = phone,
             role= User.Role.CUSTOMER
+
 
         )
         return user"""
@@ -77,10 +79,22 @@ class VendorRegisterSeralizer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("email","full_name","phone","password","password2","invite_code", "shop_name", "shop_descriptions")
+        fields = ("email","name","phone","password","password2","invite_code", "shop_name", "shop_descriptions")
+
 
     shop_name = serializers.CharField(write_only=True)
     shop_descriptions = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+             raise serializers.ValidationError("This Email is Already Registered")
+        return value
+
+    def validate_shop_name(self, value):
+        from vendors.models import Vendor
+        if Vendor.objects.filter(shop_name=value).exists():
+            raise serializers.ValidationError("This Shop Name is Already Registered")
+        return value
     
     def validate(self, attrs):
         password = attrs.get("password")
@@ -99,21 +113,23 @@ class VendorRegisterSeralizer(serializers.ModelSerializer):
         return attrs
     
     def create(self, validated_data):
+        from django.db import transaction
         password2 = validated_data.pop("password2", None)
         invite_code = validated_data.pop("invite_code", None)
         shop_name = validated_data.pop("shop_name")
         shop_descriptions = validated_data.pop("shop_descriptions", "")
         
-        validated_data["role"] = User.Role.VENDOR
-        validated_data["is_active"] = False
-        user = User.objects.create_user(**validated_data)
-        
-        from vendors.models import Vendor
-        Vendor.objects.create(
-            user=user,
-            shop_name=shop_name,
-            shop_descriptions=shop_descriptions
-        )
+        with transaction.atomic():
+            validated_data["role"] = User.Role.VENDOR
+            validated_data["is_active"] = False
+            user = User.objects.create_user(**validated_data)
+            
+            from vendors.models import Vendor
+            Vendor.objects.create(
+                user=user,
+                shop_name=shop_name,
+                shop_descriptions=shop_descriptions
+            )
         return user
     
 
@@ -141,8 +157,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "email", "full_name", "phone", "role", "created_at", "vendor_details")
+        fields = ("id", "email", "name", "phone", "role", "created_at", "vendor_details")
         read_only_fields = ("id", "email", "role", "created_at")
+
 
     def get_vendor_details(self, obj):
         if obj.role == User.Role.VENDOR:

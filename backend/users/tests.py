@@ -13,7 +13,7 @@ class UserTests(APITestCase):
             "email": "customer@example.com",
             "password": "Password123!",
             "password2": "Password123!",
-            "full_name": "Test Customer",
+            "name": "Test Customer",
             "phone": "9876543210",
         }
         response = self.client.post(url, data)
@@ -29,7 +29,7 @@ class UserTests(APITestCase):
             "email": "wrongpass@example.com",
             "password": "Password123!",
             "password2": "DifferentPass123!", # Passwords don't match
-            "full_name": "Test User",
+            "name": "Test User",
             "phone": "9876543210",
         }
         response = self.client.post(url, data)
@@ -45,7 +45,7 @@ class UserTests(APITestCase):
         url = reverse('vendor-register')
         data = {
             "email": "vendor@example.com",
-            "full_name": "Vendor Shop",
+            "name": "Vendor Shop",
             "phone": "1234567890",
             "password": "VendorPassword123!",
             "password2": "VendorPassword123!",
@@ -59,7 +59,7 @@ class UserTests(APITestCase):
         url = reverse('vendor-register')
         data = {
             "email": "badvendor@example.com",
-            "full_name": "Bad Vendor",
+            "name": "Bad Vendor",
             "phone": "1234567890",
             "password": "VendorPassword123!",
             "password2": "VendorPassword123!",
@@ -73,11 +73,11 @@ class UserTests(APITestCase):
 
     def test_registration_fails_duplicate_email(self):
         """Check ki ek hi email se do baar registration nahi ho sakta"""
-        # Pehle ek user banate hain
+ 
         User.objects.create_user(
             email="duplicate@example.com", 
             password="Password123!", 
-            full_name="User One",
+            name="User One",
             phone="12345"
         )
         
@@ -86,7 +86,7 @@ class UserTests(APITestCase):
             "email": "duplicate@example.com", # Same email
             "password": "Password123!",
             "password2": "Password123!",
-            "full_name": "User Two",
+            "name": "User Two",
             "phone": "67890",
         }
         response = self.client.post(url, data)

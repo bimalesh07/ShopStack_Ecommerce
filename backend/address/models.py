@@ -5,7 +5,8 @@ from users.models import User
 class Address(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="address")
-    full_name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+
     phone = models.CharField(max_length=20)
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=100)

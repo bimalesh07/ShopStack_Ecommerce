@@ -6,7 +6,8 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         fields = (
             "id",
-            "full_name",
+            "name",
+
             "phone",
             "street",
             "city",

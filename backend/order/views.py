@@ -6,13 +6,19 @@ from users.permissions import IsCustomer, isVendor
 from address.models import Address
 from cart.models import Cart
 from config.pagination import StandardPagination
-from.models import Order,OrderItem
-
+from .models import Order, OrderItem
 from .serializers import (
     OrderSerializer,
     OrderCreateSerializer,
     OrderStatusUpdateSerializer
 )
+from django.db import transaction
+from django.conf import settings
+from payments.utils import create_razorpay_order
+from payments.models import Payment
+import logging
+
+logger = logging.getLogger(__name__)
 
 class OrderListCreateView(APIView):
     permission_classes = (IsAuthenticated, IsCustomer)
@@ -29,74 +35,113 @@ class OrderListCreateView(APIView):
     
     def post(self, request):
         serializer = OrderCreateSerializer(
-            data= request.data,
-            context = {"request":request}
+            data=request.data,
+            context={"request": request}
         )
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
-        # cart check
         try:
-            cart = Cart.objects.prefetch_related(
-                "items__product__vendor"
+            with transaction.atomic():
+                # cart check
+                try:
+                    cart = Cart.objects.prefetch_related(
+                        "items__product__vendor"
+                    ).get(user=request.user)
+                except Cart.DoesNotExist:
+                    return Response(
+                        {"error": "Cart not found"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                
+                if not cart.items.exists():
+                    return Response(
+                        {"error": "Cart is empty"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                
+                # stock check
+                for item in cart.items.all():
+                    if item.product.stock < item.quantity:
+                        return Response(
+                            {"error": f"'{item.product.name}' has only {item.product.stock} items in stock."},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+                    
+                # Address
+                try:
+                    address = Address.objects.get(
+                        pk=serializer.validated_data["address_id"],
+                        user=request.user
+                    )
+                except Address.DoesNotExist:
+                    return Response(
+                        {"error": "Shipping address not found."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-            ).get(user=request.user)
-        except Cart.DoesNotExist:
-            return Response(
-                {"error":"Cart not found"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if not cart.items.exists():
-            return Response({"error":"Cart is empty"},
-                            status=status.HTTP_400_BAD_REQUEST)
-        
-        # stock chek
-
-        for item in cart.items.all():
-            if item.product.stock< item.quantity:
-             return Response(
-                    {"error": f"'{item.product.name}' has only "
-                               f"{item.product.stock} items in stock."},
-                    status=status.HTTP_400_BAD_REQUEST,
+                # order create
+                order = Order.objects.create(
+                    user=request.user,
+                    address=address,
+                    payment_method=serializer.validated_data["payment_method"],
+                    note=serializer.validated_data.get("note", ""),
+                    total_amount=cart.total_amount,
+                    payment_status=Order.PaymentStatus.PENDING,
                 )
-            
-         # Address
-        address = Address.objects.get(
-            pk=serializer.validated_data["address_id"],
-            user=request.user
-        )
 
-        # order create
-        order = Order.objects.create(
-            user=request.user,
-            address = address,
-            payment_method=serializer.validated_data["payment_method"],
-            note = serializer.validated_data.get("note",""),
-            total_amount = cart.total_amount,
-            payment_status=(
-                Order.PaymentStatus.PENDING
-                if serializer.validated_data["payment_method"] == Order.PaymentMethod.ONLINE
-                else Order.PaymentStatus.PENDING
-            ),
-        )
-         # orderItem create + stock reduce
-        for item in cart.items.all():
-            OrderItem.objects.create(
-                order=order,
-                product= item.product,
-                vendor = item.product.vendor,
-                product_name = item.product.name,
-                product_price=item.product.price,
-                quantity=item.quantity,
-                total_price=item.total_price,
+                # orderItem create + stock reduce
+                for item in cart.items.all():
+                    OrderItem.objects.create(
+                        order=order,
+                        product=item.product,
+                        vendor=item.product.vendor,
+                        product_name=item.product.name,
+                        product_price=item.product.selling_price,
+                        quantity=item.quantity,
+                        total_price=item.total_price,
+                    )
+                    # stock reduce
+                    item.product.stock -= item.quantity
+                    item.product.save()
+                
+                # Empty the cart
+                cart.items.all().delete()
+
+                # If Online Payment, create Razorpay order
+                if order.payment_method == Order.PaymentMethod.ONLINE:
+                    try:
+                        razorpay_order = create_razorpay_order(order.total_amount)
+                        
+                        # Create Payment record
+                        Payment.objects.create(
+                            order=order,
+                            razorpay_order_id=razorpay_order["id"],
+                            amount=order.total_amount,
+                            status=Payment.PaymentStatus.PENDING
+                        )
+                        
+                        return Response({
+                            "order": OrderSerializer(order, context={'request': request}).data,
+                            "razorpay_order_id": razorpay_order["id"],
+                            "razorpay_key_id": settings.RAZORPAY_KEY_ID,
+                            "amount": int(order.total_amount * 100),
+                            "currency": "INR",
+                        }, status=status.HTTP_201_CREATED)
+                    except Exception as e:
+                        # If Razorpay fails,  fail the transaction
+                        raise Exception(f"Payment gateway error: {str(e)}")
+                
+                return Response(
+                    OrderSerializer(order, context={'request': request}).data,
+                    status=status.HTTP_201_CREATED
+                )
+        except Exception as e:
+            logger.exception("Order creation failed")
+            return Response(
+                {"error": f"An error occurred while creating your order: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            # stock reduce
-            item.product.stock -= item.quantity
-            item.product.save()
-        
-        cart.items.all().delete()
-        return Response(OrderSerializer(order, context={'request': request}).data, status=status.HTTP_201_CREATED)
-    
 
 class OrderCancelView(APIView):
     permission_classes = (IsAuthenticated, IsCustomer)
@@ -256,4 +301,3 @@ class  AdminOrderStatusUpdateView(APIView):
             serializer.save()
             return Response(OrderSerializer(order, context={'request': request}).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

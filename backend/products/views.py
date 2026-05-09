@@ -14,6 +14,7 @@ from .serializers import (
     ProductImageSerializer
 )
 from config.pagination import StandardPagination
+from rest_framework import generics, filters
 
 # category views
 class CategoryListView(APIView):
@@ -40,56 +41,56 @@ class CategoryCreateView(APIView):
     
 # public Product View
 
-class ProductListView(APIView):
+class ProductListView(generics.ListAPIView):
     permission_classes = (AllowAny,)
-    def get(self, request):
-        products = Product.objects.filter(
-            is_active=True,
-            vendor__is_approved=True
-        ).select_related("category", "vendor").prefetch_related("images")
+    serializer_class = ProductSerializer
+    pagination_class = StandardPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'description', 'category__name']
+    ordering_fields = ['selling_price', 'created_at']
 
-        # filtring
-        category = request.query_params.get("category")
-        search = request.query_params.get("search")
-        min_price = request.query_params.get("min_price")
-        max_price = request.query_params.get("max_price")
+    def get_queryset(self):
+        if self.request.user.is_authenticated and self.request.user.role == "vendor":
+            # If user is a vendor, show only their own products
+            queryset = Product.objects.filter(
+                vendor=self.request.user.vendor
+            )
+        else:
+            # For customers or anonymous users, show all active and approved products
+            queryset = Product.objects.filter(
+                is_active=True,
+                vendor__is_approved=True
+            )
+        
+        queryset = queryset.select_related("category", "vendor").prefetch_related("images")
+
+        # manual filtring for category and price range
+        category = self.request.query_params.get("category")
+        min_price = self.request.query_params.get("min_price")
+        max_price = self.request.query_params.get("max_price")
 
         if category:
             import uuid
             try:
                 # Check if category is a valid UUID (ID)
                 uuid.UUID(str(category))
-                products = products.filter(category_id=category)
+                queryset = queryset.filter(category_id=category)
             except ValueError:
                 # Otherwise treat as category name
-                products = products.filter(category__name__iexact=category)
-        if search:
-            products = products.filter(name__icontains=search)
+                queryset = queryset.filter(category__name__iexact=category)
+        
         if min_price:
-            products = products.filter(price__gte=min_price)
+            queryset = queryset.filter(selling_price__gte=min_price)
         if max_price:
-            products = products.filter(price__lte=max_price)
+            queryset = queryset.filter(selling_price__lte=max_price)
         
-        # ordering
-        ordering = request.query_params.get("ordering")
-        if ordering:
-            allowed_ordering = ["price", "-price", "created_at", "-created_at"]
-            if ordering in allowed_ordering:
-                products = products.order_by(ordering)
-        
-        #paginations start
-        paginator = StandardPagination()
-        #paginations start
-        page = paginator.paginate_queryset(products, request)
+        return queryset
 
-        if page is not None:
-            serializer = ProductSerializer(page, many=True, context={'request': request})
-            return paginator.get_paginated_response(serializer.data)
-        
-        # if pagiantions fallback not workingn
-        
-        serializer = ProductSerializer(products, many=True, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
     
 class ProductDetailView(APIView):
     permission_classes = (AllowAny,)

@@ -30,14 +30,16 @@ class ProductSerializer(serializers.ModelSerializer):
             "name",
             "slug",
             "description",
-            "price",
+            "mrp_price",
+            "selling_price",
+            "discount_percentage",
             "stock",
             "is_in_stock",
             "is_active",
             "images",
             "created_at",
         )
-        read_only_fields = ("id", "slug", "vendor_name", "created_at")
+        read_only_fields = ("id", "slug", "vendor_name", "created_at", "discount_percentage")
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
@@ -52,7 +54,8 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "category",
             "name",
             "description",
-            "price",
+            "mrp_price",
+            "selling_price",
             "stock",
             "is_active",
             "images",
@@ -75,7 +78,8 @@ class ProductUpdateSerializer(serializers.ModelSerializer):
             "category",
             "name",
             "description",
-            "price",
+            "mrp_price",
+            "selling_price",
             "stock",
             "is_active",
         )

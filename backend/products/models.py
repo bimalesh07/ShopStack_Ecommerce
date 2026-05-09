@@ -30,7 +30,8 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, blank=True)
     description = models.TextField(blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    mrp_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Maximum Retail Price (Original Price)")
+    selling_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Discounted price at which product is sold")
     stock = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
@@ -54,6 +55,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def discount_percentage(self):
+        if self.mrp_price and self.mrp_price > 0:
+            discount = ((self.mrp_price - self.selling_price) / self.mrp_price) * 100
+            return round(discount)
+        return 0
+
     @property
     def is_in_stock(self):
         return self.stock >0

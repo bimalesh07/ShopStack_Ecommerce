@@ -9,7 +9,7 @@ from .serializer import CartItemSerializer, CartSerializer
 from rest_framework.views import APIView
 
 class CartView(APIView):
-    permission_classes = (IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
 
     def get_or_create_cart(self, user):
         cart, _ = Cart.objects.get_or_create(user=user)
@@ -73,7 +73,7 @@ class CartView(APIView):
             )
 
 class CartItemUpdateView(APIView):
-    permission_classes = (IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
     def patch(self, request, pk):
         try:
             cart_item = CartItem.objects.get(

@@ -4,7 +4,9 @@ from .models import Cart, CartItem
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer(read_only=True)
+    product_name = serializers.CharField(source="product.name", read_only=True)
+    product_image = serializers.SerializerMethodField()
+    vendor_name = serializers.CharField(source="product.vendor.shop_name", read_only=True)
     product_id = serializers.UUIDField(write_only=True)
     total_price = serializers.DecimalField(
         max_digits=10,
@@ -16,13 +18,28 @@ class CartItemSerializer(serializers.ModelSerializer):
         model = CartItem
         fields = (
             "id",
-            "product",
+            "product_name",
+            "product_image",
+            "vendor_name",
             "product_id",
             "quantity",
             "total_price",
             "created_at",
         )
         read_only_fields = ("id", "created_at")
+    
+    def get_product_image(self, obj):
+        request = self.context.get('request')
+        primary_image = obj.product.images.filter(is_primary=True).first()
+        if not primary_image:
+            primary_image = obj.product.images.first()
+        
+        if primary_image and primary_image.image:
+            image_url = primary_image.image.url
+            if request:
+                return request.build_absolute_uri(image_url)
+            return image_url
+        return None
     
     def validate_product_id(self, value):
         from products.models import Product

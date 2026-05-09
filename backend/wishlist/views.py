@@ -9,7 +9,7 @@ from .serializers import WishlistSerializer, wishlistItemSerailizer
 from rest_framework.views import APIView
 
 class WishlistView(APIView):
-    permission_classes = (IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
 
     def get_or_create_wishlist(self, user):
         wishlist, _= Wishlist.objects.get_or_create(user=user)
@@ -39,7 +39,7 @@ class WishlistView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
 class WishlistItemDeleteView(APIView):
-    permission_classes = (IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
 
     def delete(self, request, pk):
         try:
@@ -53,7 +53,7 @@ class WishlistItemDeleteView(APIView):
         return Response()
 
 class WishlistClearView(APIView):
-    permission_classes =(IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
 
     def delete(self,request):
         try:

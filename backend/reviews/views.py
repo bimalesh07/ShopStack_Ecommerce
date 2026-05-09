@@ -43,7 +43,6 @@ class ReviewListCreateView(APIView):
 
 class ProductRatingView(APIView):
     permission_classes = (AllowAny,)
-
     def get(self, request, product_id):
         reviews = Review.objects.filter(product_id=product_id)
         if not reviews.exists():

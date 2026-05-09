@@ -21,22 +21,25 @@ const Login = () => {
     
     try {
       const data = await authService.login({ email, password });
-      // Correctly extract token from nested tokens object
-      const accessToken = data.tokens?.access;
-      const refreshToken = data.tokens?.refresh;
       
+      if (data.otp_required) {
+        toast.success('MFA Required: Please verify your device.');
+        navigate(`/verify-otp?email=${encodeURIComponent(email)}&mfa=true`);
+        return;
+      }
+
       if (data.tokens?.access) {
         login(data.user, data.tokens);
-        setError(''); 
-        toast.success('Welcome back! You have logged in successfully.');
-        
-        // Redirect to Home Page regardless of role
+        toast.success('Welcome back!');
         navigate('/');
       } else {
         setError('Login failed: No access token received');
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Invalid email or password');
+      console.error('Login error:', err.response?.data);
+      const errorMsg = err.response?.data?.error || err.response?.data?.detail || 'Invalid email or password';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

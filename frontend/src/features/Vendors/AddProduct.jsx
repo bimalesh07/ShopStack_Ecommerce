@@ -9,7 +9,8 @@ const AddProduct = () => {
     name: '',
     category: '',
     description: '',
-    price: '',
+    mrp_price: '',
+    selling_price: '',
     stock: '1',
     is_active: true,
   });
@@ -85,7 +86,7 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8">
+    <div className="container-tight max-w-5xl">
       <button 
         onClick={() => navigate(-1)} 
         className="flex items-center space-x-2 text-slate-500 hover:text-primary-600 mb-8 transition-colors"
@@ -148,17 +149,30 @@ const AddProduct = () => {
             ></textarea>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Price ($)</label>
+              <label className="block text-sm font-bold text-slate-700">MRP (₹)</label>
               <input
-                name="price"
+                name="mrp_price"
                 type="number"
                 step="0.01"
                 required
                 className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
                 placeholder="0.00"
-                value={formData.price}
+                value={formData.mrp_price}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-bold text-slate-700">Selling Price (₹)</label>
+              <input
+                name="selling_price"
+                type="number"
+                step="0.01"
+                required
+                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                placeholder="0.00"
+                value={formData.selling_price}
                 onChange={handleChange}
               />
             </div>

@@ -83,45 +83,45 @@ const Dashboard = () => {
       label: 'Total Orders', 
       value: orders.length, 
       icon: Package, 
-      color: 'text-blue-600', 
-      bg: 'bg-blue-100' 
+      color: 'text-slate-600', 
+      bg: 'bg-slate-50' 
     },
     { 
       label: 'Active Cart', 
       value: `${cart?.total_items || 0} Items`, 
       icon: ShoppingCart, 
-      color: 'text-green-600', 
-      bg: 'bg-green-100' 
+      color: 'text-slate-600', 
+      bg: 'bg-slate-50' 
     },
     { 
       label: 'Wishlist', 
       value: `${wishlist?.items?.length || 0} Items`, 
       icon: Heart, 
-      color: 'text-purple-600', 
-      bg: 'bg-purple-100' 
+      color: 'text-slate-600', 
+      bg: 'bg-slate-50' 
     },
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="container-tight space-y-8">
+      <div className="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 border-b border-slate-100 pb-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Welcome, {user?.name || 'Shopper'}!</h1>
-          <p className="text-slate-600">Here's what's happening with your account today.</p>
+          <h1 className="text-2xl font-medium text-slate-900 tracking-tight">Welcome, {user?.name || 'Shopper'}!</h1>
+          <p className="text-sm text-slate-500 font-medium">Here's what's happening with your account today.</p>
         </div>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-8">
           <button 
             onClick={() => navigate('/profile')}
-            className="flex items-center space-x-2 text-slate-600 hover:text-primary-600 font-medium transition-colors"
+            className="flex items-center space-x-2 text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest"
           >
-            <UserIcon className="h-5 w-5" />
+            <UserIcon className="h-4 w-4" />
             <span>Account Settings</span>
           </button>
           <button 
             onClick={handleLogout}
-            className="flex items-center space-x-2 text-red-600 hover:text-red-700 font-medium transition-colors"
+            className="flex items-center space-x-2 text-xs font-medium text-rose-500 hover:text-rose-600 transition-colors uppercase tracking-widest"
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-4 w-4" />
             <span>Logout</span>
           </button>
         </div>
@@ -135,24 +135,24 @@ const Dashboard = () => {
         <>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {stats.map((stat) => (
-              <div key={stat.label} className="glass-card p-6 flex items-center space-x-4">
-                <div className={`${stat.bg} p-3 rounded-xl`}>
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+              <div key={stat.label} className="bg-white rounded-xl p-5 shadow-sm border border-slate-50 flex items-center space-x-4">
+                <div className={`${stat.bg} p-2.5 rounded-lg`}>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-500 font-medium">{stat.label}</p>
-                  <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-lg font-medium text-slate-900">{stat.value}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="glass-card p-8 min-h-[400px]">
+          <div className="bg-white rounded-xl p-8 shadow-sm border border-slate-50 min-h-[400px]">
             <div className="flex justify-between items-center mb-8">
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Recent Orders</h3>
+              <h3 className="text-xl font-medium text-slate-900 tracking-tight">Recent Orders</h3>
               <button 
                 onClick={() => navigate('/products')}
-                className="text-sm font-bold text-primary-600 hover:underline"
+                className="text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest"
               >
                 View Catalog
               </button>
@@ -161,64 +161,63 @@ const Dashboard = () => {
             {orders.length > 0 ? (
               <div className="space-y-6">
                 {orders.slice(0, 5).map((order) => (
-                    <div key={order.id} className="group relative bg-white border border-slate-100 rounded-[2rem] p-6 hover:border-primary-200 hover:shadow-xl transition-all duration-300">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                      <div className="flex items-center space-x-5">
-                        <div className="bg-slate-50 p-4 rounded-2xl group-hover:bg-primary-50 transition-colors">
-                          <Package className="h-6 w-6 text-slate-400 group-hover:text-primary-600" />
+                    <div key={order.id} className="group relative bg-white border border-slate-100 rounded-xl p-5 hover:border-slate-200 hover:shadow-md transition-all duration-300">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100">
+                          <Package className="h-4 w-4 text-slate-400" />
                         </div>
                         <div>
-                          <div className="flex items-center space-x-3 mb-1">
-                            <p className="font-black text-slate-900 text-lg tracking-tight">
+                          <div className="flex items-center space-x-3 mb-0.5">
+                            <p className="font-bold text-slate-900 text-sm">
                               {order.items?.[0]?.product_name || 'Order'}
                               {order.items?.length > 1 && (
-                                <span className="text-slate-400 font-bold ml-2">
-                                  + {order.items.length - 1} more items
+                                <span className="text-slate-400 font-medium ml-2">
+                                  + {order.items.length - 1} more
                                 </span>
                               )}
                             </p>
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm ${
-                              order.order_status?.toLowerCase() === 'delivered' ? 'bg-green-100 text-green-700' :
-                              order.order_status?.toLowerCase() === 'cancelled' ? 'bg-red-100 text-red-700' :
-                              order.order_status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-blue-100 text-blue-700'
+                            <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${
+                              order.order_status?.toLowerCase() === 'delivered' ? 'bg-emerald-50 text-emerald-600' :
+                              order.order_status?.toLowerCase() === 'cancelled' ? 'bg-rose-50 text-rose-600' :
+                              order.order_status?.toLowerCase() === 'pending' ? 'bg-amber-50 text-amber-600' :
+                              'bg-slate-100 text-slate-600'
                             }`}>
                               {order.order_status}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                            <span>ID: #{order.id.slice(0, 8)}</span>
+                          <div className="flex items-center space-x-2 text-[10px] font-medium text-slate-400 uppercase tracking-widest">
+                            <span>#{order.id.slice(0, 8)}</span>
                             <span>•</span>
                             <span>{new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between md:justify-end md:space-x-12 px-2">
+                      <div className="flex items-center justify-between md:justify-end md:space-x-8">
                         <div className="text-left md:text-right">
-                          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total</p>
-                          <p className="text-xl font-black text-primary-600">${parseFloat(order.total_amount).toFixed(2)}</p>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</p>
+                          <p className="text-base font-bold text-slate-900">₹{parseFloat(order.total_amount).toLocaleString('en-IN')}</p>
                         </div>
                         
                         {order.order_status?.toLowerCase() === 'pending' && (
                           <button 
                             onClick={() => handleCancelOrder(order.id)}
-                            className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all"
+                            className="text-rose-500 hover:text-rose-600 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors pl-4 border-l border-slate-100"
                           >
                             Cancel
                           </button>
                         )}
                       </div>
                     </div>
-
-                    <div className="mt-6 pt-6 border-t border-slate-50 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Shipping To</p>
-                        <p className="text-sm text-slate-700 font-medium leading-relaxed">
-                          {order.address?.full_name}, {order.address?.street}, {order.address?.city}
+                    <div className="mt-4 pt-4 border-t border-slate-50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div className="flex items-center space-x-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Shipping To:</p>
+                        <p className="text-xs text-slate-600 font-medium">
+                          {order.address?.street}, {order.address?.city}
                         </p>
                       </div>
-                      <div className="flex items-end justify-end space-x-4">
+                      <div className="flex items-center space-x-6">
                         {order.order_status?.toLowerCase() === 'delivered' && (
                           <button 
                             onClick={() => openReviewModal({
@@ -226,18 +225,18 @@ const Dashboard = () => {
                               product_name: order.items[0].product_name,
                               image: order.items[0].product_image
                             })}
-                            className="text-sm font-bold text-primary-600 hover:text-primary-700 transition-colors flex items-center space-x-1"
+                            className="text-[10px] font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-widest flex items-center space-x-1"
                           >
-                            <Star className="h-4 w-4 fill-primary-600" />
-                            <span>Write a Review</span>
+                            <Star className="h-3 w-3" />
+                            <span>Rate Product</span>
                           </button>
                         )}
                         <button 
                           onClick={() => navigate(`/order-success/${order.id}`)}
-                          className="text-sm font-bold text-slate-400 hover:text-primary-600 transition-colors flex items-center space-x-1"
+                          className="text-[10px] font-bold text-slate-400 hover:text-slate-900 transition-colors uppercase tracking-widest flex items-center space-x-1"
                         >
                           <span>Track Order</span>
-                          <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-3 w-3" />
                         </button>
                       </div>
                     </div>

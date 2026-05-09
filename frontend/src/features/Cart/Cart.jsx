@@ -29,7 +29,7 @@ const Cart = () => {
   }
 
   return (
-    <div className="py-12">
+    <div className="container-tight">
       <h1 className="text-4xl font-black text-slate-900 mb-8 tracking-tight">Shopping Cart</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -73,7 +73,7 @@ const Cart = () => {
                       <Plus className="h-4 w-4" />
                     </button>
                   </div>
-                  <p className="text-lg font-black text-slate-900">${item.total_price}</p>
+                  <p className="text-lg font-black text-slate-900">₹{parseFloat(item.total_price).toLocaleString('en-IN')}</p>
                 </div>
               </div>
             </div>
@@ -87,7 +87,7 @@ const Cart = () => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal ({cart.items.length} items)</span>
-                <span>${cart.total_amount}</span>
+                <span>₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Shipping</span>
@@ -95,7 +95,7 @@ const Cart = () => {
               </div>
               <div className="border-t border-slate-100 pt-4 flex justify-between items-end">
                 <span className="font-bold text-slate-900">Total</span>
-                <span className="text-3xl font-black text-primary-600">${cart.total_amount}</span>
+                <span className="text-3xl font-black text-primary-600">₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
               </div>
             </div>
             

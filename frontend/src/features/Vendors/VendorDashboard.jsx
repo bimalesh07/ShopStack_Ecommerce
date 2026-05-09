@@ -41,7 +41,7 @@ const VendorDashboard = () => {
   const pendingShipments = orders.filter(order => order.order_status === 'PENDING').length;
 
   const stats = [
-    { label: 'Total Sales', value: `$${totalSales.toFixed(2)}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
+    { label: 'Total Sales', value: `₹${totalSales.toLocaleString('en-IN')}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
     { label: 'My Products', value: products.length, icon: Package, color: 'text-blue-600', bg: 'bg-blue-100' },
     { label: 'Pending Shipments', value: pendingShipments, icon: Truck, color: 'text-amber-600', bg: 'bg-amber-100' },
     { label: 'Total Orders', value: orders.length, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-100' },
@@ -59,11 +59,11 @@ const VendorDashboard = () => {
   };
 
   const [editingId, setEditingId] = useState(null);
-  const [editValues, setEditValues] = useState({ stock: 0, price: 0 });
+  const [editValues, setEditValues] = useState({ stock: 0, selling_price: 0 });
 
   const startEditing = (product) => {
     setEditingId(product.id);
-    setEditValues({ stock: product.stock, price: product.price });
+    setEditValues({ stock: product.stock, selling_price: product.selling_price });
   };
 
   const handleQuickUpdate = async (id) => {
@@ -89,7 +89,7 @@ const VendorDashboard = () => {
   }
 
   return (
-    <div className="space-y-8 py-8">
+    <div className="container-tight space-y-8">
       {error && (
         <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl flex items-center space-x-3">
           <Package className="h-5 w-5" />
@@ -173,12 +173,12 @@ const VendorDashboard = () => {
                     <td className="px-6 py-4">
                       {editingId === product.id ? (
                         <div className="flex items-center space-x-1">
-                          <span className="text-slate-400 font-bold">$</span>
+                          <span className="text-slate-400 font-bold">₹</span>
                           <input 
                             type="number"
                             className="w-20 px-2 py-1 bg-white border border-primary-200 rounded-lg text-sm font-bold outline-none ring-2 ring-primary-50 focus:border-primary-500"
-                            value={editValues.price}
-                            onChange={(e) => setEditValues({ ...editValues, price: e.target.value })}
+                            value={editValues.selling_price}
+                            onChange={(e) => setEditValues({ ...editValues, selling_price: e.target.value })}
                           />
                         </div>
                       ) : (
@@ -186,7 +186,7 @@ const VendorDashboard = () => {
                           onClick={() => startEditing(product)}
                           className="font-bold text-slate-900 cursor-pointer hover:text-primary-600 hover:underline decoration-dotted transition-colors"
                         >
-                          ${parseFloat(product.price).toFixed(2)}
+                          ₹{parseFloat(product.selling_price).toLocaleString('en-IN')}
                         </span>
                       )}
                     </td>

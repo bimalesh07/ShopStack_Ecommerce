@@ -4,7 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import productService from '../api/productService';
-import { ShoppingCart, Heart, Search, User as UserIcon, Menu, Plus, LogOut, ChevronDown } from 'lucide-react';
+import useDebounce from '../hooks/useDebounce';
+import { ShoppingCart, Heart, Search, User as UserIcon, Menu, Plus, LogOut, ChevronDown, X, HelpCircle } from 'lucide-react';
+
 
 const Navbar = () => {
   const { token, user, logout } = useAuth();
@@ -14,6 +16,47 @@ const Navbar = () => {
   const location = useLocation();
   const [categories, setCategories] = useState([]);
   const [showCategories, setShowCategories] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(new URLSearchParams(location.search).get('search') || '');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // Handle scroll for sticky effect
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Sync searchTerm with URL when navigating
+  useEffect(() => {
+    const searchParam = new URLSearchParams(location.search).get('search') || '';
+    if (searchParam !== searchTerm) {
+      setSearchTerm(searchParam);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
+    if (debouncedSearchTerm === '' && !new URLSearchParams(location.search).get('search')) return;
+    const params = new URLSearchParams(location.search);
+    if (debouncedSearchTerm) {
+      params.set('search', debouncedSearchTerm);
+    } else {
+      params.delete('search');
+    }
+    const currentSearch = new URLSearchParams(location.search).get('search') || '';
+    if (debouncedSearchTerm !== currentSearch) {
+      navigate(`/products?${params.toString()}`);
+    }
+  }, [debouncedSearchTerm, navigate]);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm) {
+      const params = new URLSearchParams(location.search);
+      params.set('search', searchTerm);
+      navigate(`/products?${params.toString()}`);
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,108 +76,111 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-lg border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="bg-primary-600 p-2 rounded-lg">
-                <svg className="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-3' : 'bg-[#f8f9f6] py-5'}`}>
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
+        <div className="flex justify-between items-center gap-8">
+          {/* Left: Logo & Main Nav */}
+          <div className="flex items-center space-x-12">
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="bg-slate-900 p-2 rounded-xl transition-all group-hover:bg-primary-600 shadow-lg shadow-slate-900/10">
+                <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
               </div>
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">ShopStack</span>
+              <span className="text-2xl font-black text-slate-900 tracking-tighter uppercase font-heading">ShopStack</span>
             </Link>
-          </div>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/" className={`font-medium transition-colors ${location.pathname === '/' ? 'text-primary-600' : 'text-slate-600 hover:text-primary-600'}`}>Home</Link>
-            <Link to="/products" className={`font-medium transition-colors ${location.pathname === '/products' ? 'text-primary-600' : 'text-slate-600 hover:text-primary-600'}`}>Products</Link>
-            
-            {/* Categories Dropdown */}
-            <div 
-              className="relative group h-full flex items-center"
-              onMouseEnter={() => setShowCategories(true)}
-              onMouseLeave={() => setShowCategories(false)}
-            >
-              <button className="flex items-center space-x-1 text-slate-600 hover:text-primary-600 font-medium transition-colors py-4">
-                <span>Categories</span>
-                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showCategories ? 'rotate-180' : ''}`} />
-              </button>
+            <div className="hidden lg:flex items-center space-x-8">
+              <Link to="/" className={`text-xs font-bold uppercase tracking-widest hover:text-primary-600 transition-colors ${location.pathname === '/' ? 'text-primary-600' : 'text-slate-500'}`}>Home</Link>
+              <Link to="/products" className={`text-xs font-bold uppercase tracking-widest hover:text-primary-600 transition-colors ${location.pathname === '/products' ? 'text-primary-600' : 'text-slate-500'}`}>Shop</Link>
+              
+              <div 
+                className="relative group h-full flex items-center"
+                onMouseEnter={() => setShowCategories(true)}
+                onMouseLeave={() => setShowCategories(false)}
+              >
+                <button className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-primary-600 transition-colors">
+                  <span>Collections</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${showCategories ? 'rotate-180' : ''}`} />
+                </button>
 
-              {showCategories && (
-                <div className="absolute top-full left-0 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                  {categories.length > 0 ? (
-                    categories.map(cat => (
+                {showCategories && (
+                  <div className="absolute top-[100%] left-0 w-64 bg-white border border-slate-100 rounded-2xl shadow-2xl py-6 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                    {categories.map(cat => (
                       <Link 
                         key={cat.id} 
                         to={`/products?category=${cat.name}`}
                         onClick={() => setShowCategories(false)}
-                        className="block px-6 py-2 text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-slate-50 transition-all"
+                        className="flex items-center px-6 py-3 text-sm font-semibold text-slate-600 hover:text-primary-600 hover:bg-slate-50 transition-colors"
                       >
+                        <Plus className="h-4 w-4 mr-3 text-slate-300" />
                         {cat.name}
                       </Link>
-                    ))
-                  ) : (
-                    <div className="px-6 py-2 text-sm text-slate-400 italic">No categories found</div>
-                  )}
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Center: Search Bar */}
+          <div className="flex-grow max-w-xl hidden md:block">
+            <form onSubmit={handleSearchSubmit} className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search products, vendors..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-white border border-slate-200 rounded-full py-2.5 pl-12 pr-12 text-sm focus:outline-none focus:ring-1 focus:ring-slate-300 transition-all shadow-sm"
+              />
+            </form>
+          </div>
+
+          {/* Right: Action Icons */}
+          <div className="flex items-center space-x-6 lg:space-x-8 flex-shrink-0">
+            <button className="md:hidden text-slate-800 hover:text-primary-600 transition-colors">
+              <Search className="h-6 w-6 stroke-[1.5px]" />
+            </button>
+            
+            <Link to="/wishlist" className="text-slate-800 hover:text-primary-600 transition-colors relative">
+              <Heart className="h-6 w-6 stroke-[1.5px]" />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ring-2 ring-white">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            <Link to="/cart" className="text-slate-800 hover:text-primary-600 transition-colors relative">
+              <ShoppingCart className="h-6 w-6 stroke-[1.5px]" />
+              {cart?.items?.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-slate-900 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full ring-2 ring-white">
+                  {cart.items.length}
+                </span>
+              )}
+            </Link>
+
+            <div className="flex items-center space-x-4">
+              {token ? (
+                <div className="flex items-center space-x-4">
+                  <Link to={user?.role === 'vendor' ? '/vendor/dashboard' : '/dashboard'} className="group">
+                    <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200 group-hover:border-primary-500 transition-all overflow-hidden">
+                      <UserIcon className="h-5 w-5 text-slate-600 group-hover:text-primary-600" />
+                    </div>
+                  </Link>
+                  <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors">
+                    <LogOut className="h-5 w-5" />
+                  </button>
                 </div>
+              ) : (
+                <Link to="/login" className="text-slate-800 hover:text-primary-600 transition-colors">
+                  <UserIcon className="h-6 w-6 stroke-[1.5px]" />
+                </Link>
               )}
             </div>
 
-            {user?.role === 'vendor' && (
-              <Link to="/vendor/dashboard" className={`font-medium transition-colors ${location.pathname.startsWith('/vendor') ? 'text-primary-600' : 'text-slate-600 hover:text-primary-600'}`}>My Shop</Link>
-            )}
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <button className="p-2 text-slate-600 hover:text-primary-600 transition-colors">
-              <Search className="h-5 w-5" />
-            </button>
-            {user?.role !== 'vendor' && (
-              <>
-                <Link to="/wishlist" className="p-2 text-slate-600 hover:text-primary-600 transition-colors relative">
-                  <Heart className="h-5 w-5" />
-                  {wishlistCount > 0 && (
-                    <span className="absolute top-0 right-0 bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                      {wishlistCount}
-                    </span>
-                  )}
-                </Link>
-                <Link to="/cart" className="p-2 text-slate-600 hover:text-primary-600 transition-colors relative">
-                  <ShoppingCart className="h-5 w-5" />
-                  {cart?.items?.length > 0 && (
-                    <span className="absolute top-0 right-0 bg-primary-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                      {cart.items.length}
-                    </span>
-                  )}
-                </Link>
-              </>
-            )}
-            {token ? (
-              <div className="flex items-center space-x-2">
-                {user?.role === 'vendor' && (
-                  <Link to="/vendor/dashboard" className="text-sm font-bold text-slate-700 hover:text-primary-600 hidden lg:block">
-                    Vendor Dashboard
-                  </Link>
-                )}
-                <Link to={user?.role === 'vendor' ? '/vendor/dashboard' : '/dashboard'} className="p-2 text-slate-600 hover:text-primary-600 transition-colors">
-                  <UserIcon className="h-5 w-5" />
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className="p-2 text-slate-600 hover:text-red-600 transition-colors"
-                  title="Logout"
-                >
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </div>
-            ) : (
-              <Link to="/login" className="btn-primary text-sm px-4 py-1.5">
-                Login
-              </Link>
-            )}
-            <button className="md:hidden p-2 text-slate-600">
+            <button className="lg:hidden p-2 text-slate-900">
               <Menu className="h-6 w-6" />
             </button>
           </div>

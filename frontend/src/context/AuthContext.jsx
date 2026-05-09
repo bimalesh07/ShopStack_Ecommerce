@@ -36,11 +36,11 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = (userData, tokens) => {
-    setToken(tokens.access);
-    setUser(userData);
     localStorage.setItem('access_token', tokens.access);
     localStorage.setItem('refresh_token', tokens.refresh);
     localStorage.setItem('user', JSON.stringify(userData));
+    setToken(tokens.access);
+    setUser(userData);
     toast.success('Welcome back!');
   };
 

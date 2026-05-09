@@ -64,11 +64,20 @@ const ProductCard = ({ product }) => {
         </div>
         
         <div className="mt-auto pt-4 flex justify-between items-center border-t border-slate-50">
-          <div className="space-y-0.5">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Price</p>
-            <p className="text-xl font-black text-primary-600 tracking-tight">
-              ${parseFloat(product.price).toFixed(2)}
-            </p>
+          <div className="flex flex-col">
+            <div className="flex items-center space-x-2">
+              <p className="text-xl font-black text-slate-900 tracking-tight">
+                ₹{parseFloat(product.selling_price).toLocaleString('en-IN')}
+              </p>
+              <p className="text-sm font-bold text-slate-400 line-through">
+                ₹{parseFloat(product.mrp_price).toLocaleString('en-IN')}
+              </p>
+            </div>
+            {product.discount_percentage > 0 && (
+              <p className="text-[10px] font-black text-green-600 uppercase tracking-widest mt-0.5">
+                {product.discount_percentage}% OFF
+              </p>
+            )}
           </div>
           
           <div className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full ${product.stock > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>

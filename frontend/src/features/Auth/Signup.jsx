@@ -3,14 +3,16 @@ import { useAuth } from '../../context/AuthContext';
 import authService from '../../api/authService';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Loader2, Store } from 'lucide-react';
+import toast from 'react-hot-toast';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
 
 const Signup = () => {
   const [isVendor, setIsVendor] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
-    full_name: '',
+    name: '',
     phone: '',
+
     password: '',
     password2: '',
     invite_code: '',
@@ -45,22 +47,8 @@ const Signup = () => {
       
       const data = await authService.signup(trimmedData, role);
       
-      if (isVendor) {
-        setSuccess('Vendor registration successful! Please wait for admin approval before logging in.');
-        setFormData({ 
-          email: '', 
-          full_name: '', 
-          phone: '', 
-          password: '', 
-          password2: '', 
-          invite_code: '',
-          shop_name: '',
-          shop_descriptions: '' 
-        });
-      } else {
-        login(data.user, data.tokens);
-        navigate('/dashboard');
-      }
+      toast.success('Registration successful! Please verify your email.');
+      navigate(`/verify-otp?email=${encodeURIComponent(trimmedData.email)}&role=${role}`);
     } catch (err) {
       console.error('Signup error response:', err.response?.data);
       const errorData = err.response?.data;
@@ -137,12 +125,13 @@ const Signup = () => {
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
               <input
-                name="full_name"
+                name="name"
                 type="text"
                 required
                 className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                 placeholder="John Doe"
-                value={formData.full_name}
+                value={formData.name}
+
                 onChange={handleChange}
               />
             </div>

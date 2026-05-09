@@ -46,7 +46,7 @@ const Wishlist = () => {
   }
 
   return (
-    <div className="py-12">
+    <div className="container-tight">
       <div className="flex justify-between items-end mb-8">
         <h1 className="text-4xl font-black text-slate-900 tracking-tight">My Wishlist</h1>
         <p className="text-slate-500 font-medium">{wishlist.items.length} items saved</p>
@@ -77,9 +77,14 @@ const Wishlist = () => {
                 <Link to={`/products/${item.product?.id}`} className="text-sm font-bold text-slate-900 hover:text-primary-600 transition-colors line-clamp-1 block">
                   {item.product?.name}
                 </Link>
-                <p className="text-lg font-black text-primary-600 mt-0.5">
-                  ${item.product?.price ? parseFloat(item.product.price).toFixed(2) : '0.00'}
-                </p>
+                <div className="flex items-center space-x-2">
+                  <p className="text-lg font-black text-slate-900">
+                    ₹{item.product?.selling_price ? parseFloat(item.product.selling_price).toLocaleString('en-IN') : '0'}
+                  </p>
+                  <p className="text-xs font-bold text-slate-400 line-through">
+                    ₹{item.product?.mrp_price ? parseFloat(item.product.mrp_price).toLocaleString('en-IN') : '0'}
+                  </p>
+                </div>
               </div>
               
               <button 

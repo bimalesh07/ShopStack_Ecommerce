@@ -16,6 +16,8 @@ const ProductList = () => {
   const currentOrdering = queryParams.get('ordering') || '-created_at';
   const currentMinPrice = queryParams.get('min_price') || '';
   const currentMaxPrice = queryParams.get('max_price') || '';
+  const currentSearch = queryParams.get('search') || '';
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,8 +27,10 @@ const ProductList = () => {
           category: currentCategory,
           ordering: currentOrdering,
           min_price: currentMinPrice,
-          max_price: currentMaxPrice
+          max_price: currentMaxPrice,
+          search: currentSearch
         };
+
         const data = await productService.getProducts(params);
         setProducts(data);
       } catch (error) {
@@ -69,15 +73,16 @@ const ProductList = () => {
   }
 
   return (
-    <div className="space-y-8 pb-20">
+    <div className="container-tight space-y-8 pb-20">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-            {currentCategory ? `${currentCategory} Collection` : 'Our Collection'}
+            {currentSearch ? `Search: "${currentSearch}"` : (currentCategory ? `${currentCategory} Collection` : 'Our Collection')}
           </h1>
           <p className="text-slate-600 mt-1">Discover {products.length} exclusive items tailored for you.</p>
         </div>
+
         
         <div className="flex items-center gap-3">
           <button 

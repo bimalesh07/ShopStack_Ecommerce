@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import addressService from '../../api/addressService';
 import orderService from '../../api/orderService';
+import paymentService from '../../api/paymentService';
 import { Loader2, Plus, MapPin, CheckCircle2, ChevronRight, CreditCard, Truck, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -13,10 +14,12 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   
   const [newAddress, setNewAddress] = useState({
-    full_name: '',
+    name: '',
     phone: '',
+
     street: '',
     city: '',
     state: '',
@@ -68,18 +71,75 @@ const Checkout = () => {
     try {
       const orderData = {
         address_id: selectedAddressId,
-        payment_method: 'cod',
+        payment_method: paymentMethod,
         note: ''
       };
+      
       const response = await orderService.createOrder(orderData);
-      toast.success('Order placed successfully!');
-      fetchCart(); // Clear cart state
-      navigate(`/order-success/${response.id}`);
+      
+      if (paymentMethod === 'cod') {
+        toast.success('Order placed successfully!');
+        fetchCart(); // Clear cart state
+        navigate(`/order-success/${response.id}`);
+      } else {
+        // Online Payment Flow - response now contains Razorpay details
+        await handleOnlinePayment(response);
+      }
     } catch (err) {
       const message = err.response?.data?.error || 'Failed to place order';
       toast.error(message);
     } finally {
       setIsPlacingOrder(false);
+    }
+  };
+
+  const handleOnlinePayment = async (orderResponse) => {
+    try {
+      const orderId = orderResponse.order.id;
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Step 4: Open Razorpay Checkout using data already returned from backend
+      const options = {
+        key: orderResponse.razorpay_key_id,
+        amount: orderResponse.amount,
+        currency: orderResponse.currency,
+        name: "ShopStack",
+        description: "Order Payment",
+        order_id: orderResponse.razorpay_order_id,
+        handler: async function(response) {
+          try {
+            // Step 5: Verify payment
+            await paymentService.verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            
+            toast.success('Payment successful!');
+            fetchCart();
+            navigate(`/order-success/${orderId}`);
+          } catch (err) {
+            const message = err.response?.data?.error || 'Payment verification failed. Invalid signature.';
+            toast.error(message);
+            // On failure, stay on page but show error
+          }
+        },
+        prefill: {
+          name: user.name || user.full_name || '',
+          email: user.email || '',
+        },
+        theme: { color: "#3399cc" },
+        modal: {
+          ondismiss: function() {
+            toast.error("Payment cancelled.");
+          }
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      toast.error('Something went wrong. Please contact support.');
     }
   };
 
@@ -102,11 +162,11 @@ const Checkout = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-4">
-      <div className="flex items-center space-x-2 text-sm font-bold text-slate-400 mb-8 uppercase tracking-widest">
-        <Link to="/cart" className="hover:text-primary-600">Cart</Link>
-        <ChevronRight className="h-4 w-4" />
-        <span className="text-slate-900 underline decoration-primary-500 decoration-4 underline-offset-8">Checkout</span>
+    <div className="container-tight">
+      <div className="flex items-center space-x-2 text-xs font-bold text-slate-400 mb-6 uppercase tracking-[0.2em]">
+        <Link to="/cart" className="hover:text-slate-900 transition-colors">Cart</Link>
+        <ChevronRight className="h-3 w-3" />
+        <span className="text-slate-900">Checkout</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -114,88 +174,122 @@ const Checkout = () => {
         <div className="lg:col-span-2 space-y-10">
           
           {/* Shipping Address Section */}
-          <section className="space-y-6">
+          <section className="space-y-8">
             <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-3">
-                <div className="bg-primary-100 p-2 rounded-xl">
-                  <MapPin className="h-5 w-5 text-primary-600" />
+              <div className="flex items-center space-x-4">
+                <div className="bg-slate-100 p-2.5 rounded-xl">
+                  <MapPin className="h-5 w-5 text-slate-900" />
                 </div>
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight">Shipping Address</h2>
+                <div>
+                  <h2 className="text-xl font-medium text-slate-900 tracking-tight">Shipping Address</h2>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Where should we send it?</p>
+                </div>
               </div>
               {!showAddressForm && (
-                <button 
+                  <button 
                   onClick={() => setShowAddressForm(true)}
-                  className="flex items-center space-x-2 text-sm font-bold text-primary-600 hover:text-primary-700"
+                  className="flex items-center space-x-2 text-xs font-bold text-slate-900 hover:bg-slate-100 px-4 py-2 rounded-lg border border-slate-200 transition-all uppercase tracking-widest"
                 >
-                  <Plus className="h-4 w-4" />
-                  <span>Add New Address</span>
+                  <Plus className="h-3 w-3" />
+                  <span>Add New</span>
                 </button>
               )}
             </div>
 
             {showAddressForm ? (
-              <form onSubmit={handleAddAddress} className="bg-white p-8 rounded-3xl border-2 border-primary-100 space-y-6 animate-in slide-in-from-top-4 duration-300">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <input 
-                    type="text" placeholder="Full Name" required 
-                    className="form-input" value={newAddress.full_name}
-                    onChange={(e) => setNewAddress({...newAddress, full_name: e.target.value})}
-                  />
-                  <input 
-                    type="text" placeholder="Phone Number" required 
-                    className="form-input" value={newAddress.phone}
-                    onChange={(e) => setNewAddress({...newAddress, phone: e.target.value})}
-                  />
-                  <div className="md:col-span-2">
+              <form onSubmit={handleAddAddress} className="glass-card p-10 space-y-8 animate-in fade-in zoom-in duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Name</label>
+
                     <input 
-                      type="text" placeholder="Street Address" required 
-                      className="form-input" value={newAddress.street}
+                      type="text" placeholder="John Doe" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.name}
+                      onChange={(e) => setNewAddress({...newAddress, name: e.target.value})}
+
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Phone Number</label>
+                    <input 
+                      type="tel" placeholder="+91 98765 43210" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.phone}
+                      onChange={(e) => setNewAddress({...newAddress, phone: e.target.value})}
+                    />
+                  </div>
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Street Address</label>
+                    <input 
+                      type="text" placeholder="House No, Building, Street" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.street}
                       onChange={(e) => setNewAddress({...newAddress, street: e.target.value})}
                     />
                   </div>
-                  <input 
-                    type="text" placeholder="City" required 
-                    className="form-input" value={newAddress.city}
-                    onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
-                  />
-                  <input 
-                    type="text" placeholder="State" required 
-                    className="form-input" value={newAddress.state}
-                    onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
-                  />
-                  <input 
-                    type="text" placeholder="Pincode" required 
-                    className="form-input" value={newAddress.pincode}
-                    onChange={(e) => setNewAddress({...newAddress, pincode: e.target.value})}
-                  />
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">City</label>
+                    <input 
+                      type="text" placeholder="Mumbai" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.city}
+                      onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">State</label>
+                    <input 
+                      type="text" placeholder="Maharashtra" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.state}
+                      onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Pincode</label>
+                    <input 
+                      type="text" placeholder="400001" required 
+                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      value={newAddress.pincode}
+                      onChange={(e) => setNewAddress({...newAddress, pincode: e.target.value})}
+                    />
+                  </div>
                 </div>
-                <div className="flex justify-end space-x-4">
-                  <button type="button" onClick={() => setShowAddressForm(false)} className="px-6 py-3 font-bold text-slate-500">Cancel</button>
-                  <button type="submit" className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-600 transition-colors">Save Address</button>
+                <div className="flex justify-end space-x-4 pt-4">
+                  <button type="button" onClick={() => setShowAddressForm(false)} className="px-8 py-4 font-black text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest text-xs">Cancel</button>
+                  <button type="submit" className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-primary-600 transition-all shadow-xl shadow-slate-900/10">Save & Use This Address</button>
                 </div>
               </form>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {addresses.map((addr) => (
                   <div 
                     key={addr.id}
                     onClick={() => setSelectedAddressId(addr.id)}
-                    className={`p-6 rounded-3xl border-2 cursor-pointer transition-all relative ${selectedAddressId === addr.id ? 'border-primary-500 bg-primary-50/30' : 'border-slate-100 hover:border-primary-200 bg-white'}`}
+                    className={`p-6 rounded-2xl border transition-all relative group ${selectedAddressId === addr.id ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
                   >
-                    {selectedAddressId === addr.id && (
-                      <CheckCircle2 className="absolute top-4 right-4 h-5 w-5 text-primary-600" />
-                    )}
-                    <p className="font-black text-slate-900 mb-1">{addr.full_name}</p>
-                    <p className="text-sm text-slate-500 font-medium mb-4">{addr.phone}</p>
-                    <p className="text-sm text-slate-600 leading-relaxed">
-                      {addr.street}, {addr.city}<br />
-                      {addr.state}, {addr.pincode}
-                    </p>
+                    <div className={`absolute top-6 right-6 h-5 w-5 rounded-full border flex items-center justify-center transition-all ${selectedAddressId === addr.id ? 'bg-slate-900 border-slate-900' : 'border-slate-200 group-hover:border-slate-300'}`}>
+                      {selectedAddressId === addr.id && <CheckCircle2 className="h-3 w-3 text-white" />}
+                    </div>
+                    <p className="font-bold text-slate-900 mb-1">{addr.name}</p>
+
+                    <p className="text-xs text-slate-400 font-medium mb-4 tracking-wide">{addr.phone}</p>
+                    <div className="space-y-1">
+                      <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                        {addr.street}, {addr.city}
+                      </p>
+                      <p className="text-sm text-slate-600 font-medium">
+                        {addr.state} - {addr.pincode}
+                      </p>
+                    </div>
                   </div>
                 ))}
                 {addresses.length === 0 && (
-                  <div className="col-span-full py-12 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-                    <p className="text-slate-500 font-medium">No saved addresses found.</p>
+                  <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-200">
+                    <MapPin className="h-10 w-10 text-slate-300 mx-auto mb-4" />
+                    <p className="text-slate-500 font-black">No addresses saved yet</p>
+                    <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest">Add your first address to proceed</p>
                   </div>
                 )}
               </div>
@@ -203,38 +297,52 @@ const Checkout = () => {
           </section>
 
           {/* Payment Method Section */}
-          <section className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <div className="bg-primary-100 p-2 rounded-xl">
-                <CreditCard className="h-5 w-5 text-primary-600" />
+          <section className="space-y-8">
+            <div className="flex items-center space-x-4 border-t border-slate-100 pt-10">
+              <div className="bg-slate-100 p-2.5 rounded-xl">
+                <CreditCard className="h-5 w-5 text-slate-900" />
               </div>
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">Payment Method</h2>
+              <div>
+                <h2 className="text-xl font-medium text-slate-900 tracking-tight">Payment Method</h2>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Select how you want to pay</p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-6 rounded-3xl border-2 border-primary-500 bg-primary-50/30 flex items-center justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div 
+                onClick={() => setPaymentMethod('cod')}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'cod' ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+              >
                 <div className="flex items-center space-x-4">
-                  <div className="bg-white p-3 rounded-2xl shadow-sm">
-                    <Truck className="h-6 w-6 text-slate-900" />
+                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'cod' ? 'bg-white shadow-sm' : 'bg-slate-50'}`}>
+                    <Truck className="h-5 w-5 text-slate-900" />
                   </div>
                   <div>
-                    <p className="font-black text-slate-900">Cash on Delivery</p>
-                    <p className="text-xs font-bold text-primary-600 uppercase tracking-widest">Active Option</p>
+                    <p className="font-bold text-slate-900">Cash on Delivery</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pay when you receive</p>
                   </div>
                 </div>
-                <CheckCircle2 className="h-5 w-5 text-primary-600" />
+                {paymentMethod === 'cod' && (
+                  <CheckCircle2 className="h-5 w-5 text-slate-900" />
+                )}
               </div>
 
-              <div className="p-6 rounded-3xl border-2 border-slate-100 bg-slate-50 opacity-60 flex items-center justify-between cursor-not-allowed">
+              <div 
+                onClick={() => setPaymentMethod('online')}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'online' ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+              >
                 <div className="flex items-center space-x-4">
-                  <div className="bg-white p-3 rounded-2xl shadow-sm">
-                    <CreditCard className="h-6 w-6 text-slate-400" />
+                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'online' ? 'bg-white shadow-sm' : 'bg-slate-900 text-white'}`}>
+                    <CreditCard className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-black text-slate-400">Online Payment</p>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Coming Soon</p>
+                    <p className="font-bold text-slate-900">Online Payment</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Razorpay Secure</p>
                   </div>
                 </div>
+                {paymentMethod === 'online' && (
+                  <CheckCircle2 className="h-5 w-5 text-slate-900" />
+                )}
               </div>
             </div>
           </section>
@@ -242,59 +350,62 @@ const Checkout = () => {
 
         {/* Order Summary Sidebar */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-[3rem] border border-slate-100 p-8 shadow-xl sticky top-24 space-y-8">
-            <h3 className="text-2xl font-black text-slate-900 tracking-tight">Order Summary</h3>
+          <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm sticky top-24 space-y-8">
+            <h3 className="text-xl font-medium text-slate-900 tracking-tight">Order Summary</h3>
             
-            <div className="space-y-4 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-5 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {cart.items.map((item) => (
-                <div key={item.id} className="flex items-center space-x-4">
-                  <div className="h-16 w-16 bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0">
-                    <img src={item.product?.images?.[0]?.image} alt="" className="w-full h-full object-cover" />
+                <div key={item.id} className="flex items-center space-x-4 group">
+                  <div className="h-16 w-16 bg-slate-50 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
+                    <img src={item.product_image || 'https://via.placeholder.com/150'} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-grow min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate">{item.product?.name}</p>
-                    <p className="text-xs font-bold text-slate-400">Qty: {item.quantity}</p>
+                    <p className="text-xs font-bold text-slate-900 truncate">{item.product_name}</p>
+                    <p className="text-[10px] font-medium text-slate-400 mt-0.5 uppercase tracking-widest">Qty: {item.quantity}</p>
                   </div>
-                  <p className="text-sm font-black text-slate-900">${parseFloat(item.total_price).toFixed(2)}</p>
+                  <p className="text-xs font-bold text-slate-900">₹{parseFloat(item.total_price).toLocaleString('en-IN')}</p>
                 </div>
               ))}
             </div>
 
             <div className="pt-6 border-t border-slate-100 space-y-3">
-              <div className="flex justify-between text-slate-500 font-medium">
+              <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
                 <span>Subtotal</span>
-                <span>${parseFloat(cart.total_amount).toFixed(2)}</span>
+                <span>₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between text-slate-500 font-medium">
+              <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
                 <span>Shipping</span>
-                <span className="text-green-600 font-bold uppercase tracking-widest text-xs">Free</span>
+                <span className="text-emerald-600 font-bold">Free</span>
               </div>
-              <div className="flex justify-between pt-4">
-                <span className="text-xl font-black text-slate-900">Total</span>
-                <span className="text-2xl font-black text-primary-600">${parseFloat(cart.total_amount).toFixed(2)}</span>
+              <div className="flex justify-between pt-4 border-t border-slate-50">
+                <span className="text-lg font-medium text-slate-900 tracking-tight">Total</span>
+                <div className="text-right">
+                  <span className="text-2xl font-bold text-slate-900 tracking-tight">₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Inclusive of all taxes</p>
+                </div>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4">
-              <div className="flex items-center space-x-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 rounded-xl">
-                <ShieldCheck className="h-4 w-4 text-green-500" />
-                <span>Secure Checkout Guaranteed</span>
+            <div className="space-y-4 pt-2">
+              <div className="flex items-center space-x-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                <span>SSL encrypted Checkout</span>
               </div>
               
               <button 
                 onClick={handlePlaceOrder}
                 disabled={isPlacingOrder || !selectedAddressId}
-                className="w-full bg-slate-900 text-white py-5 rounded-[2rem] font-black text-lg hover:bg-primary-600 transition-all active:scale-[0.98] disabled:opacity-50 shadow-2xl shadow-slate-900/20 flex items-center justify-center space-x-3"
+                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 group"
               >
                 {isPlacingOrder ? (
                   <>
-                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                     <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    <span>Place Order</span>
-                    <ChevronRight className="h-6 w-6" />
+                    <span>Confirm Order</span>
+                    <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
               </button>

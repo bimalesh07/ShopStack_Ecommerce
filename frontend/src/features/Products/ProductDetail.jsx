@@ -92,7 +92,7 @@ const ProductDetail = () => {
   const currentImage = product.images?.[activeImageIndex]?.image || 'https://via.placeholder.com/600';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="container-tight">
       {/* Minimal Breadcrumb */}
       <nav className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-8 text-slate-400">
         <button onClick={() => navigate('/products')} className="hover:text-primary-600 transition-colors">Shop</button>
@@ -103,15 +103,15 @@ const ProductDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         {/* Left: Refined Image Gallery */}
         <div className="space-y-4">
-          <div className="relative aspect-square rounded-[1.5rem] overflow-hidden bg-slate-50 border border-slate-100 group shadow-sm">
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 group shadow-sm">
             <img 
               src={currentImage} 
               alt={product.name} 
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
             {product.stock <= 0 && (
-              <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
-                <span className="text-slate-900 font-black uppercase tracking-widest text-[10px]">Sold Out</span>
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center">
+                <span className="text-rose-600 font-black uppercase tracking-[0.3em] text-sm">Sold Out</span>
               </div>
             )}
           </div>
@@ -152,13 +152,23 @@ const ProductDetail = () => {
               {product.name}
             </h1>
             
-            <div className="text-2xl font-medium text-slate-900">
-              ${parseFloat(product.price).toFixed(2)}
+            <div className="flex items-baseline space-x-3">
+              <span className="text-3xl font-black text-slate-900 tracking-tighter">
+                ₹{parseFloat(product.selling_price).toLocaleString('en-IN')}
+              </span>
+              <span className="text-lg font-bold text-slate-400 line-through">
+                ₹{parseFloat(product.mrp_price).toLocaleString('en-IN')}
+              </span>
+              {product.discount_percentage > 0 && (
+                <span className="text-sm font-black text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-lg">
+                  {product.discount_percentage}% OFF
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="border-t border-slate-100 pt-6">
-            <p className="text-slate-500 leading-relaxed text-sm max-w-lg">
+          <div className="border-t border-slate-100 pt-8">
+            <p className="text-slate-600 leading-relaxed font-medium text-base max-w-lg">
               {product.description}
             </p>
           </div>
@@ -178,18 +188,19 @@ const ProductDetail = () => {
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <button 
                     onClick={handleAddToCart}
                     disabled={product.stock <= 0}
-                    className="flex-1 min-w-[140px] max-w-[200px] h-11 bg-slate-900 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50"
+                    className="flex-1 h-14 bg-slate-900 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50 shadow-xl shadow-slate-900/10 flex items-center justify-center space-x-3"
                   >
-                    Add to Bag
+                    <ShoppingCart className="h-4 w-4" />
+                    <span>Add to Bag</span>
                   </button>
                   <button 
                     onClick={handleBuyItNow}
                     disabled={product.stock <= 0}
-                    className="flex-1 min-w-[140px] max-w-[200px] h-11 bg-white border border-slate-200 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98] disabled:opacity-30"
+                    className="flex-1 h-14 bg-white border border-slate-200 text-slate-900 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-all active:scale-[0.98] disabled:opacity-30"
                   >
                     Buy Now
                   </button>

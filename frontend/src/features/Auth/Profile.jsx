@@ -10,7 +10,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    full_name: '',
+    name: '',
+
     phone: '',
     shop_name: '',
     shop_descriptions: '',
@@ -19,7 +20,8 @@ const Profile = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        full_name: user.full_name || '',
+        name: user.name || '',
+
         phone: user.phone || '',
         shop_name: user.vendor_details?.shop_name || '',
         shop_descriptions: user.vendor_details?.shop_descriptions || '',
@@ -37,7 +39,8 @@ const Profile = () => {
     try {
       // Update basic info
       await axiosInstance.patch('/profile/', {
-        full_name: formData.full_name,
+        name: formData.name,
+
         phone: formData.phone,
       });
 
@@ -138,14 +141,17 @@ const Profile = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Full Name</label>
+                <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Name</label>
+
                 <div className="relative">
                   <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
-                    name="full_name"
+                    name="name"
+
                     type="text"
                     className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary-500 transition-all font-medium"
-                    value={formData.full_name}
+                    value={formData.name}
+
                     onChange={handleChange}
                   />
                 </div>

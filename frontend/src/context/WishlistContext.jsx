@@ -8,10 +8,10 @@ const WishlistContext = createContext();
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const fetchWishlist = async () => {
-    if (!user || user.role === 'vendor') return;
+    if (!token) return;
     setLoading(true);
     try {
       const data = await wishlistService.getWishlist();
@@ -29,7 +29,7 @@ export const WishlistProvider = ({ children }) => {
 
   useEffect(() => {
     fetchWishlist();
-  }, [user?.id]);
+  }, [token, user?.id]);
 
   const addToWishlist = async (productId) => {
     try {

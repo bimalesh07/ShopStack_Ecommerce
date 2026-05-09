@@ -11,7 +11,7 @@ export const CartProvider = ({ children }) => {
   const { token, user } = useAuth();
 
   const fetchCart = async () => {
-    if (!token || user?.role !== 'customer') return;
+    if (!token) return;
     setLoading(true);
     try {
       const data = await cartService.getCart();

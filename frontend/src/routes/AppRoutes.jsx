@@ -17,6 +17,8 @@ import Profile from '../features/Auth/Profile';
 import EditProduct from '../features/Vendors/EditProduct';
 import VendorOrders from '../features/Vendors/VendorOrders';
 import OrderSuccess from '../features/Checkout/OrderSuccess';
+import OTPVerification from '../features/Auth/OTPVerification';
+import VendorPendingApproval from '../features/Auth/VendorPendingApproval';
 
 import Home from '../features/Home/Home';
 
@@ -37,6 +39,8 @@ const AppRoutes = () => {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/verify-otp" element={<OTPVerification />} />
+      <Route path="/pending-approval" element={<VendorPendingApproval />} />
       <Route path="/products" element={<ProductList />} />
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route 

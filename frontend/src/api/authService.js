@@ -8,8 +8,9 @@ const authService = {
   },
 
   signup: async (userData, role = 'customer') => {
-    // userData for customer: { email, full_name, phone, password, password2 }
-    // userData for vendor: { email, full_name, phone, password, password2, invite_code }
+    // userData for customer: { email, name, phone, password, password2 }
+    // userData for vendor: { email, name, phone, password, password2, invite_code }
+
     const endpoint = role === 'vendor' ? '/vendor/register/' : '/register/';
     const response = await axiosInstance.post(endpoint, userData);
     return response.data;
@@ -32,6 +33,16 @@ const authService = {
 
   googleLogin: async (credential, role = 'customer') => {
     const response = await axiosInstance.post('/google-login/', { credential, role });
+    return response.data;
+  },
+  
+  verifyOTP: async (email, otp) => {
+    const response = await axiosInstance.post('/verify-otp/', { email, otp });
+    return response.data;
+  },
+
+  resendOTP: async (email) => {
+    const response = await axiosInstance.post('/resend-otp/', { email });
     return response.data;
   }
 };

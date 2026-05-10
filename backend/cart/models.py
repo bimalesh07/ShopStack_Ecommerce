@@ -16,8 +16,18 @@ class Cart(models.Model):
         return f"{self.user.email} =cart"
     
     @property
+    def subtotal(self):
+        return sum(item.total_price for item in self.items.all())
+
+    @property
+    def shipping_fee(self):
+        if self.subtotal == 0:
+            return 0
+        return 50 if self.subtotal < 500 else 0
+
+    @property
     def total_amount(self):
-        return sum( item.total_price for item in self.items.all())
+        return self.subtotal + self.shipping_fee
     
     @property 
     def total_items(self):

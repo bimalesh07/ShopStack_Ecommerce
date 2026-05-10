@@ -10,13 +10,13 @@ from .views import (
 )
 
 urlpatterns =[
-    #Public
-    path("", ProductListView.as_view(), name="product_list"),
-    path("<uuid:pk>/", ProductDetailView.as_view(), name="Product-detail"),
-
     # category
     path("categories/", CategoryListView.as_view(), name="category-list"),
     path("categories/create/", CategoryCreateView.as_view(), name="category-create"),
+
+    #Public
+    path("", ProductListView.as_view(), name="product_list"),
+    path("<slug:slug>/", ProductDetailView.as_view(), name="Product-detail"),
 
 
     # vendor 

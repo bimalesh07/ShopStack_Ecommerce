@@ -94,12 +94,12 @@ class ProductListView(generics.ListAPIView):
     
 class ProductDetailView(APIView):
     permission_classes = (AllowAny,)
-    def get(self, request, pk):
+    def get(self, request, slug):
         try:
             product =Product.objects.select_related(
                 "category", "vendor"
             ).prefetch_related("images").get(
-                pk=pk,
+                slug=slug,
                 is_active = True,
                 vendor__is_approved = True
             )
@@ -112,7 +112,6 @@ class ProductDetailView(APIView):
         return Response(serializer.data)
     
 # Vndor products 
-
 class VendorProductListCreateview(APIView):
     permission_classes = (IsAuthenticated, isVendor, )
     parser_classes = (MultiPartParser, FormParser)

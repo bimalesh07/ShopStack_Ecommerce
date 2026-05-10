@@ -86,6 +86,7 @@ class OrderListCreateView(APIView):
                     address=address,
                     payment_method=serializer.validated_data["payment_method"],
                     note=serializer.validated_data.get("note", ""),
+                    shipping_fee=cart.shipping_fee,
                     total_amount=cart.total_amount,
                     payment_status=Order.PaymentStatus.PENDING,
                 )

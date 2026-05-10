@@ -6,9 +6,10 @@ import { useCart } from '../../context/CartContext';
 import { ShoppingCart, ChevronLeft, Minus, Plus, ShieldCheck, Truck, RefreshCcw, Loader2, Info, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 import reviewService from '../../api/reviewService';
+import ProductCard from './ProductCard';
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addToCart } = useCart();
@@ -20,6 +21,7 @@ const ProductDetail = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   const handleAddToCart = async () => {
     if (!product) return;
@@ -43,9 +45,21 @@ const ProductDetail = () => {
     const fetchProductData = async () => {
       setLoading(true);
       try {
-        const productData = await productService.getProductById(id);
+        const productData = await productService.getProductBySlug(slug);
         if (productData) {
           setProduct(productData);
+          
+          // Fetch related products
+          try {
+            const related = await productService.getProducts({ 
+              category: productData.category,
+              limit: 5 
+            });
+            // Filter out current product and take top 4
+            setRelatedProducts(related.filter(p => p.id !== productData.id).slice(0, 4));
+          } catch (relatedErr) {
+            console.error('Failed to fetch related products:', relatedErr);
+          }
         } else {
           navigate('/products');
           return;
@@ -53,8 +67,8 @@ const ProductDetail = () => {
 
         try {
           const [reviewsData, ratingStats] = await Promise.all([
-            reviewService.getProductReviews(id),
-            reviewService.getProductRating(id)
+            reviewService.getProductReviews(productData.id),
+            reviewService.getProductRating(productData.id)
           ]);
           setReviews(reviewsData);
           setRatingData(ratingStats);
@@ -71,7 +85,7 @@ const ProductDetail = () => {
     };
 
     fetchProductData();
-  }, [id, navigate]);
+  }, [slug, navigate]);
 
   const handleQuantity = (type) => {
     if (type === 'inc') setQuantity(prev => prev + 1);
@@ -103,11 +117,11 @@ const ProductDetail = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
         {/* Left: Refined Image Gallery */}
         <div className="space-y-4">
-          <div className="relative aspect-square rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 group shadow-sm">
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-white border border-slate-100 group shadow-sm p-8">
             <img 
               src={currentImage} 
               alt={product.name} 
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+              className="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-105"
             />
             {product.stock <= 0 && (
               <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center">
@@ -234,10 +248,10 @@ const ProductDetail = () => {
       </div>
 
       {/* Compact Reviews Section */}
-      <div className="mt-20 pt-16 border-t border-slate-100">
-        <div className="flex items-end justify-between mb-10">
+      <div className="mt-6 pt-6 border-t border-slate-100">
+        <div className="flex items-end justify-between mb-8">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Community Feedback</h2>
+            <h2 className="text-xl font-bold text-slate-900">Product Reviews</h2>
             <div className="flex items-center space-x-3 mt-1">
               <div className="flex items-center space-x-1 text-amber-400">
                 {[1, 2, 3, 4, 5].map(s => <Star key={s} className={`h-3 w-3 ${ratingData.average_rating >= s ? 'fill-current' : 'text-slate-100'}`} />)}
@@ -265,11 +279,35 @@ const ProductDetail = () => {
             ))}
           </div>
         ) : (
-          <div className="py-12 text-center bg-slate-50/50 rounded-3xl border border-dashed border-slate-100">
+          <div className="py-8 text-center bg-slate-50/50 rounded-3xl border border-dashed border-slate-100">
             <p className="text-xs font-medium text-slate-400">No reviews yet for this product.</p>
           </div>
         )}
       </div>
+      {/* Related Products Section */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-6 pt-6 border-t border-slate-100">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">You May Also Like</h2>
+              <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-widest">Handpicked for you based on this category</p>
+            </div>
+            <button 
+              onClick={() => navigate('/products')}
+              className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-600 hover:text-primary-700 transition-colors"
+            >
+              View All
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {relatedProducts.map((relatedProduct) => (
+              <ProductCard key={relatedProduct.id} product={relatedProduct} />
+            ))}
+          </div>
+        </div>
+      )}
+
       {isReviewModalOpen && selectedProduct && (
         <ReviewModal
           isOpen={isReviewModalOpen}

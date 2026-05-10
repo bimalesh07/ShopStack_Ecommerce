@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import productService from '../../api/productService';
 import orderService from '../../api/orderService';
 import { Package, Plus, Trash2, Edit, ExternalLink, Loader2, DollarSign, Truck, ShoppingBag } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const VendorDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -47,14 +48,52 @@ const VendorDashboard = () => {
     { label: 'Total Orders', value: orders.length, icon: ShoppingBag, color: 'text-purple-600', bg: 'bg-purple-100' },
   ];
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        await productService.deleteProduct(id); // I should add this to service
-        setProducts(products.filter(p => p.id !== id));
-      } catch (err) {
-        alert('Failed to delete product');
+  const handleDelete = (id) => {
+    toast((t) => (
+      <div className="flex flex-col gap-4">
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-slate-900">Delete this product?</p>
+          <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">This action cannot be undone.</p>
+        </div>
+        <div className="flex gap-3 justify-end">
+          <button 
+            onClick={() => toast.dismiss(t.id)}
+            className="px-4 py-2 text-[10px] font-black text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-[0.15em]"
+          >
+            No, Keep it
+          </button>
+          <button 
+            onClick={async () => {
+              toast.dismiss(t.id);
+              await confirmDelete(id);
+            }}
+            className="px-5 py-2 text-[10px] font-black bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-all uppercase tracking-[0.15em] shadow-lg shadow-rose-500/20 active:scale-95"
+          >
+            Yes, Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 6000,
+      position: 'top-center',
+      style: {
+        minWidth: '320px',
+        borderRadius: '1.5rem',
+        padding: '1.25rem',
+        border: '1px solid #f1f5f9',
+        boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)'
       }
+    });
+  };
+
+  const confirmDelete = async (id) => {
+    const loadingToast = toast.loading('Deleting product...');
+    try {
+      await productService.deleteProduct(id);
+      setProducts(products.filter(p => p.id !== id));
+      toast.success('Product deleted successfully', { id: loadingToast });
+    } catch (err) {
+      toast.error('Failed to delete product', { id: loadingToast });
     }
   };
 

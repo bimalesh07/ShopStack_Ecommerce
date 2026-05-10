@@ -88,7 +88,7 @@ const OTPVerification = () => {
       
       if (data.tokens) {
         // Customer success or Login success
-        login(data.user, data.tokens);
+        login(data.user, data.tokens, true);
         toast.success(isMfa ? 'Security verified! Welcome back.' : 'Account verified successfully!');
         navigate('/');
       } else {

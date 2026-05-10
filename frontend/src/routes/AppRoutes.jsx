@@ -41,8 +41,8 @@ const AppRoutes = () => {
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify-otp" element={<OTPVerification />} />
       <Route path="/pending-approval" element={<VendorPendingApproval />} />
+      <Route path="/products/:slug" element={<ProductDetail />} />
       <Route path="/products" element={<ProductList />} />
-      <Route path="/products/:id" element={<ProductDetail />} />
       <Route 
         path="/cart" 
         element={

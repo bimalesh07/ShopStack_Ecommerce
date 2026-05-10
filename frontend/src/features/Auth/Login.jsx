@@ -30,7 +30,6 @@ const Login = () => {
 
       if (data.tokens?.access) {
         login(data.user, data.tokens);
-        toast.success('Welcome back!');
         navigate('/');
       } else {
         setError('Login failed: No access token received');

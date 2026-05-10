@@ -57,24 +57,60 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm('Are you sure you want to cancel this order?')) return;
-    
+  const handleCancelOrder = (orderId) => {
+    toast((t) => (
+      <div className="flex flex-col gap-4">
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-slate-900">Cancel this order?</p>
+          <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">This action cannot be undone.</p>
+        </div>
+        <div className="flex gap-3 justify-end">
+          <button 
+            onClick={() => toast.dismiss(t.id)}
+            className="px-4 py-2 text-[10px] font-black text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-[0.15em]"
+          >
+            No, Go Back
+          </button>
+          <button 
+            onClick={async () => {
+              toast.dismiss(t.id);
+              await confirmCancel(orderId);
+            }}
+            className="px-5 py-2 text-[10px] font-black bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-all uppercase tracking-[0.15em] shadow-lg shadow-rose-500/20 active:scale-95"
+          >
+            Yes, Cancel Order
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 6000,
+      position: 'top-center',
+      style: {
+        minWidth: '320px',
+        borderRadius: '1.5rem',
+        padding: '1.25rem',
+        border: '1px solid #f1f5f9',
+        boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)'
+      }
+    });
+  };
+
+  const confirmCancel = async (orderId) => {
+    const loadingToast = toast.loading('Cancelling your order...');
     try {
       await orderService.cancelOrder(orderId);
-      toast.success('Order cancelled successfully');
+      toast.success('Order cancelled successfully', { id: loadingToast });
       // Refresh orders
       const updatedOrders = await orderService.getOrders();
       setOrders(updatedOrders.results || updatedOrders);
     } catch (error) {
       const msg = error.response?.data?.error || 'Failed to cancel order';
-      toast.error(msg);
+      toast.error(msg, { id: loadingToast });
     }
   };
 
   const handleLogout = () => {
     logout();
-    toast.success('You have been logged out. See you soon!');
     navigate('/login');
   };
 

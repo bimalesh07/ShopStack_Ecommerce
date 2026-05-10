@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import productService from '../../api/productService';
 import { Filter, ChevronDown, Loader2, PackageSearch } from 'lucide-react';
@@ -77,10 +77,23 @@ const ProductList = () => {
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">
-            {currentSearch ? `Search: "${currentSearch}"` : (currentCategory ? `${currentCategory} Collection` : 'Our Collection')}
+          <nav className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
+            <Link to="/" className="hover:text-primary-600 transition-colors">Home</Link>
+            <span className="text-slate-200">/</span>
+            <span className="text-slate-900">Shop</span>
+          </nav>
+          <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase font-heading">
+            {currentCategory ? currentCategory : 'The Collection'}
           </h1>
-          <p className="text-slate-600 mt-1">Discover {products.length} exclusive items tailored for you.</p>
+          {currentSearch ? (
+            <p className="text-slate-400 text-sm font-medium mt-1 italic">
+              Displaying curated results for <span className="text-slate-900 font-bold not-italic">"{currentSearch}"</span>
+            </p>
+          ) : (
+            <p className="text-slate-500 mt-1 font-medium">
+              Explore {products.length} hand-picked treasures from around the globe.
+            </p>
+          )}
         </div>
 
         

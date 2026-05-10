@@ -12,6 +12,11 @@ const productService = {
     const response = await axiosInstance.get(`/products/${id}/`);
     return response.data;
   },
+  
+  getProductBySlug: async (slug) => {
+    const response = await axiosInstance.get(`/products/${slug}/`);
+    return response.data;
+  },
 
   getCategories: async () => {
     const response = await axiosInstance.get('/products/categories/');

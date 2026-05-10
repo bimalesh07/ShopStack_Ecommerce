@@ -35,13 +35,15 @@ export const AuthProvider = ({ children }) => {
     fetchProfile();
   }, [token]);
 
-  const login = (userData, tokens) => {
+  const login = (userData, tokens, suppressToast = false) => {
     localStorage.setItem('access_token', tokens.access);
     localStorage.setItem('refresh_token', tokens.refresh);
     localStorage.setItem('user', JSON.stringify(userData));
     setToken(tokens.access);
     setUser(userData);
-    toast.success('Welcome back!');
+    if (!suppressToast) {
+      toast.success('Welcome back!');
+    }
   };
 
   const logout = async () => {
@@ -58,7 +60,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
-    toast.success('Logged out successfully');
+    toast.success('Logged out successfully. See you soon!');
   };
 
   const googleLogin = async (credential, role = 'customer') => {

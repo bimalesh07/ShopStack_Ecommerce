@@ -37,17 +37,27 @@ const Navbar = () => {
 
   useEffect(() => {
     if (debouncedSearchTerm === '' && !new URLSearchParams(location.search).get('search')) return;
+    
+    // Only auto-navigate if we are on the products page or if we are on home/other and starting to search
+    // BUT do NOT navigate if we are on a product detail page (/products/:slug)
+    const isProductDetailPage = location.pathname.startsWith('/products/') && location.pathname !== '/products';
+    
+    if (isProductDetailPage) return;
+
     const params = new URLSearchParams(location.search);
     if (debouncedSearchTerm) {
       params.set('search', debouncedSearchTerm);
     } else {
       params.delete('search');
     }
+    
     const currentSearch = new URLSearchParams(location.search).get('search') || '';
     if (debouncedSearchTerm !== currentSearch) {
+      // If we are not on the products page, we want to go there
+      // If we are on the products page, we just update the query params
       navigate(`/products?${params.toString()}`);
     }
-  }, [debouncedSearchTerm, navigate]);
+  }, [debouncedSearchTerm, navigate, location.pathname]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -105,18 +115,29 @@ const Navbar = () => {
                 </button>
 
                 {showCategories && (
-                  <div className="absolute top-[100%] left-0 w-64 bg-white border border-slate-100 rounded-2xl shadow-2xl py-6 mt-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {categories.map(cat => (
-                      <Link 
-                        key={cat.id} 
-                        to={`/products?category=${cat.name}`}
-                        onClick={() => setShowCategories(false)}
-                        className="flex items-center px-6 py-3 text-sm font-semibold text-slate-600 hover:text-primary-600 hover:bg-slate-50 transition-colors"
-                      >
-                        <Plus className="h-4 w-4 mr-3 text-slate-300" />
-                        {cat.name}
-                      </Link>
-                    ))}
+                  <div className="absolute top-[100%] left-0 pt-2 z-50">
+                    <div className="min-w-[220px] bg-white border border-slate-100 rounded-2xl shadow-2xl py-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-6 pb-3 mb-2 border-b border-slate-50">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Our Collections</p>
+                      </div>
+                      <div className="space-y-1">
+                        {categories.length > 0 ? (
+                          categories.map(cat => (
+                            <Link 
+                              key={cat.id} 
+                              to={`/products?category=${cat.name}`}
+                              onClick={() => setShowCategories(false)}
+                              className="flex items-center px-6 py-2.5 text-sm font-bold text-slate-600 hover:text-primary-600 hover:bg-slate-50 transition-all duration-300 group/item"
+                            >
+                              <div className="h-1.5 w-1.5 rounded-full bg-slate-200 mr-3 group-hover/item:bg-primary-600 group-hover/item:scale-125 transition-all"></div>
+                              <span>{cat.name}</span>
+                            </Link>
+                          ))
+                        ) : (
+                          <p className="px-6 py-2 text-xs text-slate-400 italic">No categories found</p>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

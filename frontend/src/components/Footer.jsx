@@ -79,8 +79,9 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="border-t border-slate-800 mt-12 pt-8 text-center text-xs">
+        <div className="border-t border-slate-800 mt-12 pt-8 text-center text-xs space-y-2">
           <p>&copy; {new Date().getFullYear()} ShopStack E-Commerce. All rights reserved.</p>
+          <p className="text-slate-500 font-medium tracking-wide">Developed & Managed by Bimalesk K Yadav</p>
         </div>
       </div>
     </footer>

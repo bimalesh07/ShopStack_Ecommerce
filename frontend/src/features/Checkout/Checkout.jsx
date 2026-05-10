@@ -371,11 +371,15 @@ const Checkout = () => {
             <div className="pt-6 border-t border-slate-100 space-y-3">
               <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
                 <span>Subtotal</span>
-                <span>₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
+                <span>₹{parseFloat(cart.subtotal).toLocaleString('en-IN')}</span>
               </div>
               <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
                 <span>Shipping</span>
-                <span className="text-emerald-600 font-bold">Free</span>
+                {parseFloat(cart.shipping_fee) === 0 ? (
+                  <span className="text-emerald-600 font-bold">Free</span>
+                ) : (
+                  <span className="text-slate-900 font-bold">₹{parseFloat(cart.shipping_fee).toLocaleString('en-IN')}</span>
+                )}
               </div>
               <div className="flex justify-between pt-4 border-t border-slate-50">
                 <span className="text-lg font-medium text-slate-900 tracking-tight">Total</span>

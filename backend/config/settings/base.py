@@ -1,6 +1,8 @@
 from pathlib import Path
 from decouple import config, Csv
 import dj_database_url
+#for clery ssl handelling
+import ssl
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -166,19 +168,56 @@ CORS_ALLOW_ALL_ORIGINS = True
 # Redis
 REDIS_URL = config("REDIS_URL")
 
-# Celery
-CELERY_BROKER_URL = config("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
+# Celery for localy and dockers
+# CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+# CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+# CELERY_ACCEPT_CONTENT = ["json"]
+# CELERY_TASK_SERIALIZER = "json"
 
-# Cache
+# # Cache for localy
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": config("REDIS_URL"),
+#     }
+# }
+
+#For Developement
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": config("REDIS_URL"),
+        "TIMEOUT": 600,  # 10 minutes defult
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "ssl_cert_reqs": ssl.CERT_NONE, # for Upstash TLS it is  mandatory 
+            }
+        }
     }
 }
+# for Sessions want to in Redis  (for speed)
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
+
+
+
+# For production
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+# UPSTASH SSL CONFIG START 
+CELERY_BROKER_USE_SSL = {
+   'ssl_cert_reqs': ssl.CERT_NONE
+}
+CELERY_REDIS_BACKEND_USE_SSL = {
+    'ssl_cert_reqs': ssl.CERT_NONE
+}
+# UPSTASH SSL CONFIG END
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json" 
+
+
 
 # DRF Spectacular
 SPECTACULAR_SETTINGS = {

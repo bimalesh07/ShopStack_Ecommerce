@@ -162,11 +162,11 @@ const Checkout = () => {
   }
 
   return (
-    <div className="container-tight">
+    <div className="container-tight pt-10 transition-colors duration-500">
       <div className="flex items-center space-x-2 text-xs font-bold text-slate-400 mb-6 uppercase tracking-[0.2em]">
-        <Link to="/cart" className="hover:text-slate-900 transition-colors">Cart</Link>
+        <Link to="/cart" className="hover:text-slate-900 dark:hover:text-white transition-colors">Cart</Link>
         <ChevronRight className="h-3 w-3" />
-        <span className="text-slate-900">Checkout</span>
+        <span className="text-slate-900 dark:text-white">Checkout</span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -177,18 +177,18 @@ const Checkout = () => {
           <section className="space-y-8">
             <div className="flex justify-between items-center">
               <div className="flex items-center space-x-4">
-                <div className="bg-slate-100 p-2.5 rounded-xl">
-                  <MapPin className="h-5 w-5 text-slate-900" />
+                <div className="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl">
+                  <MapPin className="h-5 w-5 text-slate-900 dark:text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-medium text-slate-900 tracking-tight">Shipping Address</h2>
+                  <h2 className="text-xl font-medium text-slate-900 dark:text-white tracking-tight">Shipping Address</h2>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Where should we send it?</p>
                 </div>
               </div>
               {!showAddressForm && (
                   <button 
                   onClick={() => setShowAddressForm(true)}
-                  className="flex items-center space-x-2 text-xs font-bold text-slate-900 hover:bg-slate-100 px-4 py-2 rounded-lg border border-slate-200 transition-all uppercase tracking-widest"
+                  className="flex items-center space-x-2 text-xs font-bold text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 transition-all uppercase tracking-widest"
                 >
                   <Plus className="h-3 w-3" />
                   <span>Add New</span>
@@ -197,68 +197,68 @@ const Checkout = () => {
             </div>
 
             {showAddressForm ? (
-              <form onSubmit={handleAddAddress} className="glass-card p-10 space-y-8 animate-in fade-in zoom-in duration-300">
+              <form onSubmit={handleAddAddress} className="bg-white dark:bg-transparent border border-slate-100 dark:border-slate-800/60 rounded-[2.5rem] p-10 space-y-8 animate-in fade-in zoom-in duration-300 shadow-sm">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Name</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Name</label>
 
                     <input 
                       type="text" placeholder="John Doe" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.name}
                       onChange={(e) => setNewAddress({...newAddress, name: e.target.value})}
 
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Phone Number</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
                     <input 
                       type="tel" placeholder="+91 98765 43210" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.phone}
                       onChange={(e) => setNewAddress({...newAddress, phone: e.target.value})}
                     />
                   </div>
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Street Address</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Street Address</label>
                     <input 
                       type="text" placeholder="House No, Building, Street" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.street}
                       onChange={(e) => setNewAddress({...newAddress, street: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">City</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">City</label>
                     <input 
                       type="text" placeholder="Mumbai" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.city}
                       onChange={(e) => setNewAddress({...newAddress, city: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">State</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">State</label>
                     <input 
                       type="text" placeholder="Maharashtra" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.state}
                       onChange={(e) => setNewAddress({...newAddress, state: e.target.value})}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Pincode</label>
+                    <label className="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Pincode</label>
                     <input 
                       type="text" placeholder="400001" required 
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-primary-500 focus:bg-white focus:border-transparent outline-none transition-all font-medium" 
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-500 dark:focus:ring-white focus:bg-white dark:focus:bg-slate-800 focus:border-transparent outline-none transition-all font-medium text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-600" 
                       value={newAddress.pincode}
                       onChange={(e) => setNewAddress({...newAddress, pincode: e.target.value})}
                     />
                   </div>
                 </div>
                 <div className="flex justify-end space-x-4 pt-4">
-                  <button type="button" onClick={() => setShowAddressForm(false)} className="px-8 py-4 font-black text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest text-xs">Cancel</button>
-                  <button type="submit" className="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black hover:bg-primary-600 transition-all shadow-xl shadow-slate-900/10">Save & Use This Address</button>
+                  <button type="button" onClick={() => setShowAddressForm(false)} className="px-8 py-4 font-black text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-white transition-colors uppercase tracking-widest text-xs">Cancel</button>
+                  <button type="submit" className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-10 py-4 rounded-2xl font-black hover:bg-primary-600 dark:hover:bg-primary-500 transition-all shadow-xl shadow-slate-900/10">Save & Use This Address</button>
                 </div>
               </form>
             ) : (
@@ -267,29 +267,29 @@ const Checkout = () => {
                   <div 
                     key={addr.id}
                     onClick={() => setSelectedAddressId(addr.id)}
-                    className={`p-6 rounded-2xl border transition-all relative group ${selectedAddressId === addr.id ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+                    className={`p-6 rounded-2xl border transition-all relative group cursor-pointer ${selectedAddressId === addr.id ? 'border-slate-900 dark:border-white bg-slate-50/50 dark:bg-white/5 ring-1 ring-slate-900 dark:ring-white shadow-sm' : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-900'}`}
                   >
-                    <div className={`absolute top-6 right-6 h-5 w-5 rounded-full border flex items-center justify-center transition-all ${selectedAddressId === addr.id ? 'bg-slate-900 border-slate-900' : 'border-slate-200 group-hover:border-slate-300'}`}>
-                      {selectedAddressId === addr.id && <CheckCircle2 className="h-3 w-3 text-white" />}
+                    <div className={`absolute top-6 right-6 h-5 w-5 rounded-full border flex items-center justify-center transition-all ${selectedAddressId === addr.id ? 'bg-slate-900 dark:bg-white border-slate-900 dark:border-white' : 'border-slate-200 dark:border-slate-700 group-hover:border-slate-300'}`}>
+                      {selectedAddressId === addr.id && <CheckCircle2 className="h-3 w-3 text-white dark:text-slate-900" />}
                     </div>
-                    <p className="font-bold text-slate-900 mb-1">{addr.name}</p>
+                    <p className="font-bold text-slate-900 dark:text-white mb-1">{addr.name}</p>
 
                     <p className="text-xs text-slate-400 font-medium mb-4 tracking-wide">{addr.phone}</p>
                     <div className="space-y-1">
-                      <p className="text-sm text-slate-600 leading-relaxed font-normal">
+                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
                         {addr.street}, {addr.city}
                       </p>
-                      <p className="text-sm text-slate-600 font-medium">
+                      <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">
                         {addr.state} - {addr.pincode}
                       </p>
                     </div>
                   </div>
                 ))}
                 {addresses.length === 0 && (
-                  <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                    <MapPin className="h-10 w-10 text-slate-300 mx-auto mb-4" />
-                    <p className="text-slate-500 font-black">No addresses saved yet</p>
-                    <p className="text-xs text-slate-400 mt-1 uppercase tracking-widest">Add your first address to proceed</p>
+                  <div className="col-span-full py-20 text-center bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <MapPin className="h-10 w-10 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
+                    <p className="text-slate-500 dark:text-slate-400 font-black">No addresses saved yet</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-600 mt-1 uppercase tracking-widest">Add your first address to proceed</p>
                   </div>
                 )}
               </div>
@@ -298,12 +298,12 @@ const Checkout = () => {
 
           {/* Payment Method Section */}
           <section className="space-y-8">
-            <div className="flex items-center space-x-4 border-t border-slate-100 pt-10">
-              <div className="bg-slate-100 p-2.5 rounded-xl">
-                <CreditCard className="h-5 w-5 text-slate-900" />
+            <div className="flex items-center space-x-4 border-t border-slate-100 dark:border-slate-800 pt-10">
+              <div className="bg-slate-100 dark:bg-slate-800 p-2.5 rounded-xl">
+                <CreditCard className="h-5 w-5 text-slate-900 dark:text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-medium text-slate-900 tracking-tight">Payment Method</h2>
+                <h2 className="text-xl font-medium text-slate-900 dark:text-white tracking-tight">Payment Method</h2>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Select how you want to pay</p>
               </div>
             </div>
@@ -311,37 +311,37 @@ const Checkout = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div 
                 onClick={() => setPaymentMethod('cod')}
-                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'cod' ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'cod' ? 'border-slate-900 dark:border-white bg-slate-50/50 dark:bg-white/5 ring-1 ring-slate-900 dark:ring-white' : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-900'}`}
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'cod' ? 'bg-white shadow-sm' : 'bg-slate-50'}`}>
-                    <Truck className="h-5 w-5 text-slate-900" />
+                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'cod' ? 'bg-white dark:bg-slate-800 shadow-sm' : 'bg-slate-50 dark:bg-slate-800'}`}>
+                    <Truck className="h-5 w-5 text-slate-900 dark:text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900">Cash on Delivery</p>
+                    <p className="font-bold text-slate-900 dark:text-white">Cash on Delivery</p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pay when you receive</p>
                   </div>
                 </div>
                 {paymentMethod === 'cod' && (
-                  <CheckCircle2 className="h-5 w-5 text-slate-900" />
+                  <CheckCircle2 className="h-5 w-5 text-slate-900 dark:text-white" />
                 )}
               </div>
 
               <div 
                 onClick={() => setPaymentMethod('online')}
-                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'online' ? 'border-slate-900 bg-slate-50/50 ring-1 ring-slate-900' : 'border-slate-200 hover:border-slate-300 bg-white'}`}
+                className={`p-6 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${paymentMethod === 'online' ? 'border-slate-900 dark:border-white bg-slate-50/50 dark:bg-white/5 ring-1 ring-slate-900 dark:ring-white' : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-900'}`}
               >
                 <div className="flex items-center space-x-4">
-                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'online' ? 'bg-white shadow-sm' : 'bg-slate-900 text-white'}`}>
+                  <div className={`p-3 rounded-xl transition-colors ${paymentMethod === 'online' ? 'bg-white dark:bg-slate-800 shadow-sm' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900'}`}>
                     <CreditCard className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-slate-900">Online Payment</p>
+                    <p className="font-bold text-slate-900 dark:text-white">Online Payment</p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Razorpay Secure</p>
                   </div>
                 </div>
                 {paymentMethod === 'online' && (
-                  <CheckCircle2 className="h-5 w-5 text-slate-900" />
+                  <CheckCircle2 className="h-5 w-5 text-slate-900 dark:text-white" />
                 )}
               </div>
             </div>
@@ -350,48 +350,48 @@ const Checkout = () => {
 
         {/* Order Summary Sidebar */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm sticky top-24 space-y-8">
-            <h3 className="text-xl font-medium text-slate-900 tracking-tight">Order Summary</h3>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 p-8 shadow-sm sticky top-24 space-y-8">
+            <h3 className="text-xl font-medium text-slate-900 dark:text-white tracking-tight">Order Summary</h3>
             
             <div className="space-y-5 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {cart.items.map((item) => (
                 <div key={item.id} className="flex items-center space-x-4 group">
-                  <div className="h-16 w-16 bg-slate-50 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100">
+                  <div className="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100 dark:border-slate-700">
                     <img src={item.product_image || 'https://via.placeholder.com/150'} alt="" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-grow min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">{item.product_name}</p>
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{item.product_name}</p>
                     <p className="text-[10px] font-medium text-slate-400 mt-0.5 uppercase tracking-widest">Qty: {item.quantity}</p>
                   </div>
-                  <p className="text-xs font-bold text-slate-900">₹{parseFloat(item.total_price).toLocaleString('en-IN')}</p>
+                  <p className="text-xs font-bold text-slate-900 dark:text-white">₹{parseFloat(item.total_price).toLocaleString('en-IN')}</p>
                 </div>
               ))}
             </div>
 
-            <div className="pt-6 border-t border-slate-100 space-y-3">
-              <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-800 space-y-3">
+              <div className="flex justify-between text-slate-500 dark:text-slate-400 font-medium text-[11px] uppercase tracking-widest">
                 <span>Subtotal</span>
                 <span>₹{parseFloat(cart.subtotal).toLocaleString('en-IN')}</span>
               </div>
-              <div className="flex justify-between text-slate-500 font-medium text-[11px] uppercase tracking-widest">
+              <div className="flex justify-between text-slate-500 dark:text-slate-400 font-medium text-[11px] uppercase tracking-widest">
                 <span>Shipping</span>
                 {parseFloat(cart.shipping_fee) === 0 ? (
-                  <span className="text-emerald-600 font-bold">Free</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">Free</span>
                 ) : (
-                  <span className="text-slate-900 font-bold">₹{parseFloat(cart.shipping_fee).toLocaleString('en-IN')}</span>
+                  <span className="text-slate-900 dark:text-white font-bold">₹{parseFloat(cart.shipping_fee).toLocaleString('en-IN')}</span>
                 )}
               </div>
-              <div className="flex justify-between pt-4 border-t border-slate-50">
-                <span className="text-lg font-medium text-slate-900 tracking-tight">Total</span>
+              <div className="flex justify-between pt-4 border-t border-slate-50 dark:border-slate-800/50">
+                <span className="text-lg font-medium text-slate-900 dark:text-white tracking-tight">Total</span>
                 <div className="text-right">
-                  <span className="text-2xl font-bold text-slate-900 tracking-tight">₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">₹{parseFloat(cart.total_amount).toLocaleString('en-IN')}</span>
                   <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Inclusive of all taxes</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4 pt-2">
-              <div className="flex items-center space-x-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 rounded-xl border border-slate-100">
+              <div className="flex items-center space-x-3 text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
                 <ShieldCheck className="h-4 w-4 text-emerald-500" />
                 <span>SSL encrypted Checkout</span>
               </div>
@@ -399,7 +399,7 @@ const Checkout = () => {
               <button 
                 onClick={handlePlaceOrder}
                 disabled={isPlacingOrder || !selectedAddressId}
-                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 group"
+                className="w-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 py-4 rounded-xl font-bold text-base hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 group shadow-xl hover:shadow-2xl"
               >
                 {isPlacingOrder ? (
                   <>

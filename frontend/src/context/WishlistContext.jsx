@@ -53,7 +53,8 @@ export const WishlistProvider = ({ children }) => {
   };
 
   const isInWishlist = (productId) => {
-    return wishlist?.items?.some(item => item.product.id === productId);
+    const items = wishlist?.results || wishlist?.items || [];
+    return items.some(item => (item.product?.id || item.product) === productId);
   };
 
   return (
@@ -63,7 +64,8 @@ export const WishlistProvider = ({ children }) => {
       addToWishlist, 
       removeFromWishlist, 
       isInWishlist,
-      wishlistCount: wishlist?.items?.length || 0
+      fetchWishlist,
+      wishlistCount: wishlist?.total_items || (wishlist?.results || wishlist?.items || []).length
     }}>
       {children}
     </WishlistContext.Provider>

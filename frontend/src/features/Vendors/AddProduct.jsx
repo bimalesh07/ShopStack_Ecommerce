@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Package, Plus, Save, Trash2, Image as ImageIcon, X, Loader2, Info, ChevronRight, Store, Upload } from 'lucide-react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import productService from '../../api/productService';
-import { Package, Upload, X, Loader2, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuth } from '../../context/AuthContext';
 
 const AddProduct = () => {
   const [categories, setCategories] = useState([]);
@@ -16,6 +20,7 @@ const AddProduct = () => {
   });
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -24,14 +29,20 @@ const AddProduct = () => {
   }, []);
 
   const fetchCategories = async () => {
+    setCategoriesLoading(true);
     try {
       const data = await productService.getCategories();
-      setCategories(data);
-      if (data.length > 0) {
-        setFormData(prev => ({ ...prev, category: data[0].id }));
+      const categoriesArray = Array.isArray(data) ? data : [];
+      setCategories(categoriesArray);
+      
+      // Only set default if we have categories and none is selected
+      if (categoriesArray.length > 0 && !formData.category) {
+        setFormData(prev => ({ ...prev, category: categoriesArray[0].id }));
       }
     } catch (err) {
       console.error('Failed to fetch categories:', err);
+    } finally {
+      setCategoriesLoading(false);
     }
   };
 
@@ -126,27 +137,41 @@ const AddProduct = () => {
               <select
                 name="category"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all disabled:opacity-50"
                 value={formData.category}
                 onChange={handleChange}
+                disabled={categoriesLoading}
               >
+                <option value="">{categoriesLoading ? 'Loading categories...' : 'Select Category'}</option>
                 {categories.map(cat => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
+              {categories.length === 0 && !categoriesLoading && (
+                <p className="text-[10px] text-amber-600 font-medium mt-1">
+                  No categories found. Please contact admin.
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 quill-wrapper">
             <label className="block text-sm font-bold text-slate-700">Description</label>
-            <textarea
-              name="description"
-              rows="4"
-              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
-              placeholder="Describe your product in detail..."
+            <ReactQuill
+              theme="snow"
               value={formData.description}
-              onChange={handleChange}
-            ></textarea>
+              onChange={(content) => setFormData(prev => ({ ...prev, description: content }))}
+              placeholder="Describe your product in professional detail..."
+              modules={{
+                toolbar: [
+                  [{ 'header': [1, 2, 3, false] }],
+                  ['bold', 'italic', 'underline', 'strike'],
+                  [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                  ['clean']
+                ],
+              }}
+              className="bg-slate-50 rounded-xl overflow-hidden border border-slate-200"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

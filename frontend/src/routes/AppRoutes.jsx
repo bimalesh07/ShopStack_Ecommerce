@@ -57,7 +57,7 @@ const AppRoutes = () => {
         path="/dashboard" 
         element={
           <ProtectedRoute allowedRole="customer">
-            <Dashboard />
+            <Navigate to="/profile" replace />
           </ProtectedRoute>
         } 
       />

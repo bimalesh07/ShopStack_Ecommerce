@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { LayoutDashboard, Package, ShoppingCart, User as UserIcon, LogOut, Heart, Loader2, ChevronRight, Star } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -11,9 +12,9 @@ import ReviewModal from '../../components/ReviewModal';
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const { cart } = useCart();
+  const { wishlist } = useWishlist();
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [wishlist, setWishlist] = useState(null);
   const [loading, setLoading] = useState(true);
   
   // Review Modal State
@@ -38,17 +39,18 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [ordersData, wishlistData] = await Promise.all([
-          orderService.getOrders(),
-          wishlistService.getWishlist()
-        ]);
-        // Handle paginated response
-        const orderList = ordersData.results || ordersData;
-        const activeOrders = orderList.filter(order => order.order_status?.toUpperCase() !== 'CANCELLED');
+        const ordersData = await orderService.getOrders();
+        
+        // Safety check for ordersData
+        const orderList = ordersData?.results || (Array.isArray(ordersData) ? ordersData : []);
+        const activeOrders = orderList.filter(order => 
+          order && order.order_status?.toUpperCase() !== 'CANCELLED'
+        );
+        
         setOrders(activeOrders);
-        setWishlist(wishlistData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        toast.error('Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -131,7 +133,7 @@ const Dashboard = () => {
     },
     { 
       label: 'Wishlist', 
-      value: `${wishlist?.items?.length || 0} Items`, 
+      value: `${wishlist?.items?.length || wishlist?.results?.length || wishlist?.total_items || 0} Items`, 
       icon: Heart, 
       color: 'text-slate-600', 
       bg: 'bg-slate-50' 

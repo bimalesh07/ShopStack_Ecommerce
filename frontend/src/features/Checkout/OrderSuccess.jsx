@@ -79,12 +79,12 @@ const OrderSuccess = () => {
               <MapPin className="h-5 w-5 text-slate-400" />
               <h3 className="font-medium">Shipping Address</h3>
             </div>
-            {order?.shipping_address ? (
+            {order?.address ? (
               <div className="text-sm text-slate-500 leading-relaxed pl-8">
-                <p className="font-bold text-slate-800 mb-1">{order.shipping_address.name}</p>
-                <p>{order.shipping_address.street}</p>
-                <p>{order.shipping_address.city}, {order.shipping_address.state} - {order.shipping_address.pincode}</p>
-                <p>{order.shipping_address.phone}</p>
+                <p className="font-bold text-slate-800 mb-1">{order.address.name}</p>
+                <p>{order.address.street}</p>
+                <p>{order.address.city}, {order.address.state} - {order.address.pincode}</p>
+                <p>{order.address.phone}</p>
               </div>
             ) : (
               <p className="text-sm text-slate-400 pl-8">Address details unavailable.</p>

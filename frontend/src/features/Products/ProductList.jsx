@@ -73,24 +73,24 @@ const ProductList = () => {
   }
 
   return (
-    <div className="container-tight space-y-8 pb-20">
+    <div className="container-tight space-y-6 pb-20">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <nav className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
             <Link to="/" className="hover:text-primary-600 transition-colors">Home</Link>
-            <span className="text-slate-200">/</span>
-            <span className="text-slate-900">Shop</span>
+            <span className="text-slate-200 dark:text-slate-700">/</span>
+            <span className="text-slate-900 dark:text-white">Shop</span>
           </nav>
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase font-heading">
+          <h1 className="text-5xl font-medium text-slate-900 dark:text-white tracking-tight font-serif capitalize">
             {currentCategory ? currentCategory : 'The Collection'}
           </h1>
           {currentSearch ? (
-            <p className="text-slate-400 text-sm font-medium mt-1 italic">
-              Displaying curated results for <span className="text-slate-900 font-bold not-italic">"{currentSearch}"</span>
+            <p className="text-slate-400 dark:text-slate-500 text-sm font-medium mt-1 italic">
+              Displaying curated results for <span className="text-slate-900 dark:text-white font-bold not-italic">"{currentSearch}"</span>
             </p>
           ) : (
-            <p className="text-slate-500 mt-1 font-medium">
+            <p className="text-slate-400 dark:text-slate-500 mt-2 text-sm font-medium italic tracking-wide">
               Explore {products.length} hand-picked treasures from around the globe.
             </p>
           )}
@@ -100,7 +100,7 @@ const ProductList = () => {
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center space-x-2 px-4 py-2 border rounded-xl text-sm font-bold transition-all ${showFilters ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}
+            className={`flex items-center space-x-2 px-4 py-2 border rounded-xl text-sm font-bold transition-all ${showFilters ? 'bg-slate-900 text-white border-slate-900 dark:bg-primary-600 dark:border-primary-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:bg-slate-700'}`}
           >
             <Filter className="h-4 w-4" />
             <span>Filters</span>
@@ -159,7 +159,7 @@ const ProductList = () => {
 
       {/* Product Grid */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

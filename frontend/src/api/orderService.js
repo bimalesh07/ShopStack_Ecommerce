@@ -20,6 +20,11 @@ const orderService = {
     const response = await axiosInstance.post(`/orders/${id}/cancel/`);
     return response.data;
   },
+  
+  deleteOrder: async (id) => {
+    const response = await axiosInstance.delete(`/orders/${id}/`);
+    return response.data;
+  },
 
   // Vendor specific
   getVendorOrders: async () => {

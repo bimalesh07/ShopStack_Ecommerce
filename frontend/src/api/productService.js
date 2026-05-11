@@ -20,13 +20,19 @@ const productService = {
 
   getCategories: async () => {
     const response = await axiosInstance.get('/products/categories/');
-    return response.data;
+    // Handle both direct array and paginated results
+    return response.data.results || response.data;
   },
 
   // Vendor specific methods
   getVendorProducts: async () => {
     const response = await axiosInstance.get('/products/vendor/');
     return response.data.results || response.data;
+  },
+
+  getVendorProductById: async (id) => {
+    const response = await axiosInstance.get(`/products/vendor/${id}/`);
+    return response.data;
   },
 
   createProduct: async (productData) => {

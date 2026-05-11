@@ -19,9 +19,15 @@ const ProtectedRoute = ({ children, allowedRole }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (allowedRole && user?.role !== allowedRole) {
+  if (allowedRole && user?.role !== allowedRole && user?.role !== 'superuser') {
     // Redirect unauthorized roles to their respective dashboards
     const redirectPath = user?.role === 'vendor' ? '/vendor/dashboard' : '/dashboard';
+    
+    // If we are already on the redirect path, don't redirect again to avoid infinite loops
+    if (location.pathname === redirectPath) {
+      return children;
+    }
+    
     return <Navigate to={redirectPath} replace />;
   }
 

@@ -13,6 +13,7 @@ from .serializers import (
     OrderStatusUpdateSerializer
 )
 from django.db import transaction
+from django.db.models import Prefetch
 from django.conf import settings
 from payments.utils import create_razorpay_order
 from payments.models import Payment
@@ -63,8 +64,13 @@ class OrderListCreateView(APIView):
                 # stock check
                 for item in cart.items.all():
                     if item.product.stock < item.quantity:
+                        if item.product.stock == 0:
+                             return Response(
+                                {"error": f"'{item.product.name}' is currently out of stock. Please remove it from your cart."},
+                                status=status.HTTP_400_BAD_REQUEST,
+                            )
                         return Response(
-                            {"error": f"'{item.product.name}' has only {item.product.stock} items in stock."},
+                            {"error": f"We're sorry, '{item.product.name}' has only {item.product.stock} items left in stock."},
                             status=status.HTTP_400_BAD_REQUEST,
                         )
                     
@@ -170,41 +176,60 @@ class OrderCancelView(APIView):
 
 
 class OrderDetailView(APIView):
-    permission_classes = (IsAuthenticated, IsCustomer)
+    permission_classes = (IsAuthenticated,)
 
-    def get(self,request, pk):
+    def get(self, request, pk):
         try:
-            order = Order.objects.prefetch_related(
-                "items"
-            ).select_related("address").get(
-                pk=pk,
-                user=request.user
-            )
+            # Allow both customer and authorized vendor
+            order = Order.objects.prefetch_related("items").select_related("address").get(pk=pk)
+            
+            is_customer = order.user == request.user
+            vendor = getattr(request.user, 'vendor', None)
+            is_authorized_vendor = vendor and order.items.filter(vendor=vendor).exists()
+            
+            if not (is_customer or is_authorized_vendor):
+                return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+                
         except Order.DoesNotExist:
-            return Response({"error":"Order not found"},
-                            status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data)
     
     def delete(self, request, pk):
         try:
-            order = Order.objects.get(pk=pk, user=request.user)
+            order = Order.objects.get(pk=pk)
+            
+            is_customer = order.user == request.user
+            vendor = getattr(request.user, 'vendor', None)
+            is_authorized_vendor = vendor and order.items.filter(vendor=vendor).exists()
+            
+            if not (is_customer or is_authorized_vendor):
+                return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+                
         except Order.DoesNotExist:
-            return Response({"error":"Order not found"},
-                            status=status.HTTP_404_NOT_FOUND)
-        if order.order_status!= Order.OrderStatus.PENDING:
-            return Response({"error":"Only pending orders can be cancelled"},
-             status=status.HTTP_400_BAD_REQUEST,)
-        
-        for  item in order.items.all():
-            if item.product:
-                item.product.stock += item.quantity
-                item.product.save()
+            return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        order.order_status = Order.OrderStatus.CANCELLED
-        order.save()
-        return Response({"message":"Order cancelled successfully"})
+        # If order is already in a terminal state, allow permanent deletion
+        if order.order_status in [Order.OrderStatus.CANCELLED, Order.OrderStatus.DELIVERED]:
+            order.delete()
+            return Response({"message": "Order removed from history"}, status=status.HTTP_204_NO_CONTENT)
+
+        # If pending and customer is deleting, just cancel it
+        if order.order_status == Order.OrderStatus.PENDING and is_customer:
+            for item in order.items.all():
+                if item.product:
+                    item.product.stock += item.quantity
+                    item.product.save()
+
+            order.order_status = Order.OrderStatus.CANCELLED
+            order.save()
+            return Response({"message": "Order cancelled successfully"})
+        
+        return Response(
+            {"error": "Only cancelled or delivered orders can be permanently removed. Active orders must be finalized first."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
     
 # Vendor Orders
 
@@ -217,27 +242,22 @@ class VendorOrderListView(APIView):
         if not vendor:
              return Response({"error": "Vendor profile not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        order_items = OrderItem.objects.filter(
-            vendor=vendor
-        ).select_related("order", "product").order_by("-order__created_at")
+        # Get orders that contain at least one product from this vendor
+        orders = Order.objects.filter(
+            items__vendor=vendor
+        ).distinct().prefetch_related(
+            Prefetch(
+                'items', 
+                queryset=OrderItem.objects.filter(vendor=vendor)
+            ),
+            'address'
+        ).order_by("-created_at")
 
         paginator = StandardPagination()
-        result = paginator.paginate_queryset(order_items, request)
-
-        data = []
-        for item in result:
-            data.append({
-                "order_id": item.order.id,
-                "order_status": item.order.order_status,
-                "payment_method": item.order.payment_method,
-                "payment_status": item.order.payment_status,
-                "product_name": item.product_name,
-                "quantity": item.quantity,
-                "total_price": item.total_price,
-                "customer_email": item.order.user.email,
-                "ordered_at": item.order.created_at,
-            })
-        return paginator.get_paginated_response(data)
+        result = paginator.paginate_queryset(orders, request)
+        serializer = OrderSerializer(result, many=True, context={'request': request})
+        
+        return paginator.get_paginated_response(serializer.data)
         
 
 
@@ -265,6 +285,15 @@ class VendorOrderStatusUpdateView(APIView):
 
         )
         if serializer.is_valid():
+            # If status changed to cancelled, restore stock
+            new_status = serializer.validated_data.get('order_status')
+            if new_status == Order.OrderStatus.CANCELLED and order.order_status != Order.OrderStatus.CANCELLED:
+                for item in order.items.all():
+                    if item.product:
+                        item.product.stock += item.quantity
+                        item.product.save()
+            
+            serializer.save()
             return Response(OrderSerializer(order, context={'request': request}).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

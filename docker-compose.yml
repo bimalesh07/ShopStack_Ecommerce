@@ -1,49 +1,77 @@
 services:
-  # 1. Backend Django App
+  # 1. Database
+  # db:
+  #   image: postgres:15-alpine
+  #   container_name: shopstack_db
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_DB=${DB_NAME:-shopstack_db}
+  #     - POSTGRES_USER=${DB_USER:-shopstack_admin}
+  #     - POSTGRES_PASSWORD=${DB_PASSWORD:-admin_pass_789}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   ports:
+  #     - "5433:5432"
+
+
+  # 2. Backend Django App
   backend:
-    build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # Command mein entry point so automatic migrations runs
+    command: /app/entrypoint.sh python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/app
+      - /usr/local/lib/python3.13/site-packages/ # Django library protection
     ports:
       - "8000:8000"
     env_file:
       - ./backend/.env
+    #for outer network connectivity so use here dns
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.base
     depends_on:
-      - db
+      # - db
       - redis
 
-  # 2. Frontend React App (Vite)
+  # 3. Frontend React App (Vite)
   frontend:
     build: ./frontend
     volumes:
       - ./frontend:/app
-      - /app/node_modules # Taaki local node_modules container se mix na ho
+      - /app/node_modules
     ports:
       - "5173:5173"
     depends_on:
       - backend
-
-  # 3. Database
-  db:
-    image: postgres:15-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    environment:
-      # Default values add kar di hain taaki .env miss hone par bhi chale
-      POSTGRES_DB: ${DB_NAME:-shopstack}
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-    ports:
-      - "5436:5432"
 
   # 4. Redis
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  # 5. Celery Worker
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - ./backend:/app
+      - /usr/local/lib/python3.13/site-packages/
+    env_file:
+      - ./backend/.env
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.base
+    depends_on:
+      - redis
+      # - db
+      - backend
 
 volumes:
   postgres_data:

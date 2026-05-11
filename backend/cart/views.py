@@ -37,7 +37,10 @@ class CartView(APIView):
             }, status=status.HTTP_404_NOT_FOUND)
         
         if product.stock < quantity:
-            return Response({"error": f"only {product.stock} itmes availabel in stock."},
+            if product.stock == 0:
+                return Response({"error": "This item is currently out of stock."},
+                                status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": f"We're sorry, only {product.stock} items are available in stock."},
                             status=status.HTTP_400_BAD_REQUEST)
         
         cart_item, created = CartItem.objects.get_or_create(
@@ -48,8 +51,11 @@ class CartView(APIView):
         if not created:
             new_quantity = cart_item.quantity + quantity
             if product.stock < new_quantity:
+                if product.stock == 0:
+                     return Response({"error": "This item is currently out of stock."},
+                                    status=status.HTTP_400_BAD_REQUEST)
                 return Response({
-                    "error": f"Only {product.stock} items available in stock"
+                    "error": f"We're sorry, only {product.stock} items are available in stock"
                 }, status=status.HTTP_400_BAD_REQUEST)
             
             cart_item.quantity = new_quantity
@@ -94,8 +100,11 @@ class CartItemUpdateView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
         
         if cart_item.product.stock < quantity:
+            if cart_item.product.stock == 0:
+                return Response({"error": "This item is currently out of stock."},
+                                status=status.HTTP_400_BAD_REQUEST)
             return Response(
-                {"error":f"Only {cart_item.product.stock} items available"},
+                {"error": f"We're sorry, only {cart_item.product.stock} items are available"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         cart_item.quantity = quantity

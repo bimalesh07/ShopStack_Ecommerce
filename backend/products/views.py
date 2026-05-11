@@ -19,10 +19,9 @@ from rest_framework import generics, filters
 # category views
 class CategoryListView(APIView):
     permission_classes = (AllowAny,)
-
     def get(self, request):
         category = Category.objects.all()
-        serializer = CategorySerializer(category, many=True)
+        serializer = CategorySerializer(category, many=True, context={'request': request})
         return Response(serializer.data)
     
 class CategoryCreateView(APIView):
@@ -40,7 +39,6 @@ class CategoryCreateView(APIView):
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
     
 # public Product View
-
 class ProductListView(generics.ListAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ProductSerializer

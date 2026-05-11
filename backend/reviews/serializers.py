@@ -6,15 +6,17 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Review
-        fields = ('id', 'product', 'user', 'user_name', 'rating', 'comment', 'created_at')
+        fields = ('id', 'product', 'user', 'user_name', 'order', 'rating', 'comment', 'created_at')
         read_only_fields = ('id', 'user', 'created_at')
 
     def validate(self, data):
         user = self.context['request'].user
         product = data['product']
+        order = data.get('order')
         
-        # Check if user already reviewed
-        if Review.objects.filter(product=product, user=user).exists():
-            raise serializers.ValidationError("You have already reviewed this product.")
-            
+        # Check if user already reviewed this specific order-product combo
+        if order and Review.objects.filter(product=product, user=user, order=order).exists():
+            raise serializers.ValidationError("You have already reviewed this purchase.")
+        elif not order and Review.objects.filter(product=product, user=user).exists():
+             raise serializers.ValidationError("You have already reviewed this product.")  
         return data

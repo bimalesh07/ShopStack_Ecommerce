@@ -4,6 +4,7 @@ from .models import Order, OrderItem
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_image = serializers.SerializerMethodField()
+    is_reviewed = serializers.SerializerMethodField()
 
     class Meta:
         model = OrderItem
@@ -16,6 +17,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "total_price",
             "vendor",
             "product_image",
+            "is_reviewed",
         )
         read_only_fields = fields
 
@@ -23,6 +25,17 @@ class OrderItemSerializer(serializers.ModelSerializer):
         if obj.product and obj.product.images.exists():
             return self.context['request'].build_absolute_uri(obj.product.images.first().image.url)
         return None
+    
+    def get_is_reviewed(self, obj):
+        from reviews.models import Review
+        user = self.context['request'].user
+        if user.is_anonymous:
+            return False
+        return Review.objects.filter(
+            user=user, 
+            product=obj.product, 
+            order=obj.order
+        ).exists()
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
@@ -39,6 +52,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "shipping_fee",
             "total_amount",
             "note",
+            "cancel_reason",
             "items",
             "created_at",
         )
@@ -46,6 +60,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "id",
             "payment_status",
             "order_status",
+            "cancel_reason",
             "total_amount",
             "created_at",
         )
@@ -71,7 +86,7 @@ class OrderCreateSerializer(serializers.Serializer):
 class OrderStatusUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("order_status",)
+        fields = ("order_status", "cancel_reason")
     
     def validate_order_status(self, value):
         order = self.instance

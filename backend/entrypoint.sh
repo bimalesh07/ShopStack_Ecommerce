@@ -1,28 +1,17 @@
 #!/bin/sh
 
-echo "Waiting for postgres..."
+# Exit so contenir not crash
+# set -e  if use this then entrypoint will not run if any error comes in migration so now not using this.
 
-# Railway par DB_HOSTNAME aur DB_PORT variables dashboard se aayenge
-while ! nc -z $DB_HOSTNAME $DB_PORT; do
-  sleep 0.1
-done
+echo "Neon Cloud Database targeted. Skipping local wait logic..."
 
-echo "PostgreSQL started"
+# Run migrations even erros comes
+echo "Running migrations..."
+python manage.py migrate --noinput || echo "Migration failed, but keeping container alive..."
 
-# Tables banana
-python manage.py migrate --noinput
+# Collect static files
+echo "Collecting static files..."
+python manage.py collectstatic --noinput || echo "Static collection failed..."
 
-# Static files collect karna (Production mein zaroori hai)
-python manage.py collectstatic --noinput
-
-# AGAR tum local pe ho toh runserver chalega, 
-# AGAR cloud (Railway) pe ho toh Gunicorn chalega.
-if [ "$DEBUG" = "True" ]
-then
-    echo "Starting Development Server..."
-    exec python manage.py runserver 0.0.0.0:8000
-else
-    echo "Starting Production Server with Gunicorn..."
-    # Railway automatically $PORT variable deta hai
-    exec gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
-fi
+echo "Starting server..."
+exec "$@"

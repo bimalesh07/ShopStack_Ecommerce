@@ -2,10 +2,33 @@ from rest_framework import serializers
 from .models import Category, Product, ProductImage
 
 class CategorySerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ("id","name","slug","created_at")
-        read_only_fields = ("id","slug","created_at")
+        fields = ("id", "name", "slug", "image", "created_at")
+        read_only_fields = ("id", "slug", "created_at")
+
+    def get_image(self, obj):
+        # Get the latest active product in this category
+        latest_product = obj.products.filter(is_active=True).first()
+        if latest_product:
+            # Try to get the primary image first
+            primary_image = latest_product.images.filter(is_primary=True).first()
+            if primary_image:
+                request = self.context.get('request')
+                if request:
+                    return request.build_absolute_uri(primary_image.image.url)
+                return primary_image.image.url
+            
+            # Fallback to any image if no primary is marked
+            any_image = latest_product.images.first()
+            if any_image:
+                request = self.context.get('request')
+                if request:
+                    return request.build_absolute_uri(any_image.image.url)
+                return any_image.image.url
+        return None
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,6 +47,7 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = (
             "id",
+            "vendor",
             "vendor_name",
             "category",
             "category_name",

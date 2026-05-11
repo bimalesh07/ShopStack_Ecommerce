@@ -6,7 +6,7 @@ class isVendor(BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and request.user.is_vendor
+            and (request.user.is_vendor or request.user.is_superuser)
         )
         
 class IsCustomer(BasePermission):
@@ -15,7 +15,7 @@ class IsCustomer(BasePermission):
         return (
             request.user
             and request.user.is_authenticated
-            and request.user.is_customer
+            and (request.user.is_customer or request.user.is_superuser)
         )
 
 

@@ -8,6 +8,7 @@ class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    order = models.ForeignKey("order.Order", on_delete=models.SET_NULL, null=True, blank=True, related_name="reviews")
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
@@ -17,7 +18,7 @@ class Review(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        unique_together = ('product', 'user')
+        unique_together = ('product', 'user', 'order')
 
     def __str__(self):
         return f'{self.user.email} - {self.product.name} - {self.rating}'

@@ -1,5 +1,6 @@
 from pathlib import Path
 from decouple import config, Csv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -76,15 +77,33 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# DB_NAME = config('DB_NAME', default='shopstack_db')
+# DB_USER = config('DB_USER', default='shopstack_admin')
+# DB_PASSWORD = config('DB_PASSWORD', default='admin_pass_789')
+# DB_HOST = config('DB_HOSTNAME', default='db')
+# DB_PORT = config('DB_PORT', default=5432, cast=int)
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': DB_NAME,
+#         'USER': DB_USER,
+#         'PASSWORD': DB_PASSWORD,
+#         'HOST': DB_HOST,
+#         'PORT': DB_PORT,
+#     }
+
+# }
+# Neon Database Connection fix
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOSTNAME"),
-        "PORT": config("DB_PORT", cast=int),
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+        conn_max_age=600,
+        ssl_require=True  
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [

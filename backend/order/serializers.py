@@ -100,7 +100,8 @@ class OrderStatusUpdateSerializer(serializers.ModelSerializer):
                 Order.OrderStatus.CANCELLED
             ],
             Order.OrderStatus.SHIPPED:[
-                Order.OrderStatus.DELIVERED
+                Order.OrderStatus.DELIVERED,
+                Order.OrderStatus.CANCELLED
             ],
             Order.OrderStatus.DELIVERED:[],
             Order.OrderStatus.CANCELLED:[],

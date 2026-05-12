@@ -49,6 +49,7 @@ services:
     depends_on:
     - backend
 
+
   #  4. Redis
   # redis:
   #   image: redis:7-alpine

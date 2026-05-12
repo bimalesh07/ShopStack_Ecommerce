@@ -48,8 +48,13 @@ const ReviewModal = ({ product, isOpen, onClose, onSuccess }) => {
           </div>
 
           <div className="flex items-center space-x-4 mb-8 bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-            <div className="h-16 w-16 rounded-xl bg-white dark:bg-slate-800 shadow-sm overflow-hidden border border-slate-100 dark:border-slate-700">
-              <img src={product.image} alt="" className="w-full h-full object-cover" />
+            <div className="h-16 w-16 rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse shadow-sm overflow-hidden border border-slate-100 dark:border-slate-700">
+              <img 
+                src={(product.image || '').replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                alt="" 
+                loading="lazy"
+                className="w-full h-full object-cover" 
+              />
             </div>
             <div>
               <p className="font-bold text-slate-900 dark:text-white line-clamp-1">{product.name}</p>

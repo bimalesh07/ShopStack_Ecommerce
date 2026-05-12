@@ -356,8 +356,13 @@ const Checkout = () => {
             <div className="space-y-5 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
               {cart.items.map((item) => (
                 <div key={item.id} className="flex items-center space-x-4 group">
-                  <div className="h-16 w-16 bg-slate-50 dark:bg-slate-800 rounded-xl overflow-hidden flex-shrink-0 border border-slate-100 dark:border-slate-700">
-                    <img src={item.product_image || 'https://via.placeholder.com/150'} alt="" className="w-full h-full object-cover" />
+                  <div className="h-16 w-16 bg-slate-200 dark:bg-slate-800 animate-pulse rounded-xl overflow-hidden flex-shrink-0 border border-slate-100 dark:border-slate-700">
+                    <img 
+                      src={(item.product_image || 'https://via.placeholder.com/150').replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                      alt="" 
+                      loading="lazy"
+                      className="w-full h-full object-cover" 
+                    />
                   </div>
                   <div className="flex-grow min-w-0">
                     <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{item.product_name}</p>

@@ -51,10 +51,11 @@ const Cart = () => {
           <div className="lg:col-span-2 space-y-4">
             {cart.items.map((item) => (
               <div key={item.id} className="bg-white dark:bg-transparent border border-slate-100 dark:border-slate-800/60 rounded-3xl p-4 md:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 md:gap-6 shadow-sm hover:shadow-md transition-all">
-                <div className="h-24 w-24 md:h-28 md:w-28 rounded-2xl bg-slate-50 dark:bg-transparent border border-slate-100/50 dark:border-slate-800/40 overflow-hidden flex-shrink-0">
+                <div className="h-24 w-24 md:h-28 md:w-28 rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse border border-slate-100/50 dark:border-slate-800/40 overflow-hidden flex-shrink-0">
                   <img
-                    src={item.product_image || 'https://via.placeholder.com/150'}
+                    src={(item.product_image || 'https://via.placeholder.com/150').replace('/upload/', '/upload/q_auto,f_auto,w_600/')}
                     alt={item.product_name}
+                    loading="lazy"
                     className="h-full w-full object-contain p-2"
                   />
                 </div>

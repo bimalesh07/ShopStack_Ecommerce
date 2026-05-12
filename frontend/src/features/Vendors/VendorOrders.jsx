@@ -324,9 +324,14 @@ const VendorOrders = () => {
                     <div className="space-y-4">
                       {order.items.map((item) => (
                         <div key={item.id} className="group/item flex items-center gap-5 p-4 rounded-2xl bg-slate-50/50 border border-slate-100 hover:bg-white hover:border-slate-200 transition-all">
-                          <div className="h-20 w-20 rounded-xl bg-white border border-slate-100 overflow-hidden flex-shrink-0 shadow-sm">
+                          <div className="h-20 w-20 rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse border border-slate-100 overflow-hidden flex-shrink-0 shadow-sm">
                             {item.product_image ? (
-                              <img src={item.product_image} alt={item.product_name} className="h-full w-full object-cover group-hover/item:scale-110 transition-transform duration-500" />
+                              <img 
+                                src={item.product_image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                                alt={item.product_name} 
+                                loading="lazy"
+                                className="h-full w-full object-cover group-hover/item:scale-110 transition-transform duration-500" 
+                              />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center bg-slate-50 text-slate-200">
                                 <Package className="h-8 w-8" />

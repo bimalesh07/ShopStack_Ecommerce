@@ -90,10 +90,11 @@ const Home = () => {
             className={`absolute inset-x-6 md:inset-x-12 lg:inset-x-20 inset-y-4 md:inset-y-8 lg:inset-y-12 transition-opacity duration-1000 ease-in-out rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
           >
             {/* Background Image */}
-            <div className="absolute inset-0 bg-[#f8f7f5]">
+            <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse">
               <img
-                src={slide.image}
+                src={typeof slide.image === 'string' ? slide.image.replace('/upload/', '/upload/q_auto,f_auto,w_600/') : slide.image}
                 alt={slide.title}
+                loading={index < 2 ? "eager" : "lazy"}
                 className="w-full h-full object-cover object-center scale-105 animate-slow-zoom"
               />
               {/* Dynamic Vibrant Overlay */}
@@ -178,12 +179,14 @@ const Home = () => {
                 to={`/products?category=${cat.name}`}
                 className="group relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border border-slate-200/50 dark:border-white/5 shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2"
               >
-                {/* Background Image - Optimized for fit */}
-                <img
-                  src={cat.image || [heroTech, heroFashion, heroHome, heroArt, heroAccessories][idx % 5]}
-                  alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1.5s] ease-out group-hover:scale-110"
-                />
+                <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse">
+                  <img
+                    src={(cat.image || [heroTech, heroFashion, heroHome, heroArt, heroAccessories][idx % 5]).replace('/upload/', '/upload/q_auto,f_auto,w_600/')}
+                    alt={cat.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1.5s] ease-out group-hover:scale-110"
+                  />
+                </div>
 
                 {/* Overlay - Modernized gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />

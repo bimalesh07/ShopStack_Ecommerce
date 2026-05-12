@@ -169,10 +169,11 @@ const ProductDetail = () => {
 
           {/* Gallery Column */}
           <div className="flex flex-col">
-            <div className="w-full aspect-square rounded-2xl bg-[#F8F9FA] dark:bg-slate-900/50 overflow-hidden border border-slate-100 dark:border-slate-800 relative group">
+            <div className="w-full aspect-square rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse overflow-hidden border border-slate-100 dark:border-slate-800 relative group">
               <img
-                src={currentImage}
+                src={currentImage.replace('/upload/', '/upload/q_auto,f_auto,w_600/')}
                 alt={product.name}
+                loading="eager"
                 className="w-full h-full object-contain p-4 md:p-16 transition-transform duration-700 group-hover:scale-105"
               />
               {product.stock <= 0 && (
@@ -192,7 +193,14 @@ const ProductDetail = () => {
                     className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImageIndex === i ? 'border-slate-900 dark:border-white ring-2 ring-slate-900/10' : 'border-transparent opacity-50 hover:opacity-100'
                       }`}
                   >
-                    <img src={img.image} alt="" className="w-full h-full object-cover" />
+                    <div className="w-full h-full bg-slate-200 dark:bg-slate-800 animate-pulse">
+                      <img 
+                        src={img.image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                        alt="" 
+                        loading="lazy"
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
                   </button>
                 ))}
               </div>

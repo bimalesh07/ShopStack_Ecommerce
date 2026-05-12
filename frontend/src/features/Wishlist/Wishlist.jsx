@@ -80,10 +80,11 @@ const Wishlist = () => {
           {wishlistItems.map((item) => (
             <div key={item.id} className="group bg-white dark:bg-transparent rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-slate-800/60 hover:border-primary-100 dark:hover:border-primary-900/50 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-700 flex flex-col relative">
               {/* Image Section - Compact */}
-              <div className="relative aspect-square bg-white dark:bg-slate-900/50 p-6 overflow-hidden flex items-center justify-center">
+              <div className="relative aspect-square bg-slate-200 dark:bg-slate-800 animate-pulse p-6 overflow-hidden flex items-center justify-center">
                 <img 
-                  src={item.product?.images?.[0]?.image || 'https://via.placeholder.com/400'} 
+                  src={(item.product?.images?.[0]?.image || 'https://via.placeholder.com/400').replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
                   alt={item.product?.name} 
+                  loading="lazy"
                   className="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-105" 
                 />
                 

@@ -273,9 +273,14 @@ const VendorDashboard = () => {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   {/* Product Info - More Compact */}
                   <div className="flex items-center space-x-5 flex-1 min-w-0">
-                    <div className="h-20 w-20 rounded-2xl bg-slate-50 overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-700 shadow-sm">
+                    <div className="h-20 w-20 rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-700 shadow-sm">
                       {product.images?.[0] ? (
-                        <img src={product.images[0].image} alt="" className="h-full w-full object-cover" />
+                        <img 
+                          src={product.images[0].image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                          alt="" 
+                          loading="lazy"
+                          className="h-full w-full object-cover" 
+                        />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center">
                           <Package className="h-6 w-6 text-slate-200" />

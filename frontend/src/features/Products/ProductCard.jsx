@@ -21,10 +21,11 @@ const ProductCard = ({ product }) => {
       className="group bg-white dark:bg-transparent rounded-[24px] overflow-hidden border border-slate-100 dark:border-slate-800/60 hover:border-slate-200 dark:hover:border-slate-600 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all duration-500 flex flex-col h-full relative"
     >
       {/* Product Image Section - Standardized Gallery Style */}
-      <div className="relative aspect-square overflow-hidden bg-[#F9FAFB] dark:bg-slate-900/50 p-8 flex items-center justify-center">
+      <div className="relative aspect-square overflow-hidden bg-slate-200 dark:bg-slate-800 animate-pulse p-8 flex items-center justify-center">
         <img
-          src={product.images?.[0]?.image || 'https://via.placeholder.com/400x400'}
+          src={(product.images?.[0]?.image || 'https://via.placeholder.com/400x400').replace('/upload/', '/upload/q_auto,f_auto,w_600/')}
           alt={product.name}
+          loading="lazy"
           className="w-full h-full object-contain transition-all duration-700 group-hover:scale-110 drop-shadow-sm"
         />
 

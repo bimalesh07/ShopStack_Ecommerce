@@ -158,8 +158,13 @@ const EditProduct = () => {
             
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {existingImages.map((img) => (
-                <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-100 group shadow-sm">
-                  <img src={img.image} alt="" className="h-full w-full object-cover" />
+                <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden border border-slate-100 group shadow-sm bg-slate-200 dark:bg-slate-800 animate-pulse">
+                  <img 
+                    src={img.image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
+                    alt="" 
+                    loading="lazy"
+                    className="h-full w-full object-cover" 
+                  />
                   <button 
                     type="button"
                     onClick={() => handleDeleteImage(img.id)}

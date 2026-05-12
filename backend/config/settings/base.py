@@ -209,13 +209,14 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "CONNECTION_POOL_KWARGS": {
                 "ssl_cert_reqs": ssl.CERT_NONE, # for Upstash TLS it is  mandatory 
-            }
-        }
+            },
+        },
+        "KEY_PREFIX": "shopstack"
     }
 }
 # for Sessions want to in Redis  (for speed) for deployment
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
 
 

@@ -6,4 +6,4 @@ class VendorsConfig(AppConfig):
     name = 'vendors'
 
     def ready(self):
-        import vendors.signals
+       import vendors.signals

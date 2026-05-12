@@ -10,31 +10,44 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "slug", "created_at")
 
     def get_image(self, obj):
-        # Get the latest active product in this category
         latest_product = obj.products.filter(is_active=True).first()
         if latest_product:
-            # Try to get the primary image first
-            primary_image = latest_product.images.filter(is_primary=True).first()
-            if primary_image:
-                request = self.context.get('request')
-                if request:
-                    return request.build_absolute_uri(primary_image.image.url)
-                return primary_image.image.url
+            image_obj = latest_product.images.filter(is_primary=True).first() or latest_product.images.first()
             
-            # Fallback to any image if no primary is marked
-            any_image = latest_product.images.first()
-            if any_image:
+            if image_obj and image_obj.image:
+                #  image_obj.image.url
+                url = image_obj.image.url
+                #  Cloudinary Optimization
+                if 'cloudinary.com' in url:
+                    url = url.replace('/upload/', '/upload/q_auto,f_auto,w_500/')
+                
                 request = self.context.get('request')
                 if request:
-                    return request.build_absolute_uri(any_image.image.url)
-                return any_image.image.url
+                    return request.build_absolute_uri(url)
+                return url
         return None
 
+
 class ProductImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField() 
+
     class Meta:
         model = ProductImage
         fields = ("id", "image", "is_primary")
         read_only_fields = ("id",)
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        
+        url = obj.image.url
+        # Cloudinary Optimization
+        if 'cloudinary.com' in url:
+            url = url.replace('/upload/', '/upload/q_auto,f_auto,w_800/')
+        
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(url)
+        return url
 
 
 class ProductSerializer(serializers.ModelSerializer):

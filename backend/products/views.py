@@ -15,14 +15,25 @@ from .serializers import (
 )
 from config.pagination import StandardPagination
 from rest_framework import generics, filters
+from django.core.cache import cache
 
 # category views
 class CategoryListView(APIView):
     permission_classes = (AllowAny,)
     def get(self, request):
-        category = Category.objects.all()
-        serializer = CategorySerializer(category, many=True, context={'request': request})
-        return Response(serializer.data)
+        cache_key = "all_categories"
+        data = cache.get(cache_key)
+        if not data:
+            category = Category.objects.all()
+            serializer = CategorySerializer(category, many=True, context={'request': request})
+            data = serializer.data
+            # 24 hours
+            cache.set(cache_key, data, 86400)
+            print("Categories from DB")
+        else:
+            print("Categories from Redis ⚡")
+            
+        return Response(data)
     
 class CategoryCreateView(APIView):
     permission_classes = (IsAuthenticated, )
@@ -93,21 +104,29 @@ class ProductListView(generics.ListAPIView):
 class ProductDetailView(APIView):
     permission_classes = (AllowAny,)
     def get(self, request, slug):
-        try:
-            product =Product.objects.select_related(
-                "category", "vendor"
-            ).prefetch_related("images").get(
-                slug=slug,
-                is_active = True,
-                vendor__is_approved = True
-            )
-        except Product.DoesNotExist:
-            return Response(
-                {"error":" Product not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        serializer = ProductSerializer(product, context={'request': request})
-        return Response(serializer.data)
+        cache_key = f"product_detail_{slug}"
+        data = cache.get(cache_key)
+
+        if not data:
+            try:
+                product = Product.objects.select_related(
+                    "category", "vendor"
+                ).prefetch_related("images").get(
+                    slug=slug,
+                    is_active=True,
+                    vendor__is_approved=True
+                )
+                serializer = ProductSerializer(product, context={'request': request})
+                data = serializer.data
+                # 1 hours
+                cache.set(cache_key, data, 3600)
+                print("Product from DB")
+            except Product.DoesNotExist:
+                return Response({"error":"Product not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            print("Product from Redis ⚡")
+
+        return Response(data)
     
 # Vndor products 
 class VendorProductListCreateview(APIView):

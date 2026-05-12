@@ -14,4 +14,4 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput || echo "Static collection failed..."
 
 echo "Starting server..."
-exec "$@"
+exec gunicorn config.wsgi:application --bind 0.0.0.0:10000

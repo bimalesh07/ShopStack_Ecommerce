@@ -27,8 +27,8 @@ RUN pip install --upgrade pip && \
 COPY . .
 
 #2 Dummy variables build pass karne ke liye
-ENV SECRET_KEY=dummy
-ENV DATABASE_URL=sqlite:///db.sqlite3
+# ENV SECRET_KEY=dummy
+# ENV DATABASE_URL=sqlite:///db.sqlite3
 
 # 3 add this line for production deployment
 # Static files collect for (Admin CSS/JS )

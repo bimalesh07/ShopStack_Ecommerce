@@ -34,7 +34,7 @@ const Signup = () => {
     setLoading(true);
     setError('');
     setSuccess('');
-    
+
     // Trim all string values before sending
     const trimmedData = Object.keys(formData).reduce((acc, key) => {
       acc[key] = typeof formData[key] === 'string' ? formData[key].trim() : formData[key];
@@ -44,15 +44,15 @@ const Signup = () => {
     try {
       const role = isVendor ? 'vendor' : 'customer';
       console.log('Submitting Signup Form (Trimmed):', { ...trimmedData, role });
-      
+
       const data = await authService.signup(trimmedData, role);
-      
+
       toast.success('Registration successful! Please verify your email.');
       navigate(`/verify-otp?email=${encodeURIComponent(trimmedData.email)}&role=${role}`);
     } catch (err) {
       console.error('Signup error response:', err.response?.data);
       const errorData = err.response?.data;
-      
+
       if (errorData) {
         if (typeof errorData === 'string') {
           setError(errorData);
@@ -60,7 +60,7 @@ const Signup = () => {
           // Extract the first error message from the object (e.g., { "email": ["This email is already registered"] })
           const firstKey = Object.keys(errorData)[0];
           const firstError = errorData[firstKey];
-          
+
           if (Array.isArray(firstError)) {
             setError(`${firstKey}: ${firstError[0]}`);
           } else if (typeof firstError === 'string') {

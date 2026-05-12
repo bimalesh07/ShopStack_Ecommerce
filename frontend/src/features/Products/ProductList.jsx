@@ -73,83 +73,95 @@ const ProductList = () => {
   }
 
   return (
-    <div className="container-tight space-y-6 pb-20">
+    <div className="container-tight pb-20">
       {/* Header & Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <nav className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-[0.2em] mb-4 text-slate-400">
-            <Link to="/" className="hover:text-primary-600 transition-colors">Home</Link>
-            <span className="text-slate-200 dark:text-slate-700">/</span>
-            <span className="text-slate-900 dark:text-white">Shop</span>
-          </nav>
-          <h1 className="text-5xl font-medium text-slate-900 dark:text-white tracking-tight font-serif capitalize">
-            {currentCategory ? currentCategory : 'The Collection'}
-          </h1>
-          {currentSearch ? (
-            <p className="text-slate-400 dark:text-slate-500 text-sm font-medium mt-1 italic">
-              Displaying curated results for <span className="text-slate-900 dark:text-white font-bold not-italic">"{currentSearch}"</span>
-            </p>
-          ) : (
-            <p className="text-slate-400 dark:text-slate-500 mt-2 text-sm font-medium italic tracking-wide">
-              Explore {products.length} hand-picked treasures from around the globe.
-            </p>
-          )}
-        </div>
+      <div className="relative mb-4 pt-1 pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="space-y-4 max-w-2xl">
+            <nav className="flex items-center space-x-2 text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">
+              <Link to="/" className="hover:text-primary-600 transition-colors">Home</Link>
+              <span className="opacity-30">/</span>
+              <span className="text-slate-900 dark:text-white">The Shop</span>
+            </nav>
+            
+            <h1 className="text-4xl md:text-6xl font-medium text-slate-900 dark:text-white tracking-tight font-serif leading-none">
+              {currentCategory ? currentCategory : 'The Collection'}
+            </h1>
+            
+            <div className="flex items-center space-x-4">
+              <div className="h-px w-8 bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+              {currentSearch ? (
+                <p className="text-slate-400 dark:text-slate-500 text-sm font-medium italic">
+                  Curated results for <span className="text-slate-900 dark:text-white font-bold not-italic">"{currentSearch}"</span>
+                </p>
+              ) : (
+                <p className="text-slate-400 dark:text-slate-500 text-sm font-medium italic">
+                  Explore {products.length} hand-picked treasures curated for your lifestyle.
+                </p>
+              )}
+            </div>
+          </div>
 
-        
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center space-x-2 px-4 py-2 border rounded-xl text-sm font-bold transition-all ${showFilters ? 'bg-slate-900 text-white border-slate-900 dark:bg-primary-600 dark:border-primary-600' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:bg-slate-700'}`}
-          >
-            <Filter className="h-4 w-4" />
-            <span>Filters</span>
-          </button>
-          
-          <div className="relative">
-            <select 
-              value={currentOrdering}
-              onChange={handleSort}
-              className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 pr-10 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none cursor-pointer hover:bg-slate-50 transition-all"
+          <div className="flex items-center gap-3 self-start lg:self-auto">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`group flex items-center space-x-3 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${showFilters ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-900 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:border-white'}`}
             >
-              <option value="-created_at">Newest First</option>
-              <option value="price">Price: Low to High</option>
-              <option value="-price">Price: High to Low</option>
-              <option value="created_at">Oldest First</option>
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+              <Filter className={`h-4 w-4 transition-transform duration-500 ${showFilters ? 'rotate-90' : ''}`} />
+              <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
+            </button>
+
+            <div className="relative group">
+              <select
+                value={currentOrdering}
+                onChange={handleSort}
+                className="appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-8 py-3 pr-12 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white focus:ring-0 focus:border-slate-900 dark:focus:border-white outline-none cursor-pointer hover:border-slate-900 dark:hover:border-white transition-all shadow-sm"
+              >
+                <option value="-created_at">Newest First</option>
+                <option value="price">Price: Low to High</option>
+                <option value="-price">Price: High to Low</option>
+                <option value="created_at">Oldest First</option>
+              </select>
+              <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400 pointer-events-none transition-transform group-hover:translate-y-[-40%]" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Filter Sidebar (Collapsible) */}
       {showFilters && (
-        <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100 flex flex-wrap gap-8 animate-in slide-in-from-top-4 duration-300">
-          <div className="space-y-3">
-            <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Price Range</h4>
-            <div className="flex items-center gap-3">
-              <input 
-                type="number" 
-                placeholder="Min" 
-                defaultValue={currentMinPrice}
-                onBlur={(e) => updateFilters({ min_price: e.target.value })}
-                className="w-24 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <span className="text-slate-400">to</span>
-              <input 
-                type="number" 
-                placeholder="Max" 
-                defaultValue={currentMaxPrice}
-                onBlur={(e) => updateFilters({ max_price: e.target.value })}
-                className="w-24 px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
-              />
+        <div className="bg-slate-50/50 dark:bg-white/5 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 flex flex-wrap gap-12 animate-in slide-in-from-top-4 duration-500 mb-12">
+          <div className="space-y-4">
+            <h4 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Price Range</h4>
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">₹</span>
+                <input
+                  type="number"
+                  placeholder="Min"
+                  defaultValue={currentMinPrice}
+                  onBlur={(e) => updateFilters({ min_price: e.target.value })}
+                  className="w-32 pl-8 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-[11px] font-bold outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
+                />
+              </div>
+              <span className="h-px w-4 bg-slate-200 dark:bg-slate-800"></span>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">₹</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  defaultValue={currentMaxPrice}
+                  onBlur={(e) => updateFilters({ max_price: e.target.value })}
+                  className="w-32 pl-8 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-[11px] font-bold outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
+                />
+              </div>
             </div>
           </div>
-          
-          <div className="flex items-end">
-            <button 
+
+          <div className="flex items-end pb-1">
+            <button
               onClick={clearFilters}
-              className="text-sm font-bold text-red-600 hover:text-red-700 underline underline-offset-4"
+              className="text-[10px] font-black text-rose-500 hover:text-rose-600 uppercase tracking-widest border-b-2 border-rose-500/20 hover:border-rose-500 transition-all pb-1"
             >
               Reset All Filters
             </button>
@@ -169,7 +181,7 @@ const ProductList = () => {
           <PackageSearch className="h-16 w-16 text-slate-300 mb-4" />
           <h3 className="text-xl font-bold text-slate-900">No products found</h3>
           <p className="text-slate-500">We couldn't find any items matching your selection.</p>
-          <button 
+          <button
             onClick={clearFilters}
             className="mt-6 text-primary-600 font-bold hover:underline"
           >

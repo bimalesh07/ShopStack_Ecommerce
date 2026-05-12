@@ -1,9 +1,10 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AppRoutes from './routes/AppRoutes';
 import { Toaster } from 'react-hot-toast';
+import { ArrowLeft } from 'lucide-react';
 import { useTheme } from './context/ThemeContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
@@ -52,6 +53,18 @@ function App() {
         />
       <Navbar />
       <main className="flex-grow">
+        {location.pathname !== '/' && (
+          <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 pt-1">
+            <button 
+              onClick={() => window.history.back()}
+              className="flex items-center space-x-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all group"
+            >
+              <div className="p-2 rounded-full bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 group-hover:border-slate-300 dark:group-hover:border-slate-600 transition-all shadow-sm">
+                <ArrowLeft className="h-4 w-4 md:h-5 md:w-5 group-hover:-translate-x-1 transition-transform" />
+              </div>
+            </button>
+          </div>
+        )}
         <AppRoutes />
       </main>
       {!isProfilePage && <Footer />}

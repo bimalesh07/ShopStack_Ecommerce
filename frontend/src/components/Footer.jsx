@@ -5,18 +5,18 @@ const Footer = () => {
   return (
     <footer className="bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 transition-colors duration-500">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 py-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-12">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left space-y-4">
             <div className="flex items-center space-x-2">
               <svg className="h-6 w-6 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
               <span className="text-xl md:text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">ShopStack</span>
             </div>
-            <p className="text-sm font-medium leading-relaxed">
+            <p className="text-sm font-medium leading-relaxed max-w-sm">
               Experience a new standard in digital commerce. Quality products, curated for your lifestyle, delivered with care.
             </p>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 justify-center sm:justify-start">
               {/* Facebook SVG */}
               <a href="#" className="text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-all duration-300 transform hover:-translate-y-1">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className="text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs mb-4">Shop</h3>
             <ul className="space-y-2.5 text-xs font-bold uppercase tracking-widest">
               <li><Link to="/products" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">All Products</Link></li>
@@ -54,7 +54,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className="text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs mb-4">Support</h3>
             <ul className="space-y-2.5 text-xs font-bold uppercase tracking-widest">
               <li><a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Customer Service</a></li>
@@ -64,29 +64,29 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className="text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs mb-4">Subscribe</h3>
-            <p className="text-sm font-medium mb-4 leading-relaxed">Join our community for early access to curated arrivals and exclusive lookbooks.</p>
-            <div className="flex p-1 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 focus-within:ring-4 focus-within:ring-primary-500/5 transition-all">
+            <p className="text-sm font-medium mb-4 leading-relaxed max-w-sm mx-auto sm:mx-0">Join our community for early access to curated arrivals and exclusive lookbooks.</p>
+            <div className="flex flex-col sm:flex-row p-1 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 focus-within:ring-4 focus-within:ring-primary-500/5 transition-all gap-2 sm:gap-0">
               <input
                 type="email"
                 placeholder="your@email.com"
-                className="bg-transparent border-none px-4 py-2 text-xs font-bold text-slate-900 dark:text-white focus:ring-0 w-full placeholder:text-slate-400"
+                className="bg-transparent border-none px-4 py-3 sm:py-2 text-xs font-bold text-slate-900 dark:text-white focus:ring-0 w-full placeholder:text-slate-400"
               />
-              <button className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-primary-600 dark:hover:bg-primary-50 active:scale-95 shadow-lg shadow-slate-900/10 dark:shadow-none">
-                Join
+              <button className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 sm:py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all hover:bg-primary-600 dark:hover:bg-primary-50 active:scale-95 shadow-lg shadow-slate-900/10 dark:shadow-none whitespace-nowrap">
+                Join Now
               </button>
             </div>
           </div>
         </div>
         <div className="border-t border-slate-100 dark:border-slate-800/50 mt-12 pt-8 pb-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500 text-center md:text-left">
             <p>&copy; {new Date().getFullYear()} ShopStack E-Commerce. All rights reserved.</p>
             
-            <div className="flex items-center space-x-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3">
+              <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-slate-200 dark:bg-slate-800" />
               <p className="hover:text-slate-900 dark:hover:text-white transition-all duration-300">
-                Developed & Managed by <span className="text-slate-900 dark:text-white font-black ml-1">Bimalesh K Yadav</span>
+                Developed & Managed by <span className="text-slate-900 dark:text-white font-black ml-1 whitespace-nowrap">Bimalesh K Yadav</span>
               </p>
             </div>
           </div>

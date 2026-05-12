@@ -85,15 +85,15 @@ const Home = () => {
       <section className="relative w-full max-w-[1600px] mx-auto h-[85vh] md:h-[95vh] px-6 md:px-12 lg:px-20 pt-4 flex items-center overflow-hidden">
         {/* Slide Transitions */}
         {slides.map((slide, index) => (
-          <div 
+          <div
             key={index}
             className={`absolute inset-x-6 md:inset-x-12 lg:inset-x-20 inset-y-4 md:inset-y-8 lg:inset-y-12 transition-opacity duration-1000 ease-in-out rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-2xl ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
           >
             {/* Background Image */}
             <div className="absolute inset-0 bg-[#f8f7f5]">
-              <img 
-                src={slide.image} 
-                alt={slide.title} 
+              <img
+                src={slide.image}
+                alt={slide.title}
                 className="w-full h-full object-cover object-center scale-105 animate-slow-zoom"
               />
               {/* Dynamic Vibrant Overlay */}
@@ -108,17 +108,17 @@ const Home = () => {
                     <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.5em]">THE SHOPSTACK EDIT</span>
                   </div>
                   <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight tracking-widest uppercase drop-shadow-lg">
-                    {slide.title} <br /> 
+                    {slide.title} <br />
                     <span className={`${slide.color} drop-shadow-none`}>{slide.subtitle}</span>
                   </h1>
                   <p className="max-w-2xl mx-auto text-base md:text-xl text-white/90 font-medium leading-relaxed drop-shadow-md">
                     {slide.description}
                   </p>
                 </div>
-                
+
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                  <Link 
-                    to="/products" 
+                  <Link
+                    to="/products"
                     className={`inline-flex items-center px-12 py-5 ${slide.accent} text-white rounded-full font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all duration-500 shadow-2xl group`}
                   >
                     <span>Shop The Stack</span>
@@ -131,12 +131,12 @@ const Home = () => {
         ))}
 
         {/* Custom Navigation Dots */}
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-4">
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-2 md:space-x-4">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-1.5 transition-all duration-500 rounded-full ${index === currentSlide ? 'w-12 bg-white' : 'w-3 bg-white/30 hover:bg-white/50'}`}
+              className={`h-1.5 transition-all duration-500 rounded-full ${index === currentSlide ? 'w-8 md:w-12 bg-white' : 'w-2 md:w-3 bg-white/30 hover:bg-white/50'}`}
             />
           ))}
         </div>
@@ -160,76 +160,76 @@ const Home = () => {
                 Explore Collections
               </h2>
             </div>
-            
-            <Link 
-              to="/products" 
+
+            <Link
+              to="/products"
               className="group flex items-center space-x-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-all pb-1 border-b-2 border-transparent hover:border-slate-900 dark:hover:border-white"
             >
               <span>View All Series</span>
               <ArrowRight className="h-3 w-3 group-hover:translate-x-1.5 transition-transform duration-300" />
             </Link>
           </div>
-          
-          {/* Responsive Grid - 2 cols on mobile */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
-          {categories.map((cat, idx) => (
-            <Link 
-              key={cat.id || idx}
-              to={`/products?category=${cat.name}`}
-              className="group relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border border-slate-200/50 dark:border-white/5 shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2"
-            >
-              {/* Background Image - Optimized for fit */}
-              <img 
-                src={cat.image || [heroTech, heroFashion, heroHome, heroArt, heroAccessories][idx % 5]} 
-                alt={cat.name}
-                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1.5s] ease-out group-hover:scale-110"
-              />
-              
-              {/* Overlay - Modernized gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-              
-              {/* Content Overlay */}
-              <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                <div className="space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                  <div className="flex items-center space-x-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                    {(cat.name === 'Electronics' || idx === 0) && <Smartphone className="h-5 w-5 text-white" />}
-                    {(cat.name === 'Fashion' || idx === 1) && <Shirt className="h-5 w-5 text-white" />}
-                    {(cat.name === 'Home & Decor' || idx === 2) && <HomeIcon className="h-5 w-5 text-white" />}
-                    {(cat.name === 'Art' || idx === 3) && <Palette className="h-5 w-5 text-white" />}
-                    {(cat.name === 'Accessories' || idx === 4) && <Watch className="h-5 w-5 text-white" />}
-                    <div className="h-px w-3 bg-white/50" />
-                    <span className="text-[8px] font-black text-white uppercase tracking-[0.2em]">
-                      Series
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-primary-400 transition-colors">
-                    {cat.name}
-                  </h3>
-                  
-                  {/* Action Peek */}
-                  <div className="pt-2 flex items-center space-x-2 text-[9px] font-black text-white/70 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all duration-700">
-                    <span>Explore Edit</span>
-                    <ArrowRight className="h-3 w-3" />
+
+          {/* Responsive Grid - 1 col on small mobile, 2 on sm */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
+            {categories.map((cat, idx) => (
+              <Link
+                key={cat.id || idx}
+                to={`/products?category=${cat.name}`}
+                className="group relative aspect-[3/4] overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 border border-slate-200/50 dark:border-white/5 shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2"
+              >
+                {/* Background Image - Optimized for fit */}
+                <img
+                  src={cat.image || [heroTech, heroFashion, heroHome, heroArt, heroAccessories][idx % 5]}
+                  alt={cat.name}
+                  className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-[1.5s] ease-out group-hover:scale-110"
+                />
+
+                {/* Overlay - Modernized gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
+
+                {/* Content Overlay */}
+                <div className="absolute inset-0 p-4 md:p-8 flex flex-col items-center sm:items-start justify-center sm:justify-end text-center sm:text-left">
+                  <div className="space-y-2 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 flex flex-col items-center sm:items-start">
+                    <div className="flex items-center space-x-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                      {(cat.name === 'Electronics' || idx === 0) && <Smartphone className="h-5 w-5 text-white" />}
+                      {(cat.name === 'Fashion' || idx === 1) && <Shirt className="h-5 w-5 text-white" />}
+                      {(cat.name === 'Home & Decor' || idx === 2) && <HomeIcon className="h-5 w-5 text-white" />}
+                      {(cat.name === 'Art' || idx === 3) && <Palette className="h-5 w-5 text-white" />}
+                      {(cat.name === 'Accessories' || idx === 4) && <Watch className="h-5 w-5 text-white" />}
+                      <div className="h-px w-3 bg-white/50" />
+                      <span className="text-[8px] font-black text-white uppercase tracking-[0.2em]">
+                        Series
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-black text-white tracking-tight uppercase group-hover:text-primary-400 transition-colors">
+                      {cat.name}
+                    </h3>
+
+                    {/* Action Peek */}
+                    <div className="pt-2 flex items-center space-x-2 text-[9px] font-black text-white/70 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all duration-700">
+                      <span>Explore Edit</span>
+                      <ArrowRight className="h-3 w-3" />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Minimal ID Badge */}
-              <div className="absolute top-6 right-6 h-8 w-8 rounded-full border border-white/10 flex items-center justify-center backdrop-blur-md bg-white/5 shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-12">
-                 <span className="text-[9px] font-black text-white/40">0{idx + 1}</span>
-              </div>
-            </Link>
-          ))}
+                {/* Minimal ID Badge */}
+                <div className="absolute top-6 right-6 h-8 w-8 rounded-full border border-white/10 flex items-center justify-center backdrop-blur-md bg-white/5 shadow-xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-12">
+                  <span className="text-[9px] font-black text-white/40">0{idx + 1}</span>
+                </div>
+              </Link>
+            ))}
           </div>
-      </div>
-    </section>
+        </div>
+      </section>
 
       {/* 3. New Arrivals Section: The Gallery Look */}
       <section className="relative w-full bg-white dark:bg-transparent transition-colors duration-300 pt-8 pb-12">
         <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
           {/* Decorative element */}
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-slate-50/20 dark:bg-primary-500/2 rounded-full blur-[120px] -mr-40 -mt-40 pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col items-center text-center space-y-4 mb-10">
             <div className="inline-flex items-center space-x-2 px-5 py-2 bg-gradient-to-r from-primary-600/10 to-indigo-600/10 dark:from-primary-500/10 dark:to-indigo-500/10 border border-primary-200/50 dark:border-primary-800/50 rounded-full animate-in fade-in zoom-in duration-1000">
               <span className="relative flex h-2 w-2">
@@ -238,65 +238,65 @@ const Home = () => {
               </span>
               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-700 dark:text-primary-400">Trending Now</span>
             </div>
-            
+
             <div className="space-y-4">
               <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">
                 New <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Arrivals</span>
               </h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base font-medium max-w-lg mx-auto">Discover the latest treasures hand-picked for our curated community.</p>
             </div>
-            
+
             <Link to="/products" className="group flex items-center space-x-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-primary-600 transition-all pt-2">
               <span>View All Series</span>
               <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1.5 transition-transform" />
             </Link>
           </div>
 
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="animate-pulse space-y-6">
-                <div className="bg-slate-50 aspect-[4/5] rounded-[2.5rem]" />
-                <div className="space-y-3">
-                  <div className="h-4 bg-slate-50 rounded-full w-2/3" />
-                  <div className="h-4 bg-slate-50 rounded-full w-1/3" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="relative w-full overflow-hidden py-10 group">
-            {/* Infinite Marquee Container */}
-            <div className="flex w-max animate-marquee space-x-12 group-hover:[animation-play-state:paused] cursor-pointer">
-              {/* Combine unique products (LATEST per category) and repeat multiple times for a full-screen dense flow */}
-              {(() => {
-                const latestUniqueProducts = [...new Map(
-                  [...products]
-                    .sort((a, b) => (b.id || 0) - (a.id || 0))
-                    .map(p => [p.category_name, p])
-                ).values()];
-                
-                // Repeat 4 times to ensure full width on all screens
-                const displayItems = [...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts];
-                
-                return displayItems.map((product, idx) => (
-                  <div key={`${product.id}-${idx}`} className="w-[300px] flex-shrink-0">
-                    <ProductCard product={product} />
+          {loading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="animate-pulse space-y-6">
+                  <div className="bg-slate-50 aspect-[4/5] rounded-[2.5rem]" />
+                  <div className="space-y-3">
+                    <div className="h-4 bg-slate-50 rounded-full w-2/3" />
+                    <div className="h-4 bg-slate-50 rounded-full w-1/3" />
                   </div>
-                ));
-              })()}
+                </div>
+              ))}
             </div>
-          </div>
-        )}
-      </div>
-    </section>
+          ) : (
+            <div className="relative w-full overflow-hidden py-10 group">
+              {/* Infinite Marquee Container */}
+              <div className="flex w-max animate-marquee space-x-12 group-hover:[animation-play-state:paused] cursor-pointer">
+                {/* Combine unique products (LATEST per category) and repeat multiple times for a full-screen dense flow */}
+                {(() => {
+                  const latestUniqueProducts = [...new Map(
+                    [...products]
+                      .sort((a, b) => (b.id || 0) - (a.id || 0))
+                      .map(p => [p.category_name, p])
+                  ).values()];
+
+                  // Repeat 4 times to ensure full width on all screens
+                  const displayItems = [...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts];
+
+                  return displayItems.map((product, idx) => (
+                    <div key={`${product.id}-${idx}`} className="w-[300px] flex-shrink-0">
+                      <ProductCard product={product} />
+                    </div>
+                  ));
+                })()}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       <section className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20 pb-24">
         <div className="bg-white dark:bg-transparent backdrop-blur-xl rounded-[2.5rem] px-8 md:px-20 py-12 md:py-16 text-center relative overflow-hidden border border-slate-200/50 dark:border-slate-800/50 shadow-xl shadow-slate-200/40 dark:shadow-none animate-in fade-in zoom-in duration-1000">
           {/* Subtle Decorative Elements */}
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary-500/2 rounded-full blur-[100px] -mr-32 -mt-32" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-slate-400/2 dark:bg-primary-400/2 rounded-full blur-[100px] -ml-32 -mb-32" />
-          
+
           <div className="relative z-10 space-y-8">
             <div className="space-y-4">
               <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-[0.15em] uppercase font-heading leading-tight">
@@ -312,18 +312,18 @@ const Home = () => {
                 </p>
               )}
             </div>
-            
+
             {!subscribed && (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row max-w-md mx-auto gap-3 p-1.5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm focus-within:shadow-xl focus-within:shadow-slate-200/50 dark:focus-within:shadow-primary-900/20 transition-all duration-500 group">
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row max-w-md mx-auto gap-3 p-1.5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm focus-within:shadow-xl transition-all duration-500 group">
                 <input 
                   type="email" 
                   placeholder="your@email.com" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="flex-grow px-6 py-3 bg-transparent text-slate-900 dark:text-white focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm font-medium"
+                  className="flex-grow px-6 py-4 sm:py-3 bg-transparent text-slate-900 dark:text-white focus:outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm font-medium"
                 />
-                <button type="submit" className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-primary-50 transition-all active:scale-95 shadow-lg shadow-slate-900/20 dark:shadow-none">
+                <button type="submit" className="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-8 h-14 sm:h-auto rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-primary-50 transition-all active:scale-95 shadow-lg">
                   Join Now
                 </button>
               </form>

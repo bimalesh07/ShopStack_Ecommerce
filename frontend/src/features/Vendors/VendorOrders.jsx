@@ -148,7 +148,7 @@ const VendorOrders = () => {
   return (
     <div className="max-w-6xl mx-auto py-8 space-y-10">
       {/* Refined Header & Filters */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-b border-slate-100 pb-10">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 border-b border-slate-100 pb-10 px-4">
         <div className="flex items-center space-x-4">
           <div className="h-14 w-14 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-slate-900/10">
             <Truck className="h-7 w-7" />
@@ -279,12 +279,20 @@ const VendorOrders = () => {
                   )}
 
                   {order.order_status?.toLowerCase() === 'shipped' && (
-                    <button 
-                      onClick={() => handleStatusUpdate(order.id, 'delivered')}
-                      className="h-10 px-6 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-900/10"
-                    >
-                      Verify Delivery
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button 
+                        onClick={() => handleStatusUpdate(order.id, 'delivered')}
+                        className="h-10 px-6 bg-emerald-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all active:scale-95 shadow-lg shadow-emerald-900/10"
+                      >
+                        Verify Delivery
+                      </button>
+                      <button 
+                        onClick={() => promptCancellation(order.id, 'cancelled')}
+                        className="h-10 px-6 bg-white border border-slate-200 text-rose-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 hover:border-rose-100 transition-all active:scale-95"
+                      >
+                        Cancel / Return
+                      </button>
+                    </div>
                   )}
 
                   {(order.order_status?.toLowerCase() === 'delivered' || order.order_status?.toLowerCase() === 'cancelled') && (

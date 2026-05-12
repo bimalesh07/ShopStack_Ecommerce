@@ -6,7 +6,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useTheme } from '../context/ThemeContext';
 import productService from '../api/productService';
 import useDebounce from '../hooks/useDebounce';
-import { ShoppingCart, Heart, Search, User as UserIcon, Menu, Plus, LogOut, ChevronDown, ChevronRight, X, HelpCircle, ShoppingBag, Sun, Moon, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Heart, Search, User as UserIcon, Menu, Plus, LogOut, ChevronDown, ChevronRight, X, HelpCircle, ShoppingBag, Sun, Moon, LayoutDashboard, ArrowRight } from 'lucide-react';
 
 
 const getInitials = (name) => {
@@ -19,7 +19,7 @@ const getInitials = (name) => {
 const getAvatarColor = (name) => {
   if (!name) return 'bg-slate-900';
   const colors = [
-    'bg-slate-900', 'bg-sky-600', 'bg-indigo-600', 
+    'bg-slate-900', 'bg-sky-600', 'bg-indigo-600',
     'bg-emerald-600', 'bg-rose-600', 'bg-amber-600',
     'bg-violet-600', 'bg-fuchsia-600'
   ];
@@ -43,7 +43,21 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const dropdownRef = React.useRef(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  // Outside click to close profile dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowProfileDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Sticky header on scroll
   useEffect(() => {
@@ -62,20 +76,16 @@ const Navbar = () => {
 
   // Auto-navigate on search
   useEffect(() => {
-    if (debouncedSearchTerm === '' && !new URLSearchParams(location.search).get('search')) return;
-    
-    const isProductDetailPage = location.pathname.startsWith('/products/') && location.pathname !== '/products';
-    if (isProductDetailPage) return;
-
-    const params = new URLSearchParams(location.search);
-    if (debouncedSearchTerm) params.set('search', debouncedSearchTerm);
-    else params.delete('search');
-    
-    const currentSearch = new URLSearchParams(location.search).get('search') || '';
-    if (debouncedSearchTerm !== currentSearch) {
+    if (debouncedSearchTerm && isTyping) {
+      const params = new URLSearchParams(location.search);
+      params.set('search', debouncedSearchTerm);
       navigate(`/products?${params.toString()}`);
+      setIsTyping(false);
+      setSearchTerm(''); // Clear search box after search
+      setIsMobileSearchOpen(false); // Close mobile search after navigation
+      setIsMobileMenuOpen(false);
     }
-  }, [debouncedSearchTerm, navigate, location.pathname]);
+  }, [debouncedSearchTerm, navigate, isTyping]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -106,7 +116,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md py-2' : 'bg-[#f8f9f6] dark:bg-slate-950 py-3.5'}`}>
+    <>
+      <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md py-2' : 'bg-[#f8f9f6] dark:bg-slate-950 py-3.5'}`}>
       <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
         <div className="flex justify-between items-center gap-4 lg:gap-8">
           {/* Brand */}
@@ -114,7 +125,7 @@ const Navbar = () => {
             <Link to="/" className="flex items-center space-x-3 group">
               <div className="bg-slate-900 p-1.5 rounded-xl group-hover:bg-primary-600 shadow-lg transition-all">
                 <svg className="h-4 w-4 md:h-5 md:w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
               </div>
               <span className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading flex items-baseline">
@@ -124,12 +135,12 @@ const Navbar = () => {
 
             <div className="hidden lg:flex items-center space-x-10">
               <Link to="/" className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:translate-y-[-1px] ${location.pathname === '/' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>Home</Link>
-              
+
               {user?.role !== 'vendor' && (
                 <>
                   <Link to="/products" className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:translate-y-[-1px] ${location.pathname === '/products' ? 'text-primary-600' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}>Shop</Link>
-                  
-                  <div 
+
+                  <div
                     className="relative group h-full flex items-center"
                     onMouseEnter={() => setShowCategories(true)}
                     onMouseLeave={() => setShowCategories(false)}
@@ -148,8 +159,8 @@ const Navbar = () => {
                           <div className="p-3">
                             {categories.length > 0 ? (
                               categories.map(cat => (
-                                <Link 
-                                  key={cat.id} 
+                                <Link
+                                  key={cat.id}
                                   to={`/products?category=${cat.name}`}
                                   onClick={() => setShowCategories(false)}
                                   className="flex items-center group/item px-4 py-3 rounded-[1.25rem] transition-all hover:bg-slate-50 dark:hover:bg-white/5"
@@ -159,7 +170,7 @@ const Navbar = () => {
                                     {cat.name}
                                   </span>
                                   <div className="ml-auto opacity-0 group-hover/item:opacity-100 transition-all -translate-x-2 group-hover/item:translate-x-0">
-                                     <ChevronRight className="h-3 w-3 text-slate-300 dark:text-slate-600" />
+                                    <ChevronRight className="h-3 w-3 text-slate-300 dark:text-slate-600" />
                                   </div>
                                 </Link>
                               ))
@@ -184,69 +195,66 @@ const Navbar = () => {
                 type="text"
                 placeholder="Search curated products..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setIsTyping(true);
+                }}
                 className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full py-2.5 pl-14 pr-12 text-sm font-medium dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:border-2 transition-all duration-300 shadow-sm hover:border-slate-300 dark:hover:border-slate-600 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
             </form>
           </div>
 
-          {/* Icons Area */}
-          <div className="flex items-center space-x-3 md:space-x-6 lg:space-x-8 flex-shrink-0">
-            <button 
-              onClick={() => navigate('/products')}
-              className="lg:hidden p-2 text-slate-800 dark:text-white hover:text-primary-600 transition-colors"
-            >
-              <Search className="h-5 w-5 md:h-6 md:w-6 stroke-[1.5px]" />
-            </button>
-            
-            {/* Show Wishlist and Cart ONLY for customers or guest users (not vendors) */}
+          <div className="flex items-center space-x-2 md:space-x-6 lg:space-x-8 flex-shrink-0">
+
+            {/* Theme Toggle - Hidden on mobile, moved to menu */}
             {(!user || user.role !== 'vendor') && (
-              <div className="flex items-center space-x-6">
-              {/* Theme Toggle Button */}
-              <button 
-                onClick={toggleTheme}
-                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-all duration-300"
-                title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              >
-                {isDarkMode ? (
-                  <>
-                    <Sun className="h-4 w-4" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Light</span>
-                  </>
-                ) : (
-                  <>
-                    <Moon className="h-4 w-4" />
-                    <span className="text-[9px] font-black uppercase tracking-widest">Dark</span>
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center space-x-6">
-                <Link to="/wishlist" className="text-slate-800 dark:text-slate-200 hover:text-rose-500 transition-all relative group p-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/20" title="Your Wishlist">
-                  <Heart className="h-6 w-6 stroke-[1.5px] group-hover:fill-rose-500 transition-all group-hover:scale-110" />
-                  {wishlistCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ring-2 ring-white dark:ring-slate-900 animate-in zoom-in duration-300">
-                      {wishlistCount}
-                    </span>
+              <div className="hidden md:flex items-center space-x-6">
+                <button 
+                  onClick={toggleTheme}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-all duration-300"
+                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  {isDarkMode ? (
+                    <>
+                      <Sun className="h-4 w-4" />
+                      <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Light</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-4 w-4" />
+                      <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Dark</span>
+                    </>
                   )}
-                </Link>
-
-                <Link to="/cart" className="text-slate-800 dark:text-slate-200 hover:text-orange-500 transition-all relative group p-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/20" title="View Cart">
-                  <ShoppingCart className="h-6 w-6 stroke-[1.5px] group-hover:fill-orange-500 transition-all group-hover:scale-110" />
-                  {cart?.items?.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ring-2 ring-white dark:ring-slate-900 animate-in zoom-in duration-300">
-                      {cart.items.length}
-                    </span>
-                  )}
-                </Link>
+                </button>
               </div>
-            </div>
             )}
+
+            <div className="flex items-center space-x-2 md:space-x-6">
+              {/* Wishlist - Hidden on mobile, moved to menu */}
+              <Link to="/wishlist" className="hidden md:block text-slate-800 dark:text-slate-200 hover:text-rose-500 transition-all relative group p-2 rounded-xl hover:bg-rose-50 dark:hover:bg-rose-900/20" title="Your Wishlist">
+                <Heart className="h-5 w-5 md:h-6 md:w-6 stroke-[1.5px] group-hover:fill-rose-500 transition-all group-hover:scale-110" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-rose-600 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ring-2 ring-white dark:ring-slate-900 animate-in zoom-in duration-300">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* Cart - Hidden on mobile header, moved to burger menu */}
+              <Link to="/cart" className="hidden md:block text-slate-800 dark:text-slate-200 hover:text-orange-500 transition-all relative group p-2 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/20" title="View Cart">
+                <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 stroke-[1.5px] group-hover:fill-orange-500 transition-all group-hover:scale-110" />
+                {cart?.items?.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ring-2 ring-white dark:ring-slate-900 animate-in zoom-in duration-300">
+                    {cart.items.length}
+                  </span>
+                )}
+              </Link>
+            </div>
 
             <div className="relative flex items-center space-x-4">
               {token && user?.role === 'vendor' && (
-                <Link 
-                  to="/profile?tab=inventory" 
+                <Link
+                  to="/profile?tab=inventory"
                   className="hidden md:flex items-center space-x-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full text-[11px] font-black uppercase tracking-widest hover:bg-primary-600 dark:hover:bg-primary-50 transition-all shadow-xl shadow-slate-900/10 active:scale-95 group"
                 >
                   <Plus className="h-4 w-4 group-hover:rotate-90 transition-transform duration-300" />
@@ -255,12 +263,14 @@ const Navbar = () => {
               )}
 
               {token ? (
-                <div 
-                  className="relative"
-                  onMouseEnter={() => setShowProfileDropdown(true)}
-                  onMouseLeave={() => setShowProfileDropdown(false)}
+                <div
+                  className="relative hidden lg:block"
+                  ref={dropdownRef}
                 >
-                  <button className="flex items-center space-x-3 group p-1 pr-3 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700 relative">
+                  <button 
+                    onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                    className="flex items-center space-x-3 group p-1 pr-0 md:pr-3 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-all border border-transparent hover:border-slate-100 dark:hover:border-slate-700 relative"
+                  >
                     <div className={`h-10 w-10 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 group-hover:border-primary-400 transition-all overflow-hidden shadow-md relative ${getAvatarColor(user?.name)}`}>
                       <span className="text-xs font-black text-white uppercase">
                         {getInitials(user?.name)}
@@ -286,8 +296,8 @@ const Navbar = () => {
                         </div>
                         <div className="p-2">
                           {user?.role === 'vendor' && (
-                            <Link 
-                              to="/profile?tab=inventory" 
+                            <Link
+                              to="/profile?tab=inventory"
                               className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all uppercase tracking-widest group"
                             >
                               <div className="p-2 rounded-xl bg-primary-100 dark:bg-primary-900/40 group-hover:bg-primary-200 dark:group-hover:bg-primary-800 transition-colors">
@@ -296,8 +306,8 @@ const Navbar = () => {
                               <span>Vendor Dashboard</span>
                             </Link>
                           )}
-                          <Link 
-                            to="/profile?tab=overview" 
+                          <Link
+                            to="/profile?tab=overview"
                             className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                           >
                             <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
@@ -308,8 +318,8 @@ const Navbar = () => {
 
                           {user?.role !== 'vendor' && (
                             <>
-                              <Link 
-                                to="/profile?tab=orders" 
+                              <Link
+                                to="/profile?tab=orders"
                                 className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                               >
                                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
@@ -317,8 +327,8 @@ const Navbar = () => {
                                 </div>
                                 <span>My Orders</span>
                               </Link>
-                              <Link 
-                                to="/wishlist" 
+                              <Link
+                                to="/wishlist"
                                 className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                               >
                                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
@@ -328,10 +338,10 @@ const Navbar = () => {
                               </Link>
                             </>
                           )}
-                          
+
                           <div className="my-2 border-t border-slate-100/50 mx-4"></div>
-                          
-                          <button 
+
+                          <button
                             onClick={handleLogout}
                             className="w-full flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-rose-500 hover:bg-rose-50 transition-all uppercase tracking-widest group"
                           >
@@ -348,81 +358,212 @@ const Navbar = () => {
               ) : (
                 <Link 
                   to="/login" 
-                  className="group flex items-center space-x-3 px-8 py-3.5 bg-gradient-to-r from-slate-950 to-slate-800 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:from-primary-600 hover:to-indigo-600 transition-all duration-500 shadow-[0_10px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_35px_rgba(37,99,235,0.25)] hover:-translate-y-1 hover:scale-105 active:scale-95 border border-white/5"
+                  className="group flex items-center space-x-2 md:space-x-3 px-3 md:px-8 py-2 md:py-3.5 bg-gradient-to-r from-slate-950 to-slate-800 text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] hover:from-primary-600 hover:to-indigo-600 transition-all duration-500 shadow-[0_10px_20px_rgba(0,0,0,0.2)] hover:shadow-[0_20px_35px_rgba(37,99,235,0.25)] hover:-translate-y-1 hover:scale-105 active:scale-95 border border-white/5"
                 >
                   <UserIcon className="h-4 w-4 group-hover:scale-110 transition-transform duration-500" />
-                  <span>Login</span>
+                  <span className="hidden md:block">Login</span>
                 </Link>
               )}
             </div>
 
-            {/* Mobile Burger */}
-            <button 
-              className="lg:hidden p-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm text-slate-900 dark:text-white transition-all active:scale-90"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+            {/* Mobile Header Icons */}
+            <div className="flex lg:hidden items-center space-x-2">
+              {token && (
+                <div className="relative" ref={dropdownRef}>
+                  <button 
+                    onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                    className={`h-10 w-10 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-md relative ${getAvatarColor(user?.name)}`}
+                  >
+                    <span className="text-xs font-black text-white uppercase">{getInitials(user?.name)}</span>
+                  </button>
+
+                  {showProfileDropdown && (
+                    <div className="absolute top-[100%] right-[-60px] pt-4 z-[110] animate-in fade-in slide-in-from-top-2 duration-500">
+                      <div className="min-w-[280px] bg-white/90 dark:bg-slate-900/95 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] overflow-hidden">
+                        <div className="px-8 py-6 bg-slate-900/5 dark:bg-white/5 border-b border-slate-100 dark:border-slate-800">
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Signed in as</p>
+                          <p className="text-sm font-black text-slate-900 dark:text-white truncate tracking-tight">{user?.name}</p>
+                        </div>
+                        <div className="p-2">
+                          {user?.role === 'vendor' && (
+                            <Link
+                              to="/profile?tab=inventory"
+                              onClick={() => setShowProfileDropdown(false)}
+                              className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all uppercase tracking-widest group"
+                            >
+                              <div className="p-2 rounded-xl bg-primary-100 dark:bg-primary-900/40 group-hover:bg-primary-200 dark:group-hover:bg-primary-800 transition-colors">
+                                <LayoutDashboard className="h-4 w-4" />
+                              </div>
+                              <span>Vendor Dashboard</span>
+                            </Link>
+                          )}
+                          <Link
+                            to="/profile?tab=overview"
+                            onClick={() => setShowProfileDropdown(false)}
+                            className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
+                          >
+                            <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
+                              <UserIcon className="h-4 w-4" />
+                            </div>
+                            <span>My Profile</span>
+                          </Link>
+
+                          {user?.role !== 'vendor' && (
+                            <>
+                              <Link
+                                to="/profile?tab=orders"
+                                onClick={() => setShowProfileDropdown(false)}
+                                className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
+                              >
+                                <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
+                                  <ShoppingBag className="h-4 w-4" />
+                                </div>
+                                <span>My Orders</span>
+                              </Link>
+                              <Link
+                                to="/wishlist"
+                                onClick={() => setShowProfileDropdown(false)}
+                                className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
+                              >
+                                <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
+                                  <Heart className="h-4 w-4" />
+                                </div>
+                                <span>Wishlist</span>
+                              </Link>
+                            </>
+                          )}
+
+                          <div className="my-2 border-t border-slate-100/50 mx-4"></div>
+
+                          <button
+                            onClick={() => { handleLogout(); setShowProfileDropdown(false); }}
+                            className="w-full flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-rose-500 hover:bg-rose-50 transition-all uppercase tracking-widest group"
+                          >
+                            <div className="p-2 rounded-xl bg-rose-50/50 group-hover:bg-rose-100 transition-colors">
+                              <LogOut className="h-4 w-4" />
+                            </div>
+                            <span>Logout</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button
+                className="p-2 text-slate-900 dark:text-white transition-all active:scale-90"
+                onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+              >
+                <Search className="h-5 w-5" />
+              </button>
+
+              <button
+                className="p-2 text-slate-900 dark:text-white transition-all active:scale-90"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Premium Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsMobileMenuOpen(false)}></div>
-          <div className="absolute top-0 right-0 h-full w-[85%] max-w-[400px] bg-white dark:bg-slate-900 shadow-2xl p-8 flex flex-col animate-in slide-in-from-right duration-500">
-            <div className="flex justify-between items-center mb-12 border-b border-slate-100 dark:border-slate-800 pb-6">
-               <span className="text-xl font-black uppercase tracking-tighter dark:text-white">ShopStack</span>
-               <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors dark:text-white"><X className="h-6 w-6" /></button>
-            </div>
-            
-            <div className="space-y-6 flex-grow overflow-y-auto pr-2">
-               <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                 <span>Home</span>
-                 <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-               </Link>
-               <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                 <span>Shop</span>
-                 <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-               </Link>
-               {(!user || user.role !== 'vendor') && (
-                 <>
-                   <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                     <span>Wishlist</span>
-                     <Heart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-                   </Link>
-                   <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                     <span>My Bag</span>
-                     <ShoppingCart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-                   </Link>
-                 </>
-               )}
-            </div>
-
-            <div className="pt-8 border-t border-slate-100 dark:border-slate-800 mt-6">
-               {token ? (
-                 <div className="space-y-4">
-                   <div className="flex items-center space-x-2.5">
-                    <div className="h-10 w-10 bg-slate-950 dark:bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-500 overflow-hidden relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent" />
-                      <ShoppingBag className="h-5 w-5 text-white dark:text-slate-900 relative z-10" />
-                    </div>
-                    <span className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase transition-all duration-500 flex items-baseline">
-                      Shop<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Stack</span>
-                    </span>
-                  </div>
-                  <button onClick={handleLogout} className="w-full py-4 bg-rose-50 text-rose-500 rounded-2xl font-black uppercase tracking-widest text-[10px]">Logout</button>
-                 </div>
-               ) : (
-                 <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-center rounded-2xl font-black uppercase tracking-widest text-[10px]">Login / Join Stack</Link>
-               )}
-            </div>
-          </div>
+      {/* Mobile Search Overlay */}
+      {isMobileSearchOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 px-6 py-4 animate-in slide-in-from-top duration-300 shadow-xl z-[60]">
+          <form onSubmit={handleSearchSubmit} className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <input
+              type="text"
+              autoFocus
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setIsTyping(true);
+              }}
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl py-3 pl-10 pr-10 text-sm font-medium dark:text-white focus:outline-none focus:border-slate-400 transition-all"
+            />
+            <button 
+              type="button"
+              onClick={() => setIsMobileSearchOpen(false)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </form>
         </div>
       )}
     </nav>
-  );
+
+    {/* Premium Mobile Menu */}
+    {isMobileMenuOpen && (
+      <div className="fixed inset-0 z-[100] lg:hidden">
+        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsMobileMenuOpen(false)}></div>
+        <div className="absolute top-0 right-0 h-full w-[85%] max-w-[400px] bg-white dark:bg-slate-900 shadow-2xl p-8 flex flex-col animate-in slide-in-from-right duration-500">
+          <div className="flex justify-between items-center mb-12 border-b border-slate-100 dark:border-slate-800 pb-6">
+            <span className="text-xl font-black uppercase tracking-tighter dark:text-white">ShopStack</span>
+            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors dark:text-white"><X className="h-6 w-6" /></button>
+          </div>
+
+          <div className="space-y-6 flex-grow overflow-y-auto pr-2">
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
+              <span>Home</span>
+              <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
+            </Link>
+            <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
+              <span>Shop</span>
+              <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
+            </Link>
+             <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
+               <span>Shop Collection</span>
+               <ArrowRight className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
+             </Link>
+             {(!user || user.role !== 'vendor') && (
+               <>
+                 <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
+                   <span>Wishlist</span>
+                   <Heart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
+                 </Link>
+                 <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
+                   <span>My Shopping Bag</span>
+                   <ShoppingCart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
+                 </Link>
+                 <button 
+                  onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }}
+                  className="flex items-center justify-between w-full text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group"
+                 >
+                   <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                   {isDarkMode ? <Sun className="h-5 w-5 opacity-20" /> : <Moon className="h-5 w-5 opacity-20" />}
+                 </button>
+               </>
+             )}
+          </div>
+
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 mt-6">
+            {token ? (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2.5">
+                  <div className="h-10 w-10 bg-slate-950 dark:bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-500 overflow-hidden relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent" />
+                    <ShoppingBag className="h-5 w-5 text-white dark:text-slate-900 relative z-10" />
+                  </div>
+                  <span className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase transition-all duration-500 flex items-baseline">
+                    Shop<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Stack</span>
+                  </span>
+                </div>
+                <button onClick={handleLogout} className="w-full py-4 bg-rose-50 text-rose-500 rounded-2xl font-black uppercase tracking-widest text-[10px]">Logout</button>
+              </div>
+            ) : (
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-center rounded-2xl font-black uppercase tracking-widest text-[10px]">Login</Link>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+);
 };
 
 export default Navbar;

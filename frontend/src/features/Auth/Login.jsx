@@ -18,10 +18,10 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
+
     try {
       const data = await authService.login({ email, password });
-      
+
       if (data.otp_required) {
         toast.success('MFA Required: Please verify your device.');
         navigate(`/verify-otp?email=${encodeURIComponent(email)}&mfa=true`);

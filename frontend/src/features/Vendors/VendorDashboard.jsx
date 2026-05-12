@@ -43,7 +43,11 @@ const VendorDashboard = () => {
     .filter(order => order.order_status?.toLowerCase() !== 'cancelled')
     .reduce((sum, order) => sum + parseFloat(order.total_amount), 0);
 
-  const pendingShipments = orders.filter(order => order.order_status?.toLowerCase() === 'pending').length;
+  const pendingShipments = orders.filter(order => 
+    ['pending', 'confirmed', 'shipped'].includes(order.order_status?.toLowerCase())
+  ).length;
+
+  const inTransit = orders.filter(order => order.order_status?.toLowerCase() === 'shipped').length;
 
   const stats = [
     { 
@@ -73,17 +77,27 @@ const VendorDashboard = () => {
       color: 'text-orange-500', 
       bg: 'bg-orange-500/10',
       gradient: 'from-orange-500/20 to-amber-500/0',
-      trend: 'Attention',
+      trend: 'Action',
       trendUp: false
+    },
+    { 
+      label: 'In Transit', 
+      value: inTransit, 
+      icon: Truck, 
+      color: 'text-purple-500', 
+      bg: 'bg-purple-500/10',
+      gradient: 'from-purple-500/20 to-indigo-500/0',
+      trend: 'Moving',
+      trendUp: true
     },
     { 
       label: 'Orders', 
       value: orders.length, 
       icon: BarChart3, 
-      color: 'text-purple-500', 
-      bg: 'bg-purple-500/10',
-      gradient: 'from-purple-500/20 to-pink-500/0',
-      trend: 'Lifetime',
+      color: 'text-slate-500', 
+      bg: 'bg-slate-500/10',
+      gradient: 'from-slate-500/20 to-slate-400/0',
+      trend: 'Total',
       trendUp: true
     },
   ];

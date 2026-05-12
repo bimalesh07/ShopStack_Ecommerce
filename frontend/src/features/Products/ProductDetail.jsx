@@ -21,7 +21,7 @@ const getInitials = (name) => {
 const getAvatarColor = (name) => {
   if (!name) return 'bg-slate-900';
   const colors = [
-    'bg-slate-900', 'bg-sky-600', 'bg-indigo-600', 
+    'bg-slate-900', 'bg-sky-600', 'bg-indigo-600',
     'bg-emerald-600', 'bg-rose-600', 'bg-amber-600',
     'bg-violet-600', 'bg-fuchsia-600'
   ];
@@ -75,12 +75,12 @@ const ProductDetail = () => {
         const productData = await productService.getProductBySlug(slug);
         if (productData) {
           setProduct(productData);
-          
+
           // Get related items
           try {
-            const related = await productService.getProducts({ 
+            const related = await productService.getProducts({
               category: productData.category,
-              limit: 5 
+              limit: 5
             });
             setRelatedProducts(related.filter(p => p.id !== productData.id).slice(0, 4));
           } catch (relatedErr) {
@@ -166,14 +166,14 @@ const ProductDetail = () => {
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950">
         {/* 1. Layout & Image Gallery (Two-column desktop) */}
         <div className="lg:grid lg:grid-cols-2 lg:gap-x-16 lg:items-start">
-          
+
           {/* Gallery Column */}
           <div className="flex flex-col">
             <div className="w-full aspect-square rounded-2xl bg-[#F8F9FA] dark:bg-slate-900/50 overflow-hidden border border-slate-100 dark:border-slate-800 relative group">
               <img
                 src={currentImage}
                 alt={product.name}
-                className="w-full h-full object-contain p-8 md:p-16 transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-contain p-4 md:p-16 transition-transform duration-700 group-hover:scale-105"
               />
               {product.stock <= 0 && (
                 <div className="absolute inset-0 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm flex items-center justify-center">
@@ -189,9 +189,8 @@ const ProductDetail = () => {
                   <button
                     key={i}
                     onClick={() => setActiveImageIndex(i)}
-                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                      activeImageIndex === i ? 'border-slate-900 dark:border-white ring-2 ring-slate-900/10' : 'border-transparent opacity-50 hover:opacity-100'
-                    }`}
+                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${activeImageIndex === i ? 'border-slate-900 dark:border-white ring-2 ring-slate-900/10' : 'border-transparent opacity-50 hover:opacity-100'
+                      }`}
                   >
                     <img src={img.image} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -210,11 +209,11 @@ const ProductDetail = () => {
                   <span className="text-[10px] font-black text-slate-900 dark:text-white">{ratingData.average_rating}</span>
                 </div>
               </div>
-              <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+              <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
                 {product.name}
               </h1>
-              <div className="flex items-center space-x-4">
-                <p className="text-3xl font-medium text-slate-900 dark:text-white">₹{parseFloat(product.selling_price).toLocaleString('en-IN')}</p>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <p className="text-2xl md:text-3xl font-medium text-slate-900 dark:text-white">₹{parseFloat(product.selling_price).toLocaleString('en-IN')}</p>
                 {parseFloat(product.mrp_price) > parseFloat(product.selling_price) && (
                   <div className="flex items-center space-x-3">
                     <p className="text-lg text-slate-400 dark:text-slate-600 line-through">₹{parseFloat(product.mrp_price).toLocaleString('en-IN')}</p>
@@ -229,9 +228,9 @@ const ProductDetail = () => {
             <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
               <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">Product Details</h3>
               <div className="text-base text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
-                <div 
+                <div
                   className="prose prose-slate dark:prose-invert max-w-none"
-                  dangerouslySetInnerHTML={{ __html: product.description }} 
+                  dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               </div>
             </div>
@@ -250,13 +249,12 @@ const ProductDetail = () => {
                       {product.stock > 0 ? `${product.stock} Units left` : 'Out of Stock'}
                     </p>
                   </div>
-
                   <div className="flex flex-col space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         onClick={handleAddToCart}
                         disabled={product.stock <= 0}
-                        className="flex-1 bg-white dark:bg-sky-500 border border-slate-200 dark:border-transparent text-slate-900 dark:text-white h-16 rounded-full font-bold text-sm uppercase tracking-[0.3em] transition-all duration-300 hover:bg-slate-50 dark:hover:bg-sky-400 hover:border-slate-900 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 shadow-sm dark:shadow-lg dark:shadow-sky-500/20"
+                        className="w-full sm:flex-1 bg-white dark:bg-sky-500 border border-slate-200 dark:border-transparent text-slate-900 dark:text-white h-14 md:h-16 rounded-2xl md:rounded-full font-bold text-[10px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all duration-300 hover:bg-slate-50 dark:hover:bg-sky-400 hover:border-slate-900 active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 shadow-sm dark:shadow-lg dark:shadow-sky-500/20"
                       >
                         <ShoppingCart className="h-4 w-4" />
                         <span>Add to Bag</span>
@@ -264,16 +262,17 @@ const ProductDetail = () => {
                       <button
                         onClick={handleBuyItNow}
                         disabled={product.stock <= 0}
-                        className="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-16 rounded-full font-bold text-sm uppercase tracking-[0.3em] transition-all duration-300 hover:bg-slate-800 dark:hover:bg-slate-100 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 shadow-xl shadow-slate-900/20 dark:shadow-white/5"
+                        className="w-full sm:flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 h-14 md:h-16 rounded-2xl md:rounded-full font-bold text-[10px] md:text-sm uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all duration-300 hover:bg-slate-800 dark:hover:bg-slate-100 hover:scale-[1.01] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3 shadow-xl shadow-slate-900/20 dark:shadow-white/5"
                       >
                         <ArrowRight className="h-4 w-4" />
                         <span>Buy Now</span>
                       </button>
                       <button 
                         onClick={handleShare}
-                        className="h-16 w-16 flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-900 dark:hover:border-white hover:bg-slate-50 dark:hover:bg-slate-900 transition-all active:scale-95 group flex-shrink-0"
+                        className="w-full sm:h-14 sm:w-14 md:h-16 md:w-16 h-14 flex items-center justify-center rounded-2xl md:rounded-full border border-slate-200 dark:border-slate-800 hover:border-slate-900 dark:hover:border-white hover:bg-slate-50 dark:hover:bg-slate-900 transition-all active:scale-95 group flex-shrink-0"
                       >
-                        <Share2 className="h-5 w-5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" />
+                        <span className="sm:hidden text-[10px] font-black uppercase tracking-widest mr-3">Share Piece</span>
+                        <Share2 className="h-4 w-4 md:h-5 md:w-5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white" />
                       </button>
                     </div>
                   </div>
@@ -315,7 +314,7 @@ const ProductDetail = () => {
         {/* 4. Review Section (Modern Look) */}
         <section className="mt-24 pt-16 border-t border-slate-100 dark:border-slate-800">
           <div className="lg:grid lg:grid-cols-12 lg:gap-x-16 items-start">
-            
+
             {/* Rating Summary Bar */}
             <div className="lg:col-span-4 space-y-8">
               <div>
@@ -336,9 +335,9 @@ const ProductDetail = () => {
                   <div key={star} className="flex items-center space-x-4">
                     <span className="text-xs font-bold text-slate-400 dark:text-slate-500 w-3">{star}</span>
                     <div className="flex-grow h-1.5 bg-slate-50 dark:bg-slate-900 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-slate-900 dark:bg-white rounded-full transition-all duration-1000" 
-                        style={{ width: `${ratingData.average_rating >= star ? '85%' : '10%'}` }} 
+                      <div
+                        className="h-full bg-slate-900 dark:bg-white rounded-full transition-all duration-1000"
+                        style={{ width: `${ratingData.average_rating >= star ? '85%' : '10%'}` }}
                       />
                     </div>
                   </div>
@@ -397,7 +396,7 @@ const ProductDetail = () => {
                 <h2 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight">You May Also Like</h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 font-medium max-w-lg">Discover more premium pieces from our {product.category_name} collection, handpicked to complement your style.</p>
               </div>
-              <button 
+              <button
                 onClick={() => navigate('/products')}
                 className="group flex items-center space-x-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-900 dark:text-white transition-all"
               >
@@ -414,13 +413,13 @@ const ProductDetail = () => {
           </div>
         )}
 
-      {isReviewModalOpen && selectedProduct && (
-        <ReviewModal
-          isOpen={isReviewModalOpen}
-          product={selectedProduct}
-          onClose={() => setIsReviewModalOpen(false)}
-        />
-      )}
+        {isReviewModalOpen && selectedProduct && (
+          <ReviewModal
+            isOpen={isReviewModalOpen}
+            product={selectedProduct}
+            onClose={() => setIsReviewModalOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

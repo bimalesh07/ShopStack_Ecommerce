@@ -39,6 +39,13 @@
     font-family: 'Plus Jakarta Sans', sans-serif;
     color: var(--foreground);
     letter-spacing: -0.04em;
+    @apply leading-tight;
+  }
+  
+  @media (max-width: 640px) {
+    h1 { @apply !text-2xl; }
+    h2 { @apply !text-xl; }
+    h3 { @apply !text-lg; }
   }
 }
 
@@ -64,7 +71,7 @@
   }
 
   .container-tight {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12;
   }
 }
 

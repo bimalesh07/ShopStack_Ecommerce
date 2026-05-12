@@ -63,6 +63,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -132,16 +133,19 @@ TIME_ZONE = "Asia/Kolkata"
 USE_I18N = True
 USE_TZ = True
 
+#Staticfiles
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+# for WhiteNoise where to collect file 
+STATICFILES_DIRS = [BASE_DIR / "static"] # if custom static folder is there then use this 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "users.User"
 
+AUTH_USER_MODEL = "users.User"
 # DRF
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -181,6 +185,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 REDIS_URL = config("REDIS_URL")
 
 # Celery for localy and dockers
+
 # CELERY_BROKER_URL = config("CELERY_BROKER_URL")
 # CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
 # CELERY_ACCEPT_CONTENT = ["json"]
@@ -208,7 +213,7 @@ CACHES = {
         }
     }
 }
-# for Sessions want to in Redis  (for speed)
+# for Sessions want to in Redis  (for speed) for deployment
 # SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 # SESSION_CACHE_ALIAS = "default"
 
@@ -231,6 +236,7 @@ CELERY_RESULT_SERIALIZER = "json"
 
 
 
+
 # DRF Spectacular
 SPECTACULAR_SETTINGS = {
     "TITLE": "Ecommerce API",
@@ -246,8 +252,12 @@ CLOUDINARY_STORAGE = {
     "API_SECRET": config("CLOUDINARY_API_SECRET"),
 }
 
-DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
+MEDIA_URL = "/media/"
+# Production (Render) for  cloudinary storage use
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    MEDIA_ROOT = BASE_DIR / "media"
 
 
 #Email Configuration

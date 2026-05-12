@@ -8,15 +8,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
-#F and csrf for deployment
+#CORS and csrf for deployment
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = config("ALLOWED_ORIGINS", cast=Csv(), default="http://localhost:5173")
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
-#allowed hosts for deployment and local
+#allowed hosts for deployment and local development
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
-# Render  auto-host for (Extra safety)
+# Render  auto-host for deployment(Extra safety)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)

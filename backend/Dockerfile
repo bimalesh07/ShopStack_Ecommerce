@@ -23,14 +23,21 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
+# 1Copy the rest of the application code
 COPY . .
-#add this line for production deployment
+
+#2 Dummy variables build pass karne ke liye
+ENV SECRET_KEY=dummy
+ENV DATABASE_URL=sqlite:///db.sqlite3
+
+# 3 add this line for production deployment
 # Static files collect for (Admin CSS/JS )
+
+# collectstatic command 
 RUN python manage.py collectstatic --noinput
 
-#  entrypoint is executable (using absolute path for safety)
+# 4 entrypoint is executable (using absolute path for safety)
 RUN chmod +x /app/entrypoint.sh
 
-# Use absolute path for entrypoint
+#5 Use absolute path for entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]

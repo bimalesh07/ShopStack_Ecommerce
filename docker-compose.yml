@@ -34,9 +34,9 @@ services:
       - 1.1.1.1
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.base
-    depends_on:
+    # depends_on:
       # - db
-      - redis
+      # - redis
 
   # 3. Frontend React App (Vite)
   frontend:
@@ -47,13 +47,14 @@ services:
     ports:
       - "5173:5173"
     depends_on:
-      - backend
+    - backend
 
-  # 4. Redis
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
+  #  4. Redis
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
+
 
   # 5. Celery Worker
   celery_worker:
@@ -66,10 +67,13 @@ services:
       - /usr/local/lib/python3.13/site-packages/
     env_file:
       - ./backend/.env
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     environment:
       - DJANGO_SETTINGS_MODULE=config.settings.base
     depends_on:
-      - redis
+      # - redis
       # - db
       - backend
 

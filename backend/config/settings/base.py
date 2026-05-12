@@ -3,6 +3,7 @@ from decouple import config, Csv
 import dj_database_url
 #for clery ssl handelling
 import ssl
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = config("SECRET_KEY")

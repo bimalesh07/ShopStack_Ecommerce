@@ -25,6 +25,9 @@ RUN pip install --upgrade pip && \
 
 # Copy the rest of the application code
 COPY . .
+#add this line for production deployment
+# Static files collect for (Admin CSS/JS )
+RUN python manage.py collectstatic --noinput
 
 #  entrypoint is executable (using absolute path for safety)
 RUN chmod +x /app/entrypoint.sh

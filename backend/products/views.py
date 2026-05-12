@@ -121,6 +121,7 @@ class ProductDetailView(APIView):
                 # 1 hours
                 cache.set(cache_key, data, 3600)
                 print("Product from DB")
+                
             except Product.DoesNotExist:
                 return Response({"error":"Product not found"}, status=status.HTTP_404_NOT_FOUND)
         else:

@@ -285,7 +285,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
 
 # Default from email
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ShopStack <shopstackworld@gamil.com>')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ShopStack <shopstackworld@gmail.com>')
 
 
 

@@ -39,4 +39,9 @@ RUN python manage.py collectstatic --noinput --no-post-process
 RUN chmod +x /app/entrypoint.sh
 
 # 10. Start the application using the entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
+#ENTRYPOINT ["/app/entrypoint.sh"]
+
+# 3. FIX: Replace hardcoded gunicorn with exec "$@"
+# Iska matlab: Jo command Render se milegi, wahi chalegi!
+echo "Executing Command: $@"
+exec "$@"

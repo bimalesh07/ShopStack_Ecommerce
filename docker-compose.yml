@@ -20,7 +20,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     # Command mein entry point so automatic migrations runs
-    command: /app/entrypoint.sh python manage.py runserver 0.0.0.0:8000
+    # command: /app/entrypoint.sh python manage.py runserver 0.0.0.0:8000
+    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
     volumes:
       - ./backend:/app
       - /usr/local/lib/python3.13/site-packages/ # Django library protection
@@ -62,7 +63,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: celery -A config worker --loglevel=info
+    # command: celery -A config worker --loglevel=info
+    command: ["celery", "-A", "config", "worker", "--loglevel=info", "--concurrency=1"]
     volumes:
       - ./backend:/app
       - /usr/local/lib/python3.13/site-packages/

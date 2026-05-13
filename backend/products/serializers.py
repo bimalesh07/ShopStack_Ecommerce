@@ -27,7 +27,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
                 if url.startswith('http'):
                     return url
-                return f"https://shopstack-ecommerce-1.onrender.com{url}"
+                return url
         return None
 
 
@@ -53,7 +53,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(url)
         if url.startswith('http'):
             return url
-        return f"https://shopstack-ecommerce-1.onrender.com{url}"
+        return url
 
 
 

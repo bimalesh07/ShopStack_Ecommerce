@@ -39,6 +39,9 @@ RUN python manage.py collectstatic --noinput --no-post-process
 RUN chmod +x /app/entrypoint.sh
 
 # 10. Start the application using the entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
+#ENTRYPOINT ["/app/entrypoint.sh"]
+
+#for local use overwrite command in docker-compose.yml
+CMD ["/app/entrypoint.sh"]
 
 

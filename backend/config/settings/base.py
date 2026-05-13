@@ -10,12 +10,18 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure-build-time-only-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 #CORS and csrf for deployment
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
 CORS_ALLOWED_ORIGINS = config("ALLOWED_ORIGINS", cast=Csv(), default="http://localhost:5173")
 CSRF_TRUSTED_ORIGINS = list(CORS_ALLOWED_ORIGINS)
 
 #allowed hosts for deployment and local development
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default="localhost,127.0.0.1")
+
+
+# for  local par Login/Signup mein error aa sakta hai
+# CSRF_TRUSTED_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173","http://localhost:8000",]
+
 
 # Render  auto-host for deployment(Extra safety)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -233,6 +239,7 @@ SESSION_CACHE_ALIAS = "default"
 # For production
 CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
+
 # UPSTASH SSL CONFIG START 
 CELERY_BROKER_USE_SSL = {
    'ssl_cert_reqs': ssl.CERT_NONE
@@ -285,9 +292,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
 
 # Default from email
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='ShopStack <shopstackworld@gmail.com>')
-
-
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='bimaleshk07@gmail.com')
 
 #Razorpay Payment Gateway
 RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID",default="rzp_test_s8sQx5wE6B6Q7g")

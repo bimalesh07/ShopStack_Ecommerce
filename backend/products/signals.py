@@ -5,15 +5,19 @@ from .models import Product, Category
 
 @receiver([post_save, post_delete], sender=Product)
 def clear_product_cache(sender, instance, **kwargs):
-    # Specific product ka cache delete
-    cache.delete(f"product_detail_{instance.slug}")
-    # Global clear taaki dispatch wali saari categories/products refresh ho jayein
-    cache.clear() 
-   # print(f"Cache Cleared: Product {instance.name} updated.")
+    try:
+        # Specific product ka cache delete
+        cache.delete(f"product_detail_{instance.slug}")
+        # Global clear taaki dispatch wali saari categories/products refresh ho jayein
+        cache.clear() 
+    except Exception:
+        pass
 
 @receiver([post_save, post_delete], sender=Category)
 def clear_category_cache(sender, instance, **kwargs):
-    # Jab category badle, toh all_categories wali key aur baaki sab udaao
-    cache.delete("all_categories")
-    cache.clear()
-    #print("Cache Cleared: Category updated.")
+    try:
+        # Jab category badle, toh all_categories wali key aur baaki sab udaao
+        cache.delete("all_categories")
+        cache.clear()
+    except Exception:
+        pass

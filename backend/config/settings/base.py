@@ -10,7 +10,7 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure-build-time-only-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 #CORS and csrf for deployment
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = config("ALLOWED_ORIGINS", cast=Csv(), default="http://localhost:5173")
 CSRF_TRUSTED_ORIGINS = list(CORS_ALLOWED_ORIGINS)
 

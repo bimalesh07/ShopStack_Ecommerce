@@ -24,8 +24,12 @@ class CategorySerializer(serializers.ModelSerializer):
                 request = self.context.get('request')
                 if request:
                     return request.build_absolute_uri(url)
-                return url
+
+                if url.startswith('http'):
+                    return url
+                return f"https://shopstack-ecommerce-1.onrender.com{url}"
         return None
+
 
 
 class ProductImageSerializer(serializers.ModelSerializer):
@@ -47,7 +51,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request:
             return request.build_absolute_uri(url)
-        return url
+        if url.startswith('http'):
+            return url
+        return f"https://shopstack-ecommerce-1.onrender.com{url}"
+
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -78,6 +85,7 @@ class ProductSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("id", "slug", "vendor_name", "created_at", "discount_percentage")
 
+      
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     images = serializers.ListField(

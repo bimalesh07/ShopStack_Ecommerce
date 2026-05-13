@@ -17,7 +17,8 @@ from config.pagination import StandardPagination
 from rest_framework import generics, filters
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page, vary_on_headers, vary_on_cookie
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers, vary_on_cookie
 
 # category views
 class CategoryListView(APIView):
@@ -25,15 +26,15 @@ class CategoryListView(APIView):
     def get(self, request):
         cache_key = "all_categories"
         data = cache.get(cache_key)
-        if not data:
+        if data is None:
             category = Category.objects.all()
+            # Context={'request': request} important for  full URL 
             serializer = CategorySerializer(category, many=True, context={'request': request})
             data = serializer.data
-            # 24 hours
             cache.set(cache_key, data, 86400)
             print("Categories from DB")
         else:
-            print("Categories from Redis ⚡")
+            print("Categories from Redis")
             
         return Response(data)
     
@@ -111,11 +112,11 @@ class ProductListView(generics.ListAPIView):
     
 class ProductDetailView(APIView):
     permission_classes = (AllowAny,)
+
     def get(self, request, slug):
         cache_key = f"product_detail_{slug}"
         data = cache.get(cache_key)
-
-        if not data:
+        if data is None: 
             try:
                 product = Product.objects.select_related(
                     "category", "vendor"
@@ -124,16 +125,17 @@ class ProductDetailView(APIView):
                     is_active=True,
                     vendor__is_approved=True
                 )
+                # Context use for images
                 serializer = ProductSerializer(product, context={'request': request})
                 data = serializer.data
-                # 1 hours
+                
                 cache.set(cache_key, data, 3600)
                 print("Product from DB")
                 
             except Product.DoesNotExist:
                 return Response({"error":"Product not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
-            print("Product from Redis ⚡")
+            print("Product from Redis")
 
         return Response(data)
     

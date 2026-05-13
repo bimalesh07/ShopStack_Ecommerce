@@ -5,7 +5,7 @@
 ---
 
 ## 🔗 Live Demo
-- **Frontend**: [shopstack-frontend.vercel.app](https://shopstack-frontend.vercel.app)
+- **Frontend**: [shopstack-frontend.vercel.app](https://shop-stack-ecommerce.vercel.app/)
 - **Backend API**: [shopstack-ecommerce-1.onrender.com](https://shopstack-ecommerce-1.onrender.com)
 - **API Documentation**: [Swagger UI](https://shopstack-ecommerce-1.onrender.com/api/docs/)
 

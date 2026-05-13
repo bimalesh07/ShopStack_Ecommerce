@@ -1,45 +1,42 @@
 FROM python:3.13-slim
 
-# Set environment variables
+# 1. Prevent Python from writing .pyc files and enable live logs
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Set the working directory to /app
+# 2. Set the folder where our code will live
 WORKDIR /app
 
-# Install system dependencies
+# 3. Install system tools needed for Database and GCC
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-# Create a virtual environment outside of /app to prevent volume overwrite issues
+# 4. Create and use a Virtual Environment
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install Python dependencies first (for caching)
+# 5. Copy requirements first to speed up future builds
 COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# 1Copy the rest of the application code
+# 6. Copy all project files into the container
 COPY . .
 
-#2. add Dummy variables for local development if needed 
+# 7. Set dummy variables so the build doesn't crash
 ENV DATABASE_URL=sqlite:///db.sqlite3
 ENV SECRET_KEY=dummy-key-for-build
 ENV DEBUG=False
+
+# 8. Create static folders and collect files (Only Once)
+RUN mkdir -p /app/static /app/staticfiles
 RUN python manage.py collectstatic --noinput
 
-# 3 add this line for production deployment
-# Static files collect for (Admin CSS/JS )
-
-# collectstatic command 
-RUN python manage.py collectstatic --noinput
-
-# 4 entrypoint is executable (using absolute path for safety)
+# 9. Make the entrypoint script executable
 RUN chmod +x /app/entrypoint.sh
 
-#5 Use absolute path for entrypoint
+# 10. Start the application using the entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]

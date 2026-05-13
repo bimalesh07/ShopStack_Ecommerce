@@ -16,6 +16,8 @@ from .serializers import (
 from config.pagination import StandardPagination
 from rest_framework import generics, filters
 from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, vary_on_headers, vary_on_cookie
 
 # category views
 class CategoryListView(APIView):
@@ -58,6 +60,12 @@ class ProductListView(generics.ListAPIView):
     search_fields = ['name', 'description', 'category__name']
     ordering_fields = ['selling_price', 'created_at']
 
+    #use cache
+    @method_decorator(cache_page(60 * 15)) # 15 minute 
+    @method_decorator(vary_on_headers("Authorization")) # diffent user  for token
+    @method_decorator(vary_on_cookie) # diffrent filtering  for filter
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
     def get_queryset(self):
         if self.request.user.is_authenticated and self.request.user.role == "vendor":
             # If user is a vendor, show only their own products

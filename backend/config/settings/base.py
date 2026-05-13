@@ -150,6 +150,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"] # if custom static folder is there then
 # for whitenose disable staticfiles storage for docker build (render static files)
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
+# 4. Disable WhiteNoise finders for Docker builds (Render will collect files)
+# This prevents the "staticfiles not found" error during the build process.
+WHITENOISE_USE_FINDERS = True
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -6,7 +6,7 @@ import ssl
 import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-SECRET_KEY = config("SECRET_KEY")
+SECRET_KEY = config("SECRET_KEY", default="django-insecure-build-time-only-key")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 #CORS and csrf for deployment
@@ -15,7 +15,7 @@ CORS_ALLOWED_ORIGINS = config("ALLOWED_ORIGINS", cast=Csv(), default="http://loc
 CSRF_TRUSTED_ORIGINS = list(CORS_ALLOWED_ORIGINS)
 
 #allowed hosts for deployment and local development
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default="localhost,127.0.0.1")
 
 # Render  auto-host for deployment(Extra safety)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -24,7 +24,8 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 
 ADMIN_INVITE_CODE = config("ADMIN_INVITE_CODE", default="STRICT_CODE_123")
-GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID", default="")
+GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID", default="511048064353-u2r460h8k359l3v1r7r954f02l73d62f.apps.googleusercontent.com")
+GOOGLE_CLIENT_SECRET = config("GOOGLE_CLIENT_SECRET", default="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")
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -115,7 +116,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Neon Database Connection fix
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL'),
+        default=config('DATABASE_URL',default="postgresql://postgres.wzmykdwvphlqddbmdhmy:[EMAIL_ADDRESS]:5432/postgres"),
         conn_max_age=600,
         ssl_require=True  
     )
@@ -136,6 +137,7 @@ USE_TZ = True
 #Staticfiles
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
 # for WhiteNoise where to collect file 
 STATICFILES_DIRS = [BASE_DIR / "static"] # if custom static folder is there then use this 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
@@ -178,11 +180,8 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# CORS
-CORS_ALLOW_ALL_ORIGINS = True
-
 # Redis
-REDIS_URL = config("REDIS_URL")
+REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
 
 # Celery for localy and dockers
 
@@ -203,7 +202,7 @@ REDIS_URL = config("REDIS_URL")
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_URL"),
+        "LOCATION": config("REDIS_URL", default="redis://localhost:6379/0"),
         "TIMEOUT": 600,  # 10 minutes defult
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
@@ -221,8 +220,8 @@ SESSION_CACHE_ALIAS = "default"
 
 
 # For production
-CELERY_BROKER_URL = config("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
 # UPSTASH SSL CONFIG START 
 CELERY_BROKER_USE_SSL = {
    'ssl_cert_reqs': ssl.CERT_NONE
@@ -248,9 +247,9 @@ SPECTACULAR_SETTINGS = {
 
 # Cloudinary Storage
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
-    "API_KEY": config("CLOUDINARY_API_KEY"),
-    "API_SECRET": config("CLOUDINARY_API_SECRET"),
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME",default="dwijvps7n"),
+    "API_KEY": config("CLOUDINARY_API_KEY",default="241932587529337"),
+    "API_SECRET": config("CLOUDINARY_API_SECRET",default="FwT8n-v4v_7OQk796f3uI3H3oW4"),
 }
 
 MEDIA_URL = "/media/"
@@ -268,14 +267,14 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # Cast is important for Port number integer and TLS boolean
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
-EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
+EMAIL_PORT = config('EMAIL_PORT', cast=int, default=587)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
 
 # Default from email
-DEFAULT_FROM_EMAIL = 'bimaleshk07@gmail.com'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='[EMAIL_ADDRESS]')
 
 
 #Razorpay Payment Gateway
-RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET")
+RAZORPAY_KEY_ID = config("RAZORPAY_KEY_ID",default="rzp_test_s8sQx5wE6B6Q7g")
+RAZORPAY_KEY_SECRET = config("RAZORPAY_KEY_SECRET",default="3eW8gW7mH4b8G5e2f0d1c9b7")

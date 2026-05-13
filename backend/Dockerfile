@@ -33,7 +33,7 @@ ENV DEBUG=False
 
 # 8. Create static folders and collect files (Only Once)
 RUN mkdir -p /app/static /app/staticfiles
-RUN python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput --no-post-process
 
 # 9. Make the entrypoint script executable
 RUN chmod +x /app/entrypoint.sh

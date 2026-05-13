@@ -145,7 +145,10 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # for WhiteNoise where to collect file 
 STATICFILES_DIRS = [BASE_DIR / "static"] # if custom static folder is there then use this 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+#STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# for whitenose disable staticfiles storage for docker build (render static files)
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 
 

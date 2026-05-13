@@ -26,9 +26,11 @@ RUN pip install --upgrade pip && \
 # 1Copy the rest of the application code
 COPY . .
 
-#2 add Dummy variables for local development if needed 
-# ENV SECRET_KEY=dummy
-# ENV DATABASE_URL=sqlite:///db.sqlite3
+#2. add Dummy variables for local development if needed 
+ENV DATABASE_URL=sqlite:///db.sqlite3
+ENV SECRET_KEY=dummy-key-for-build
+ENV DEBUG=False
+RUN python manage.py collectstatic --noinput
 
 # 3 add this line for production deployment
 # Static files collect for (Admin CSS/JS )

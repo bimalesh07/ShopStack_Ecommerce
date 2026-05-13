@@ -113,14 +113,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 #     }
 
 # }
-# Neon Database Connection fix
+
+
+# Build environment check karne ke liye
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL',default="postgresql://postgres.wzmykdwvphlqddbmdhmy:[EMAIL_ADDRESS]:5432/postgres"),
+        default=config('DATABASE_URL', default="sqlite:///db.sqlite3"),
         conn_max_age=600,
-        ssl_require=True  
     )
 }
+
+# SSL sirf tabhi mangna jab hum SQLite use NA kar rahe hon (yaani asli Postgres ho)
+if DATABASES['default'].get('ENGINE') != 'django.db.backends.sqlite3':
+    DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

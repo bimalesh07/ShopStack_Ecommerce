@@ -45,13 +45,17 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
-  const dropdownRef = React.useRef(null);
+  const desktopDropdownRef = React.useRef(null);
+  const mobileDropdownRef = React.useRef(null);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Outside click to close profile dropdown
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      const isOutsideDesktop = desktopDropdownRef.current && !desktopDropdownRef.current.contains(event.target);
+      const isOutsideMobile = mobileDropdownRef.current && !mobileDropdownRef.current.contains(event.target);
+      
+      if (isOutsideDesktop && isOutsideMobile) {
         setShowProfileDropdown(false);
       }
     };
@@ -112,6 +116,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    setShowProfileDropdown(false);
     navigate('/login');
   };
 
@@ -265,7 +270,7 @@ const Navbar = () => {
               {token ? (
                 <div
                   className="relative hidden lg:block"
-                  ref={dropdownRef}
+                  ref={desktopDropdownRef}
                 >
                   <button 
                     onClick={() => setShowProfileDropdown(!showProfileDropdown)}
@@ -298,6 +303,7 @@ const Navbar = () => {
                           {user?.role === 'vendor' && (
                             <Link
                               to="/profile?tab=inventory"
+                              onClick={() => setShowProfileDropdown(false)}
                               className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all uppercase tracking-widest group"
                             >
                               <div className="p-2 rounded-xl bg-primary-100 dark:bg-primary-900/40 group-hover:bg-primary-200 dark:group-hover:bg-primary-800 transition-colors">
@@ -308,6 +314,7 @@ const Navbar = () => {
                           )}
                           <Link
                             to="/profile?tab=overview"
+                            onClick={() => setShowProfileDropdown(false)}
                             className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                           >
                             <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
@@ -320,6 +327,7 @@ const Navbar = () => {
                             <>
                               <Link
                                 to="/profile?tab=orders"
+                                onClick={() => setShowProfileDropdown(false)}
                                 className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-primary-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                               >
                                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-primary-50 dark:group-hover:bg-primary-900/30 transition-colors">
@@ -329,6 +337,7 @@ const Navbar = () => {
                               </Link>
                               <Link
                                 to="/wishlist"
+                                onClick={() => setShowProfileDropdown(false)}
                                 className="flex items-center space-x-3 px-6 py-3.5 rounded-2xl text-[11px] font-bold text-slate-600 dark:text-slate-400 hover:text-rose-600 hover:bg-white dark:hover:bg-slate-800 transition-all uppercase tracking-widest group"
                               >
                                 <div className="p-2 rounded-xl bg-slate-50 dark:bg-white/5 group-hover:bg-rose-50 dark:group-hover:bg-rose-900/30 transition-colors">
@@ -369,7 +378,7 @@ const Navbar = () => {
             {/* Mobile Header Icons */}
             <div className="flex lg:hidden items-center space-x-2">
               {token && (
-                <div className="relative" ref={dropdownRef}>
+                <div className="relative" ref={mobileDropdownRef}>
                   <button 
                     onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                     className={`h-10 w-10 rounded-full flex items-center justify-center border-2 border-white dark:border-slate-800 shadow-md relative ${getAvatarColor(user?.name)}`}

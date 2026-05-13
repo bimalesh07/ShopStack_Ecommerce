@@ -26,7 +26,7 @@ RUN pip install --upgrade pip && \
 # 1Copy the rest of the application code
 COPY . .
 
-#2 Dummy variables build pass karne ke liye
+#2 add Dummy variables for local development if needed 
 # ENV SECRET_KEY=dummy
 # ENV DATABASE_URL=sqlite:///db.sqlite3
 

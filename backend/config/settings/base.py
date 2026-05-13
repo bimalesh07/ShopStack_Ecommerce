@@ -113,14 +113,19 @@ WSGI_APPLICATION = "config.wsgi.application"
 #     }
 
 # }
+
+
 # Neon Database Connection fix
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL',default="postgresql://postgres.wzmykdwvphlqddbmdhmy:[EMAIL_ADDRESS]:5432/postgres"),
+        default=config('DATABASE_URL', default="sqlite:///db.sqlite3"),
         conn_max_age=600,
         ssl_require=True  
     )
 }
+
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

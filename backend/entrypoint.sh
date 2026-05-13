@@ -11,6 +11,11 @@ python manage.py collectstatic --noinput || echo "Static collection failed, but 
 echo "Running migrations..."
 python manage.py migrate --noinput || echo "Migration failed, but keeping container alive..."
 
-# 3. Start server on Render's default port 10000
-echo "Starting server..."
-exec gunicorn config.wsgi:application --bind 0.0.0.0:10000
+# # 3. Start server on Render's default port 10000
+# echo "Starting server..."
+# exec gunicorn config.wsgi:application --bind 0.0.0.0:10000
+
+# 3. FIX: Replace hardcoded gunicorn with exec "$@"
+# Iska matlab: Jo command Render se milegi, wahi chalegi!
+echo "Executing Command: $@"
+exec "$@"

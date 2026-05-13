@@ -102,20 +102,20 @@ const ProductList = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-start lg:self-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto mt-4 lg:mt-0">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`group flex items-center space-x-3 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${showFilters ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-900 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:border-white'}`}
+              className={`w-full sm:w-auto group flex items-center justify-center space-x-3 px-6 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${showFilters ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-900 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:border-white'}`}
             >
               <Filter className={`h-4 w-4 transition-transform duration-500 ${showFilters ? 'rotate-90' : ''}`} />
               <span>{showFilters ? 'Hide Filters' : 'Filters'}</span>
             </button>
 
-            <div className="relative group">
+            <div className="relative group w-full sm:w-auto">
               <select
                 value={currentOrdering}
                 onChange={handleSort}
-                className="appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-8 py-3 pr-12 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white focus:ring-0 focus:border-slate-900 dark:focus:border-white outline-none cursor-pointer hover:border-slate-900 dark:hover:border-white transition-all shadow-sm"
+                className="w-full appearance-none bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-8 py-3 pr-12 text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white focus:ring-0 focus:border-slate-900 dark:focus:border-white outline-none cursor-pointer hover:border-slate-900 dark:hover:border-white transition-all shadow-sm"
               >
                 <option value="-created_at">Newest First</option>
                 <option value="price">Price: Low to High</option>
@@ -130,11 +130,11 @@ const ProductList = () => {
 
       {/* Filter Sidebar (Collapsible) */}
       {showFilters && (
-        <div className="bg-slate-50/50 dark:bg-white/5 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 flex flex-wrap gap-12 animate-in slide-in-from-top-4 duration-500 mb-12">
+        <div className="bg-slate-50/50 dark:bg-white/5 p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row flex-wrap gap-6 md:gap-12 animate-in slide-in-from-top-4 duration-500 mb-12">
           <div className="space-y-4">
             <h4 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em]">Price Range</h4>
-            <div className="flex items-center gap-4">
-              <div className="relative">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="relative flex-1 sm:flex-none">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">₹</span>
                 <input
                   type="number"
@@ -171,7 +171,7 @@ const ProductList = () => {
 
       {/* Product Grid */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

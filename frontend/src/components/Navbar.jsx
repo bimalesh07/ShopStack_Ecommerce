@@ -123,17 +123,17 @@ const Navbar = () => {
   return (
     <>
       <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md py-2' : 'bg-[#f8f9f6] dark:bg-slate-950 py-3.5'}`}>
-      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 lg:px-20">
-        <div className="flex justify-between items-center gap-4 lg:gap-8">
+      <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-12 lg:px-20 overflow-visible">
+        <div className="flex justify-between items-center gap-2 lg:gap-8">
           {/* Brand */}
-          <div className="flex items-center space-x-6 lg:space-x-12">
-            <Link to="/" className="flex items-center space-x-3 group">
+          <div className="flex items-center space-x-3 lg:space-x-12">
+            <Link to="/" className="flex items-center space-x-2 md:space-x-3 group">
               <div className="bg-slate-900 p-1.5 rounded-xl group-hover:bg-primary-600 shadow-lg transition-all">
                 <svg className="h-4 w-4 md:h-5 md:w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
               </div>
-              <span className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading flex items-baseline">
+              <span className="text-lg md:text-2xl font-black text-slate-900 dark:text-white tracking-tighter uppercase font-heading flex items-baseline">
                 Shop<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Stack</span>
               </span>
             </Link>
@@ -211,28 +211,26 @@ const Navbar = () => {
 
           <div className="flex items-center space-x-2 md:space-x-6 lg:space-x-8 flex-shrink-0">
 
-            {/* Theme Toggle - Hidden on mobile, moved to menu */}
-            {(!user || user.role !== 'vendor') && (
-              <div className="hidden md:flex items-center space-x-6">
-                <button 
-                  onClick={toggleTheme}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-all duration-300"
-                  title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-                >
-                  {isDarkMode ? (
-                    <>
-                      <Sun className="h-4 w-4" />
-                      <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Light</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="h-4 w-4" />
-                      <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Dark</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
+            {/* Theme Toggle - Visible for all users */}
+            <div className="hidden md:flex items-center space-x-6">
+              <button 
+                onClick={toggleTheme}
+                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-primary-50 dark:hover:bg-primary-900/30 hover:text-primary-600 transition-all duration-300"
+                title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {isDarkMode ? (
+                  <>
+                    <Sun className="h-4 w-4" />
+                    <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Light</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="h-4 w-4" />
+                    <span className="hidden md:block text-[9px] font-black uppercase tracking-widest">Dark</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             <div className="flex items-center space-x-2 md:space-x-6">
               {/* Wishlist - Hidden on mobile, moved to menu */}
@@ -509,64 +507,103 @@ const Navbar = () => {
     {/* Premium Mobile Menu */}
     {isMobileMenuOpen && (
       <div className="fixed inset-0 z-[100] lg:hidden">
-        <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsMobileMenuOpen(false)}></div>
-        <div className="absolute top-0 right-0 h-full w-[85%] max-w-[400px] bg-white dark:bg-slate-900 shadow-2xl p-8 flex flex-col animate-in slide-in-from-right duration-500">
-          <div className="flex justify-between items-center mb-12 border-b border-slate-100 dark:border-slate-800 pb-6">
-            <span className="text-xl font-black uppercase tracking-tighter dark:text-white">ShopStack</span>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors dark:text-white"><X className="h-6 w-6" /></button>
+        <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>
+        <div className="absolute top-0 right-0 h-full w-[80%] max-w-[320px] bg-white dark:bg-slate-950 shadow-2xl flex flex-col animate-in slide-in-from-right duration-500 overflow-hidden">
+          
+          {/* Menu Header */}
+          <div className="flex justify-between items-center p-6 border-b border-slate-50 dark:border-slate-900">
+            <div className="flex items-center space-x-2">
+              <div className="h-2 w-2 rounded-full bg-primary-500"></div>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Navigation</span>
+            </div>
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)} 
+              className="p-2 bg-slate-50 dark:bg-slate-900 rounded-full text-slate-400 transition-transform active:scale-90"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
-          <div className="space-y-6 flex-grow overflow-y-auto pr-2">
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-              <span>Home</span>
-              <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-            </Link>
-            <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-              <span>Shop</span>
-              <Plus className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-            </Link>
-             <Link to="/products" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-               <span>Shop Collection</span>
-               <ArrowRight className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-             </Link>
-             {(!user || user.role !== 'vendor') && (
-               <>
-                 <Link to="/wishlist" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                   <span>Wishlist</span>
-                   <Heart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-                 </Link>
-                 <Link to="/cart" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center justify-between text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group">
-                   <span>My Shopping Bag</span>
-                   <ShoppingCart className="h-5 w-5 opacity-20 group-hover:opacity-100 transition-opacity" />
-                 </Link>
-                 <button 
-                  onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }}
-                  className="flex items-center justify-between w-full text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter group"
-                 >
-                   <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-                   {isDarkMode ? <Sun className="h-5 w-5 opacity-20" /> : <Moon className="h-5 w-5 opacity-20" />}
-                 </button>
-               </>
-             )}
+          {/* Menu Links */}
+          <div className="flex-grow overflow-y-auto px-4 py-8 space-y-2">
+            {[
+              { name: 'Home', to: '/', icon: Plus },
+              { name: 'Shop', to: '/products', icon: Plus },
+              { name: 'Collections', to: '/products', icon: ArrowRight },
+            ].map((item) => (
+              <Link 
+                key={item.name}
+                to={item.to} 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="flex items-center justify-between px-6 py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group"
+              >
+                <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest group-hover:translate-x-1 transition-transform">{item.name}</span>
+                <item.icon className="h-4 w-4 text-slate-200 dark:text-slate-800 group-hover:text-primary-500 transition-colors" />
+              </Link>
+            ))}
+
+            {(!user || user.role !== 'vendor') && (
+              <div className="pt-4 mt-4 border-t border-slate-50 dark:border-slate-900 space-y-2">
+                {[
+                  { name: 'Wishlist', to: '/wishlist', icon: Heart },
+                  { name: 'My Cart', to: '/cart', icon: ShoppingCart },
+                ].map((item) => (
+                  <Link 
+                    key={item.name}
+                    to={item.to} 
+                    onClick={() => setIsMobileMenuOpen(false)} 
+                    className="flex items-center justify-between px-6 py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group"
+                  >
+                    <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest group-hover:translate-x-1 transition-transform">{item.name}</span>
+                    <item.icon className="h-4 w-4 text-slate-200 dark:text-slate-800 group-hover:text-rose-500 transition-colors" />
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Theme Toggle in Menu */}
+            <button 
+              onClick={() => { toggleTheme(); setIsMobileMenuOpen(false); }}
+              className="w-full flex items-center justify-between px-6 py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-900 transition-all group mt-4 border-t border-slate-50 dark:border-slate-900 pt-8"
+            >
+              <span className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+              {isDarkMode ? <Sun className="h-4 w-4 text-amber-500" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+            </button>
           </div>
 
-          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 mt-6">
+          {/* Menu Footer */}
+          <div className="p-8 bg-slate-50/50 dark:bg-slate-900/30 border-t border-slate-100 dark:border-slate-900">
             {token ? (
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2.5">
-                  <div className="h-10 w-10 bg-slate-950 dark:bg-white rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform duration-500 overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-500/20 to-transparent" />
-                    <ShoppingBag className="h-5 w-5 text-white dark:text-slate-900 relative z-10" />
+              <div className="space-y-6">
+                <div className="flex items-center space-x-3">
+                  <div className={`h-10 w-10 rounded-full flex items-center justify-center text-[10px] font-black text-white ${getAvatarColor(user?.name)}`}>
+                    {getInitials(user?.name)}
                   </div>
-                  <span className="text-xl md:text-2xl font-black tracking-tighter text-slate-900 dark:text-white uppercase transition-all duration-500 flex items-baseline">
-                    Shop<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400">Stack</span>
-                  </span>
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Account</p>
+                    <p className="text-xs font-black text-slate-900 dark:text-white uppercase truncate max-w-[150px]">{user?.name}</p>
+                  </div>
                 </div>
-                <button onClick={handleLogout} className="w-full py-4 bg-rose-50 text-rose-500 rounded-2xl font-black uppercase tracking-widest text-[10px]">Logout</button>
+                <button 
+                  onClick={handleLogout} 
+                  className="w-full py-4 border border-rose-100 dark:border-rose-900/30 text-rose-500 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] hover:bg-rose-500 hover:text-white transition-all active:scale-95 shadow-sm"
+                >
+                  Logout Session
+                </button>
               </div>
             ) : (
-              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-center rounded-2xl font-black uppercase tracking-widest text-[10px]">Login</Link>
+              <Link 
+                to="/login" 
+                onClick={() => setIsMobileMenuOpen(false)} 
+                className="block w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-center rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-slate-900/10 active:scale-95"
+              >
+                Member Login
+              </Link>
             )}
+            
+            <div className="mt-8 flex justify-center">
+               <span className="text-[8px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-[0.5em]">ShopStack © 2024</span>
+            </div>
           </div>
         </div>
       </div>

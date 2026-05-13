@@ -50,7 +50,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const [productsData, categoriesData] = await Promise.all([
-          productService.getProducts({ limit: 8 }),
+          productService.getProducts({ limit: 50 }),
           productService.getCategories()
         ]);
         setProducts(productsData);
@@ -279,8 +279,8 @@ const Home = () => {
                       .map(p => [p.category_name, p])
                   ).values()];
 
-                  // Repeat 4 times to ensure full width on all screens
-                  const displayItems = [...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts, ...latestUniqueProducts];
+                  // Repeat 20 times to ensure full width on all screens and no gaps
+                  const displayItems = Array(20).fill(latestUniqueProducts).flat();
 
                   return displayItems.map((product, idx) => (
                     <div key={`${product.id}-${idx}`} className="w-[300px] flex-shrink-0">

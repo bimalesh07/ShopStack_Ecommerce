@@ -76,65 +76,66 @@ const Wishlist = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {wishlistItems.map((item) => (
-            <div key={item.id} className="group bg-white dark:bg-transparent rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-slate-800/60 hover:border-primary-100 dark:hover:border-primary-900/50 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] transition-all duration-700 flex flex-col relative">
-              {/* Image Section - Compact */}
-              <div className="relative aspect-square bg-slate-200 dark:bg-slate-800 animate-pulse p-6 overflow-hidden flex items-center justify-center">
-                <img 
-                  src={(item.product?.images?.[0]?.image || 'https://via.placeholder.com/400').replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
-                  alt={item.product?.name} 
+            <div key={item.id} className="group bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 transition-all duration-500 flex flex-col h-full relative hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)]">
+              
+              {/* Product Image Section - Pure White & Clean */}
+              <div className="relative aspect-square overflow-hidden bg-white rounded-xl mb-4 flex items-center justify-center border border-slate-100 dark:border-white/5 shadow-sm">
+                <img
+                  src={(item.product?.images?.[0]?.image || 'https://via.placeholder.com/400x400').replace('/upload/', '/upload/q_auto,f_auto,w_600/')}
+                  alt={item.product?.name}
                   loading="lazy"
-                  className="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-105" 
+                  className="w-[90%] h-[90%] object-contain transition-transform duration-700 group-hover:scale-110 mix-blend-multiply"
                 />
-                
-                {/* Floating Remove Action */}
+
+                {/* Remove Button - Top Right */}
                 <button 
                   onClick={() => handleRemove(item.id)}
-                  className="absolute top-6 right-6 p-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-2xl text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-xl shadow-slate-900/5 hover:scale-110 border border-slate-100 dark:border-slate-800 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0"
+                  className="absolute top-2 right-2 p-2 bg-slate-50/50 dark:bg-slate-800/50 backdrop-blur-md rounded-full text-slate-400 hover:text-rose-500 transition-all opacity-0 group-hover:opacity-100"
                   title="Remove"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
 
-                {/* Stock Indicator - Top Left */}
-                <div className="absolute top-6 left-6 opacity-0 group-hover:opacity-100 -translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-                  <div className={`px-3 py-1.5 rounded-full border text-[8px] font-black uppercase tracking-widest backdrop-blur-sm ${item.product?.stock > 0 ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800'}`}>
-                    {item.product?.stock > 0 ? 'Available' : 'Sold Out'}
+                {/* Stock Status */}
+                <div className="absolute top-2 left-2">
+                  <div className={`flex items-center space-x-1 px-2 py-1 rounded-md border ${item.product?.stock > 0 ? 'bg-emerald-50/80 text-emerald-600 border-emerald-100' : 'bg-rose-50/80 text-rose-600 border-rose-100'} backdrop-blur-sm`}>
+                    <div className={`h-1 w-1 rounded-full ${item.product?.stock > 0 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                    <span className="text-[7px] font-black uppercase tracking-widest">{item.product?.stock > 0 ? 'In Stock' : 'Sold'}</span>
                   </div>
                 </div>
               </div>
-              
-              {/* Info Section - Tightened */}
-              <div className="px-8 pb-8 pt-0 flex-grow flex flex-col space-y-4">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.25em]">
-                      {item.product?.category_name || 'Piece'}
-                    </span>
-                    <span className="text-[8px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">#{item.product?.id?.slice(0, 5)}</span>
-                  </div>
-                  <Link to={`/products/${item.product?.slug}`} className="text-lg font-black text-slate-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 transition-colors line-clamp-1 block tracking-tight">
+
+              {/* Details - Bold & Clean */}
+              <div className="flex flex-col flex-grow space-y-4">
+                <div className="space-y-1">
+                  <p className="text-[8px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">{item.product?.category_name}</p>
+                  <Link to={`/products/${item.product?.slug}`} className="text-sm font-black text-slate-900 dark:text-white leading-tight tracking-tight line-clamp-2 block hover:opacity-70 transition-opacity">
                     {item.product?.name}
                   </Link>
-                  <div className="flex items-baseline space-x-3">
-                    <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <p className="text-lg font-black text-slate-900 dark:text-white tracking-tighter">
                       ₹{item.product?.selling_price ? parseFloat(item.product.selling_price).toLocaleString('en-IN') : '0'}
                     </p>
                     {item.product?.mrp_price > item.product?.selling_price && (
-                      <p className="text-[10px] font-bold text-slate-300 dark:text-slate-600 line-through">
+                      <p className="text-[10px] font-bold text-slate-400 line-through">
                         ₹{parseFloat(item.product.mrp_price).toLocaleString('en-IN')}
                       </p>
                     )}
                   </div>
                 </div>
-                
+
+                {/* Move to Bag Button - High End */}
                 <button 
                   onClick={() => handleMoveToCart(item)}
                   disabled={item.product?.stock <= 0}
-                  className="w-full flex items-center justify-center space-x-3 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary-600 dark:hover:bg-primary-50 transition-all duration-500 shadow-xl shadow-slate-900/10 dark:shadow-none active:scale-[0.98] group disabled:opacity-30 disabled:hover:bg-slate-900 dark:disabled:hover:bg-white"
+                  className="w-full flex items-center justify-center space-x-3 py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-30 mt-auto"
                 >
-                  <ShoppingCart className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                  <ShoppingCart className="h-3.5 w-3.5" />
                   <span>Move to Bag</span>
                 </button>
               </div>

@@ -79,6 +79,7 @@ const AddProduct = () => {
 
     try {
       await productService.createProduct(data);
+      toast.success('Product listed successfully!');
       navigate('/vendor/dashboard');
     } catch (err) {
       console.log('Backend Error:', err.response?.data);
@@ -100,7 +101,7 @@ const AddProduct = () => {
     <div className="container-tight max-w-5xl">
       <button 
         onClick={() => navigate(-1)} 
-        className="flex items-center space-x-2 text-slate-500 hover:text-primary-600 mb-8 transition-colors"
+        className="flex items-center space-x-2 text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-white mb-8 transition-colors"
       >
         <ArrowLeft className="h-5 w-5" />
         <span className="font-medium">Back to Dashboard</span>
@@ -108,8 +109,8 @@ const AddProduct = () => {
 
       <div className="glass-card p-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Add New Product</h1>
-          <p className="text-slate-600 mt-2">Fill in the details to list your product</p>
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Add New Product</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">Fill in the details to list your product</p>
         </div>
 
         {error && (
@@ -121,30 +122,30 @@ const AddProduct = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Product Name</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Product Name</label>
               <input
                 name="name"
                 type="text"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="Ex: Wireless Headphones"
                 value={formData.name}
                 onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Category</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Category</label>
               <select
                 name="category"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all disabled:opacity-50"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none transition-all disabled:opacity-50 appearance-none"
                 value={formData.category}
                 onChange={handleChange}
                 disabled={categoriesLoading}
               >
-                <option value="">{categoriesLoading ? 'Loading categories...' : 'Select Category'}</option>
+                <option value="" className="dark:bg-slate-900">{categoriesLoading ? 'Loading categories...' : 'Select Category'}</option>
                 {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                  <option key={cat.id} value={cat.id} className="dark:bg-slate-900">{cat.name}</option>
                 ))}
               </select>
               {categories.length === 0 && !categoriesLoading && (
@@ -156,7 +157,7 @@ const AddProduct = () => {
           </div>
 
           <div className="space-y-2 quill-wrapper">
-            <label className="block text-sm font-bold text-slate-700">Description</label>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Description</label>
             <ReactQuill
               theme="snow"
               value={formData.description}
@@ -170,44 +171,44 @@ const AddProduct = () => {
                   ['clean']
                 ],
               }}
-              className="bg-slate-50 rounded-xl overflow-hidden border border-slate-200"
+              className="bg-slate-50 dark:bg-slate-800/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white"
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">MRP (₹)</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">MRP (₹)</label>
               <input
                 name="mrp_price"
                 type="number"
                 step="0.01"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="0.00"
                 value={formData.mrp_price}
                 onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Selling Price (₹)</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Selling Price (₹)</label>
               <input
                 name="selling_price"
                 type="number"
                 step="0.01"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 placeholder="0.00"
                 value={formData.selling_price}
                 onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-bold text-slate-700">Stock Quantity</label>
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Stock Quantity</label>
               <input
                 name="stock"
                 type="number"
                 required
-                className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 transition-all"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                 value={formData.stock}
                 onChange={handleChange}
               />
@@ -217,42 +218,42 @@ const AddProduct = () => {
                 name="is_active"
                 type="checkbox"
                 id="is_active"
-                className="h-5 w-5 text-primary-600 rounded border-slate-300 focus:ring-primary-500"
+                className="h-5 w-5 text-primary-600 rounded border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-primary-500"
                 checked={formData.is_active}
                 onChange={handleChange}
               />
-              <label htmlFor="is_active" className="text-sm font-bold text-slate-700 cursor-pointer">Active for Sale</label>
+              <label htmlFor="is_active" className="text-sm font-bold text-slate-700 dark:text-slate-400 cursor-pointer">Active for Sale</label>
             </div>
           </div>
 
           <div className="space-y-4">
-            <label className="block text-sm font-bold text-slate-700">Product Images</label>
+            <label className="block text-sm font-bold text-slate-700 dark:text-slate-400">Product Images</label>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {images.map((img, index) => (
-                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group">
+                <div key={index} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group">
                   <img src={URL.createObjectURL(img)} alt="" className="h-full w-full object-cover" />
                   <button 
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute top-1 right-1 p-1 bg-white/80 backdrop-blur rounded-full text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-1 right-1 p-1 bg-white/80 dark:bg-slate-900/80 backdrop-blur rounded-full text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               ))}
-              <label className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-300 hover:border-primary-500 hover:bg-primary-50 cursor-pointer transition-all">
-                <Upload className="h-6 w-6 text-slate-400" />
-                <span className="text-[10px] font-bold text-slate-500 mt-2">Upload</span>
+              <label className="flex flex-col items-center justify-center aspect-square rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary-500 dark:hover:border-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/10 cursor-pointer transition-all">
+                <Upload className="h-6 w-6 text-slate-400 dark:text-slate-600" />
+                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 mt-2">Upload</span>
                 <input type="file" multiple className="hidden" onChange={handleImageChange} accept="image/*" />
               </label>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-slate-100 flex justify-end">
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 flex justify-end">
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary flex items-center justify-center space-x-2 px-12 py-3"
+              className="btn-primary dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100 flex items-center justify-center space-x-2 px-12 py-3"
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <span>List Product</span>}
             </button>

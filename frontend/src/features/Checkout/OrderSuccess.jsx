@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CheckCircle, ShoppingBag, ArrowRight, Package, MapPin, CreditCard, Loader2 } from 'lucide-react';
+import { CheckCircle, ShoppingBag, ArrowRight, Package, MapPin, CreditCard, Loader2, ShieldCheck } from 'lucide-react';
 import orderService from '../../api/orderService';
 
 const OrderSuccess = () => {
@@ -36,122 +36,135 @@ const OrderSuccess = () => {
       <div className="max-w-3xl mx-auto space-y-16">
         
         {/* 1. Airy Header & Confirmation Message */}
-        <div className="text-center space-y-8">
+        <div className="text-center space-y-6">
           <div className="relative inline-block">
-            <div className="absolute inset-0 bg-emerald-100 rounded-full scale-150 blur-2xl opacity-40" />
-            <div className="relative bg-emerald-50 p-4 rounded-full border border-emerald-100">
-              <CheckCircle className="h-12 w-12 text-emerald-600" />
+            <div className="absolute inset-0 bg-emerald-100 dark:bg-emerald-500/20 rounded-full scale-150 blur-3xl opacity-30" />
+            <div className="relative bg-emerald-500 p-4 rounded-full shadow-lg shadow-emerald-500/20">
+              <CheckCircle className="h-8 w-8 text-white" />
             </div>
           </div>
           
-          <div className="space-y-3">
-            <h1 className="text-3xl md:text-4xl font-medium text-slate-900 tracking-tight">
-              Order Placed Successfully!
+          <div className="space-y-2">
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">
+              Order Placed
             </h1>
-            <p className="text-slate-500 text-lg max-w-lg mx-auto leading-relaxed">
-              Thank you for your purchase. Your order <span className="font-bold text-slate-900">#{id?.slice(0, 8)}</span> has been received and is being processed.
+            <p className="text-slate-400 dark:text-slate-500 text-xs font-black uppercase tracking-[0.3em]">
+              Confirmation ID: #{id?.slice(0, 8)}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium max-w-sm mx-auto leading-relaxed">
+            Your selection has been received and is currently being prepared for dispatch.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
             <Link 
               to="/dashboard" 
-              className="w-full sm:w-auto flex items-center justify-center space-x-3 bg-slate-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 group"
+              className="w-full sm:w-auto flex items-center justify-center space-x-3 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-90 transition-all shadow-xl group"
             >
-              <Package className="h-5 w-5" />
-              <span>View My Orders</span>
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              <Package className="h-4 w-4" />
+              <span>Track Orders</span>
             </Link>
             <Link 
               to="/products" 
-              className="w-full sm:w-auto flex items-center justify-center space-x-3 bg-white border border-slate-200 text-slate-600 px-8 py-4 rounded-xl font-bold hover:bg-slate-50 transition-all"
+              className="w-full sm:w-auto flex items-center justify-center space-x-3 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white px-10 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
             >
-              <ShoppingBag className="h-5 w-5" />
               <span>Continue Shopping</span>
             </Link>
           </div>
         </div>
 
-        {/* 2. Shipping & Payment Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-y border-slate-100 py-12">
+        {/* 2. Shipping & Payment Grid - Neat & Clean */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-y border-slate-100 dark:border-slate-800 py-10">
           <div className="space-y-4">
-            <div className="flex items-center space-x-3 text-slate-900">
-              <MapPin className="h-5 w-5 text-slate-400" />
-              <h3 className="font-medium">Shipping Address</h3>
+            <div className="flex items-center space-x-3">
+              <div className="bg-slate-900 dark:bg-white p-1.5 rounded-md">
+                <MapPin className="h-3 w-3 text-white dark:text-slate-900" />
+              </div>
+              <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">Shipping Address</h3>
             </div>
             {order?.address ? (
-              <div className="text-sm text-slate-500 leading-relaxed pl-8">
-                <p className="font-bold text-slate-800 mb-1">{order.address.name}</p>
-                <p>{order.address.street}</p>
-                <p>{order.address.city}, {order.address.state} - {order.address.pincode}</p>
-                <p>{order.address.phone}</p>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed pl-9">
+                <p className="font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">{order.address.name}</p>
+                <p>{order.address.street}, {order.address.city}</p>
+                <p>{order.address.state} - {order.address.pincode}</p>
+                <p className="font-bold mt-2">{order.address.phone}</p>
               </div>
             ) : (
-              <p className="text-sm text-slate-400 pl-8">Address details unavailable.</p>
+              <p className="text-[10px] text-slate-400 pl-9 uppercase">Details unavailable</p>
             )}
           </div>
 
-          <div className="space-y-4 border-t md:border-t-0 md:border-l border-slate-100 pt-8 md:pt-0 md:pl-12">
-            <div className="flex items-center space-x-3 text-slate-900">
-              <CreditCard className="h-5 w-5 text-slate-400" />
-              <h3 className="font-medium">Payment Method</h3>
+          <div className="space-y-4 md:pl-12 md:border-l border-slate-100 dark:border-slate-800">
+            <div className="flex items-center space-x-3">
+              <div className="bg-slate-900 dark:bg-white p-1.5 rounded-md">
+                <CreditCard className="h-3 w-3 text-white dark:text-slate-900" />
+              </div>
+              <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-widest">Payment Method</h3>
             </div>
-            <div className="pl-8">
-              <span className="inline-flex items-center px-4 py-2 bg-slate-50 rounded-lg text-sm font-medium text-slate-700 border border-slate-100 uppercase tracking-widest text-[10px]">
+            <div className="pl-9 pt-1">
+              <span className="inline-flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-[9px] font-black text-slate-700 dark:text-slate-300 border border-slate-100 dark:border-slate-800 uppercase tracking-widest">
                 {order?.payment_method === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 3. Order Summary */}
-        <div className="space-y-8 bg-slate-50/50 rounded-3xl p-8 lg:p-12 border border-slate-100">
-          <h3 className="text-xl font-medium text-slate-900">Order Summary</h3>
+        {/* 3. Order Summary - Gallery Style */}
+        <div className="space-y-8 bg-white dark:bg-slate-900/40 rounded-2xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <h3 className="text-[10px] font-black text-slate-900 dark:text-white uppercase tracking-[0.2em] border-b border-slate-100 dark:border-slate-800 pb-4">Curated Selection</h3>
           
           <div className="space-y-6">
             {order?.items?.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <div className="h-14 w-14 bg-slate-200 dark:bg-slate-800 animate-pulse rounded-lg border border-slate-200 overflow-hidden flex-shrink-0">
+                  {/* Item Image - Pure White */}
+                  <div className="h-16 w-16 bg-white rounded-xl border border-slate-100 dark:border-white/5 overflow-hidden flex-shrink-0 flex items-center justify-center shadow-sm">
                     {item.product_image && (
                       <img 
                         src={item.product_image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
                         alt="" 
                         loading="lazy"
-                        className="w-full h-full object-cover" 
+                        className="h-[80%] w-[80%] object-contain mix-blend-multiply" 
                       />
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate max-w-[200px] sm:max-w-[300px]">
+                    <p className="text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-tight truncate max-w-[200px] sm:max-w-[300px]">
                       {item.product_name}
                     </p>
-                    <p className="text-[11px] font-medium text-slate-400 uppercase tracking-widest mt-0.5">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">
                       Qty: {item.quantity}
                     </p>
                   </div>
                 </div>
-                <p className="text-sm font-bold text-slate-900 whitespace-nowrap">
+                <p className="text-sm font-black text-slate-900 dark:text-white tracking-tighter">
                   ₹{parseFloat(item.total_price).toLocaleString('en-IN')}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="pt-8 border-t border-slate-200 space-y-4">
-            <div className="flex justify-between items-center text-slate-500 text-xs font-medium uppercase tracking-widest">
+          <div className="pt-8 border-t border-slate-100 dark:border-slate-800 space-y-4">
+            <div className="flex justify-between items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
               <span>Subtotal</span>
-              <span>₹{parseFloat(order?.total_amount || 0).toLocaleString('en-IN')}</span>
+              <span className="text-slate-900 dark:text-white">₹{parseFloat(order?.total_amount || 0).toLocaleString('en-IN')}</span>
             </div>
-            <div className="flex justify-between items-center text-slate-500 text-xs font-medium uppercase tracking-widest">
-              <span>Shipping</span>
-              <span className="text-emerald-600 font-bold">Free</span>
+            <div className="flex justify-between items-center text-slate-400 text-[10px] font-black uppercase tracking-widest">
+              <span>Shipping Fee</span>
+              <span className="text-emerald-600 font-black">Complimentary</span>
             </div>
-            <div className="flex justify-between items-center pt-6 border-t border-slate-200">
-              <span className="text-xl font-medium text-slate-900">Total</span>
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">
-                ₹{parseFloat(order?.total_amount || 0).toLocaleString('en-IN')}
-              </span>
+            <div className="flex justify-between items-end pt-6 border-t border-slate-100 dark:border-slate-800">
+              <div className="space-y-1">
+                <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Investment</p>
+                <p className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
+                  ₹{parseFloat(order?.total_amount || 0).toLocaleString('en-IN')}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 opacity-40">
+                <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Authenticated</span>
+              </div>
             </div>
           </div>
         </div>

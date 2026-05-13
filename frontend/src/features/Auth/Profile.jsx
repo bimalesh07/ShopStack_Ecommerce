@@ -3,11 +3,12 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useTheme } from '../../context/ThemeContext';
 import { 
   User as UserIcon, Mail, Phone, Store, MapPin, Loader2, Save, 
   Lock, ShieldCheck, ShoppingBag, Settings, LayoutDashboard, 
   Package, ShoppingCart, Heart, LogOut, ChevronRight, Star, Truck,
-  BarChart3
+  BarChart3, Sun, Moon
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axiosInstance from '../../api/axiosInstance';
@@ -21,6 +22,7 @@ const Profile = () => {
   const { user, fetchProfile, logout } = useAuth();
   const { cart } = useCart();
   const { wishlist } = useWishlist();
+  const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -198,23 +200,23 @@ const Profile = () => {
   };
 
   const stats = user.role === 'vendor' ? [
-    { label: 'Merchant Listing', value: user.vendor_details?.product_count || 0, icon: Package, color: 'text-primary-600', bg: 'bg-primary-50', gradient: 'from-primary-50/50 to-indigo-50/30' },
-    { label: 'Fulfillment Status', value: user.is_active ? 'Verified' : 'Reviewing', icon: ShieldCheck, color: 'text-emerald-600', bg: 'bg-emerald-50', gradient: 'from-emerald-50/50 to-teal-50/30' },
-    { label: 'Shop Identity', value: user.vendor_details?.shop_name || 'My Shop', icon: Store, color: 'text-amber-600', bg: 'bg-amber-50', gradient: 'from-amber-50/50 to-orange-50/30' },
+    { label: 'Merchant Listing', value: user.vendor_details?.product_count || 0, icon: Package, color: 'text-primary-600 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-500/10', gradient: 'from-primary-50/50 to-indigo-50/30' },
+    { label: 'Fulfillment Status', value: user.is_active ? 'Verified' : 'Reviewing', icon: ShieldCheck, color: 'text-emerald-600 dark:text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-500/10', gradient: 'from-emerald-50/50 to-teal-50/30' },
+    { label: 'Shop Identity', value: user.vendor_details?.shop_name || 'My Shop', icon: Store, color: 'text-amber-600 dark:text-amber-500', bg: 'bg-amber-50 dark:bg-amber-500/10', gradient: 'from-amber-50/50 to-orange-50/30' },
   ] : [
-    { label: 'Total Orders', value: orders.length, icon: Package, color: 'text-slate-600', bg: 'bg-slate-50', gradient: 'from-slate-50 to-slate-100' },
-    { label: 'Active Cart', value: `${cart?.total_items || 0} Items`, icon: ShoppingCart, color: 'text-slate-600', bg: 'bg-slate-50', gradient: 'from-slate-50 to-slate-100' },
-    { label: 'Wishlist Items', value: `${wishlist?.items?.length || wishlist?.results?.length || wishlist?.total_items || 0} Items`, icon: Heart, color: 'text-slate-600', bg: 'bg-slate-50', gradient: 'from-slate-50 to-slate-100' },
+    { label: 'Total Orders', value: orders.length, icon: Package, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-50 dark:bg-slate-800', gradient: 'from-slate-50 to-slate-100' },
+    { label: 'Active Cart', value: `${cart?.total_items || 0} Items`, icon: ShoppingCart, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-50 dark:bg-slate-800', gradient: 'from-slate-50 to-slate-100' },
+    { label: 'Wishlist Items', value: `${wishlist?.items?.length || wishlist?.results?.length || wishlist?.total_items || 0} Items`, icon: Heart, color: 'text-slate-600 dark:text-slate-400', bg: 'bg-slate-50 dark:bg-slate-800', gradient: 'from-slate-50 to-slate-100' },
   ];
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100';
-      case 'confirmed': return 'bg-blue-50 text-blue-600 border-blue-100';
-      case 'shipped': return 'bg-purple-50 text-purple-600 border-purple-100';
-      case 'delivered': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
-      case 'cancelled': return 'bg-rose-50 text-rose-600 border-rose-100';
-      default: return 'bg-slate-100 text-slate-600 border-slate-200';
+      case 'pending': return 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 border-amber-100 dark:border-amber-500/20';
+      case 'confirmed': return 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-500 border-blue-100 dark:border-blue-500/20';
+      case 'shipped': return 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-500 border-purple-100 dark:border-purple-500/20';
+      case 'delivered': return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border-emerald-100 dark:border-emerald-500/20';
+      case 'cancelled': return 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-500 border-rose-100 dark:border-rose-500/20';
+      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
     }
   };
 
@@ -225,7 +227,7 @@ const Profile = () => {
       {/* Refined Navigation Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-6 border-b border-slate-100 dark:border-slate-800 pb-10">
         <div className="flex items-center space-x-4">
-          <div className="h-12 w-12 bg-slate-900 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-900/10">
+          <div className="h-12 w-12 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-slate-900 shadow-lg shadow-slate-900/10">
             <LayoutDashboard className="h-6 w-6" />
           </div>
           <div className="space-y-0.5">
@@ -245,7 +247,7 @@ const Profile = () => {
           <div className="flex items-center space-x-3">
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`p-3 rounded-xl transition-all ${activeTab === 'profile' ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-slate-900 hover:bg-slate-50'}`}
+              className={`p-3 rounded-xl transition-all ${activeTab === 'profile' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'}`}
               title="Account Settings"
             >
               <Settings className="h-5 w-5" />
@@ -269,21 +271,21 @@ const Profile = () => {
               <>
                 <button 
                   onClick={() => setActiveTab('performance')}
-                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'performance' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'performance' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
                 >
                   <BarChart3 className="h-4 w-4" />
                   <span>Performance</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('inventory')}
-                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'inventory' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'inventory' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
                 >
                   <Package className="h-4 w-4" />
                   <span>Inventory</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('vendor_orders')}
-                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'vendor_orders' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'vendor_orders' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
                 >
                   <Truck className="h-4 w-4" />
                   <span>Shipments</span>
@@ -293,14 +295,14 @@ const Profile = () => {
               <>
                 <button 
                   onClick={() => setActiveTab('overview')}
-                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'overview' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'overview' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   <span>Overview</span>
                 </button>
                 <button 
                   onClick={() => setActiveTab('orders')}
-                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'orders' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+                  className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'orders' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
                 >
                   <ShoppingBag className="h-4 w-4" />
                   <span>Orders</span>
@@ -312,7 +314,7 @@ const Profile = () => {
 
             <button 
               onClick={() => setActiveTab('profile')}
-              className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'profile' ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20 scale-[1.02]' : 'text-slate-400 hover:text-slate-900 hover:bg-white'}`}
+              className={`flex-shrink-0 md:w-full flex items-center space-x-4 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === 'profile' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-none scale-[1.02]' : 'text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800'}`}
             >
               <Settings className="h-4 w-4" />
               <span>Settings</span>
@@ -323,12 +325,12 @@ const Profile = () => {
           <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 border border-slate-100 dark:border-slate-800 shadow-sm group">
             <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-6">Security Clearance</p>
             <div className="flex items-center space-x-4 mb-6">
-              <div className="h-12 w-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 group-hover:scale-110 transition-transform">
+              <div className="h-12 w-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 flex items-center justify-center border border-emerald-100 dark:border-emerald-500/20 group-hover:scale-110 transition-transform">
                 <ShieldCheck className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-tight">Verified Profile</p>
-                <p className="text-[9px] text-emerald-500 font-black uppercase tracking-widest">Lvl 1 Authenticated</p>
+                <p className="text-[9px] text-emerald-500 dark:text-emerald-400 font-black uppercase tracking-widest">Lvl 1 Authenticated</p>
               </div>
             </div>
             <div className="py-3 px-4 bg-slate-50 dark:bg-slate-800 rounded-xl">
@@ -433,6 +435,36 @@ const Profile = () => {
 
           {activeTab === 'profile' && (
             <div className="max-w-4xl space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
+              {/* Display Preference Section */}
+              <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm space-y-10">
+                <div className="flex items-center space-x-4">
+                  <div className="h-12 w-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    {isDarkMode ? <Moon className="h-6 w-6" /> : <Sun className="h-6 w-6" />}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Appearance</h3>
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Personalize your visual experience</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] border border-slate-100 dark:border-slate-700">
+                   <button 
+                     onClick={() => isDarkMode && toggleTheme()}
+                     className={`flex-1 flex items-center justify-center space-x-3 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${!isDarkMode ? 'bg-white text-slate-900 shadow-xl shadow-slate-900/5 scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
+                   >
+                     <Sun className="h-4 w-4" />
+                     <span>Light Mode</span>
+                   </button>
+                   <button 
+                     onClick={() => !isDarkMode && toggleTheme()}
+                     className={`flex-1 flex items-center justify-center space-x-3 py-4 rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest transition-all duration-500 ${isDarkMode ? 'bg-slate-900 text-white shadow-2xl shadow-black scale-[1.02]' : 'text-slate-400 hover:text-slate-600'}`}
+                   >
+                     <Moon className="h-4 w-4" />
+                     <span>Dark Mode</span>
+                   </button>
+                </div>
+              </div>
+
               {/* Profile Form */}
               <div className="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-slate-100 dark:border-slate-800 shadow-sm space-y-10">
                 <div className="flex items-center space-x-4">
@@ -453,7 +485,7 @@ const Profile = () => {
                         name="name" 
                         type="text" 
                         placeholder="e.g. John Doe"
-                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm" 
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 outline-none transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                         value={formData.name} 
                         onChange={handleChange} 
                       />
@@ -464,7 +496,7 @@ const Profile = () => {
                         name="phone" 
                         type="tel" 
                         placeholder="+91 00000 00000"
-                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm" 
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 outline-none transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                         value={formData.phone} 
                         onChange={handleChange} 
                       />
@@ -475,7 +507,7 @@ const Profile = () => {
                     <button 
                       type="submit" 
                       disabled={loading} 
-                      className="group flex items-center space-x-3 px-10 py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:bg-primary-600 transition-all duration-500 shadow-2xl shadow-slate-900/10 active:scale-95"
+                      className="group flex items-center space-x-3 px-10 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-[1.5rem] font-black text-xs uppercase tracking-widest hover:bg-primary-600 dark:hover:bg-slate-100 transition-all duration-500 shadow-2xl shadow-slate-900/10 dark:shadow-none active:scale-95"
                     >
                       {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                         <>
@@ -507,7 +539,7 @@ const Profile = () => {
                       <input 
                         name="old_password" 
                         type="password" 
-                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm" 
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 outline-none transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                         value={passwords.old_password} 
                         onChange={handlePasswordChange} 
                       />
@@ -517,7 +549,7 @@ const Profile = () => {
                       <input 
                         name="new_password" 
                         type="password" 
-                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm" 
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 outline-none transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                         value={passwords.new_password} 
                         onChange={handlePasswordChange} 
                       />
@@ -527,7 +559,7 @@ const Profile = () => {
                       <input 
                         name="new_password2" 
                         type="password" 
-                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm" 
+                        className="w-full px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-rose-500/5 focus:border-rose-500 outline-none transition-all duration-300 font-bold text-slate-900 dark:text-white text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500" 
                         value={passwords.new_password2} 
                         onChange={handlePasswordChange} 
                       />
@@ -555,6 +587,7 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Review Modal */}
       {isReviewModalOpen && selectedProduct && (
         <ReviewModal
           isOpen={isReviewModalOpen}

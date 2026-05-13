@@ -186,8 +186,8 @@ const VendorDashboard = () => {
           <div className="flex items-center space-x-4">
             <div>
               <div className="flex items-center space-x-3 mb-1">
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Shop Console</h1>
-                <span className="flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[8px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm">
+                <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Shop Console</h1>
+                <span className="flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 rounded-full text-[8px] font-black uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Verified Store</span>
                 </span>
@@ -200,14 +200,14 @@ const VendorDashboard = () => {
         <div className="flex items-center gap-4">
           <Link 
             to="/vendor/orders" 
-            className="group h-14 px-8 bg-white border border-slate-200 text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center space-x-3 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+            className="group h-14 px-8 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all shadow-sm"
           >
-            <BarChart3 className="h-4 w-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
+            <BarChart3 className="h-4 w-4 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
             <span>Manage Orders</span>
           </Link>
           <Link 
             to="/vendor/add-product" 
-            className="h-14 px-10 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center space-x-3 hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
+            className="h-14 px-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] flex items-center space-x-3 hover:bg-slate-800 dark:hover:bg-slate-100 transition-all shadow-xl shadow-slate-900/10 active:scale-95"
           >
             <Plus className="h-4 w-4" />
             <span>List New Product</span>
@@ -220,7 +220,7 @@ const VendorDashboard = () => {
         {stats.map((stat) => (
           <div 
             key={stat.label} 
-            className="group relative overflow-hidden bg-white rounded-[2.5rem] p-8 border border-slate-100 hover:border-slate-200 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-slate-200/40"
+            className="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-slate-200/40 dark:hover:shadow-none"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${stat.gradient} blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
             
@@ -229,7 +229,7 @@ const VendorDashboard = () => {
                 <div className={`${stat.bg} p-4 rounded-2xl group-hover:scale-110 transition-transform duration-500`}>
                   <stat.icon className={`h-6 w-6 ${stat.color}`} />
                 </div>
-                <div className={`flex items-center space-x-1.5 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${stat.trendUp ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50'}`}>
+                <div className={`flex items-center space-x-1.5 px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${stat.trendUp ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10' : 'text-amber-600 bg-amber-50 dark:bg-amber-500/10'}`}>
                   {stat.trendUp ? <TrendingUp className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
                   <span>{stat.trend}</span>
                 </div>
@@ -237,7 +237,7 @@ const VendorDashboard = () => {
               
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1.5">{stat.label}</p>
-                <p className="text-3xl font-black text-slate-900 tracking-tighter">{stat.value}</p>
+                <p className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">{stat.value}</p>
               </div>
             </div>
           </div>
@@ -248,18 +248,18 @@ const VendorDashboard = () => {
       <div className="space-y-8">
         <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 border-b border-slate-100 pb-8">
           <div className="flex items-center space-x-5">
-            <div className="h-14 w-14 bg-slate-50 rounded-[1.5rem] flex items-center justify-center text-slate-900 border border-slate-100">
+            <div className="h-14 w-14 bg-slate-50 dark:bg-slate-900 rounded-[1.5rem] flex items-center justify-center text-slate-900 dark:text-white border border-slate-100 dark:border-slate-800">
               <Layers className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Active Inventory</h3>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Active Inventory</h3>
               <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">{products.length} Listing{products.length !== 1 ? 's' : ''} currently live</p>
             </div>
           </div>
           
-          <div className="flex items-center px-4 py-2 bg-amber-50 rounded-xl border border-amber-100/50">
+          <div className="flex items-center px-4 py-2 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-100/50 dark:border-amber-500/20">
             <Zap className="h-3.5 w-3.5 text-amber-500 mr-2" />
-            <p className="text-[9px] font-black text-amber-700 uppercase tracking-widest">Click metrics to quick-edit</p>
+            <p className="text-[9px] font-black text-amber-700 dark:text-amber-500 uppercase tracking-widest">Click metrics to quick-edit</p>
           </div>
         </div>
 
@@ -268,18 +268,18 @@ const VendorDashboard = () => {
             products.map((product) => (
               <div 
                 key={product.id} 
-                className="group relative bg-white border border-slate-100 rounded-3xl p-5 hover:border-slate-900/10 hover:shadow-xl hover:shadow-slate-200/40 transition-all duration-500"
+                className="group relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl p-5 hover:border-slate-900/10 dark:hover:border-slate-700 hover:shadow-xl hover:shadow-slate-200/40 dark:hover:shadow-none transition-all duration-500"
               >
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                   {/* Product Info - More Compact */}
                   <div className="flex items-center space-x-5 flex-1 min-w-0">
-                    <div className="h-20 w-20 rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-700 shadow-sm">
+                    <div className="h-20 w-20 rounded-2xl overflow-hidden border border-slate-100 flex-shrink-0 group-hover:scale-105 transition-transform duration-700 shadow-sm flex items-center justify-center">
                       {product.images?.[0] ? (
                         <img 
                           src={product.images[0].image.replace('/upload/', '/upload/q_auto,f_auto,w_600/')} 
                           alt="" 
                           loading="lazy"
-                          className="h-full w-full object-cover" 
+                          className="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal" 
                         />
                       ) : (
                         <div className="h-full w-full flex items-center justify-center">
@@ -289,16 +289,16 @@ const VendorDashboard = () => {
                     </div>
                     <div className="space-y-1 min-w-0">
                       <div className="flex items-center space-x-2">
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-lg text-[8px] font-black uppercase tracking-widest border border-slate-200/30">
+                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-lg text-[8px] font-black uppercase tracking-widest border border-slate-200/30 dark:border-slate-700/30">
                           {product.category_name}
                         </span>
                         <span className="text-[8px] font-black text-slate-300 uppercase tracking-widest">#{product.id.toString().slice(-6)}</span>
                       </div>
-                      <h4 className="text-lg font-black text-slate-900 group-hover:text-primary-600 transition-colors tracking-tight line-clamp-1">{product.name}</h4>
+                      <h4 className="text-lg font-black text-slate-900 dark:text-white group-hover:text-primary-600 transition-colors tracking-tight line-clamp-1">{product.name}</h4>
                       <div className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest border ${
                         product.stock > 0 && product.is_active 
-                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                          : 'bg-rose-50 text-rose-600 border-rose-100'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 border-emerald-100 dark:border-emerald-500/20' 
+                          : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-500 border-rose-100 dark:border-rose-500/20'
                       }`}>
                         <div className={`h-1 w-1 rounded-full mr-1.5 ${
                           product.stock > 0 && product.is_active ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
@@ -318,7 +318,7 @@ const VendorDashboard = () => {
                           <span className="text-slate-400 font-black text-xs">₹</span>
                           <input 
                             type="number"
-                            className="w-24 h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black outline-none focus:ring-2 focus:ring-slate-900 transition-all"
+                            className="w-24 h-9 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
                             value={editValues.selling_price}
                             onChange={(e) => setEditValues({ ...editValues, selling_price: e.target.value })}
                           />
@@ -328,7 +328,7 @@ const VendorDashboard = () => {
                           onClick={() => startEditing(product)}
                           className="cursor-pointer group/price hover:opacity-70 transition-opacity"
                         >
-                          <p className="text-xl font-black text-slate-900 tracking-tighter">
+                          <p className="text-xl font-black text-slate-900 dark:text-white tracking-tighter">
                             ₹{parseFloat(product.selling_price).toLocaleString('en-IN')}
                           </p>
                         </div>
@@ -339,17 +339,17 @@ const VendorDashboard = () => {
                     <div className="space-y-0.5 text-right lg:text-left">
                       <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">Stock</p>
                       {editingId === product.id ? (
-                        <input 
-                          type="number"
-                          className="w-20 h-9 px-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-black outline-none focus:ring-2 focus:ring-slate-900 transition-all"
-                          value={editValues.stock}
-                          onChange={(e) => setEditValues({ ...editValues, stock: e.target.value })}
-                        />
+                          <input 
+                            type="number"
+                            className="w-20 h-9 px-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all"
+                            value={editValues.stock}
+                            onChange={(e) => setEditValues({ ...editValues, stock: e.target.value })}
+                          />
                       ) : (
                         <div 
                           onClick={() => startEditing(product)}
                           className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl cursor-pointer transition-all ${
-                            product.stock < 5 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-900 hover:bg-slate-100'
+                            product.stock < 5 ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500' : 'bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700'
                           }`}
                         >
                           <span className="text-sm font-black">{product.stock}</span>
@@ -364,13 +364,13 @@ const VendorDashboard = () => {
                         <div className="flex items-center space-x-1.5">
                           <button 
                             onClick={() => handleQuickUpdate(product.id)}
-                            className="h-9 px-5 bg-slate-900 text-white rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-slate-800 shadow-lg shadow-slate-900/10 transition-all active:scale-95"
+                            className="h-9 px-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-slate-800 dark:hover:bg-slate-100 shadow-lg shadow-slate-900/10 transition-all active:scale-95"
                           >
                             Save
                           </button>
                           <button 
                             onClick={() => setEditingId(null)}
-                            className="h-9 w-9 bg-slate-100 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-all"
+                            className="h-9 w-9 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-xl flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
                           >
                             <X className="h-3.5 w-3.5" />
                           </button>
@@ -379,13 +379,13 @@ const VendorDashboard = () => {
                         <>
                           <Link 
                             to={`/vendor/edit-product/${product.id}`} 
-                            className="h-10 w-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:text-slate-900 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all group/edit"
+                            className="h-10 w-10 bg-slate-50 dark:bg-slate-900 text-slate-400 rounded-xl flex items-center justify-center hover:text-slate-900 dark:hover:text-white hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-none transition-all group/edit"
                           >
                             <Edit className="h-4 w-4 transition-transform group-hover/edit:scale-110" />
                           </Link>
                           <button 
                             onClick={() => handleDelete(product.id)}
-                            className="h-10 w-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center hover:text-rose-500 hover:bg-white hover:shadow-lg hover:shadow-rose-500/10 transition-all group/del"
+                            className="h-10 w-10 bg-slate-50 dark:bg-slate-900 text-slate-400 rounded-xl flex items-center justify-center hover:text-rose-500 hover:bg-white dark:hover:bg-slate-800 hover:shadow-lg hover:shadow-rose-500/10 dark:hover:shadow-none transition-all group/del"
                           >
                             <Trash2 className="h-4 w-4 transition-transform group-hover/del:scale-110" />
                           </button>
@@ -397,16 +397,16 @@ const VendorDashboard = () => {
               </div>
             ))
           ) : (
-            <div className="bg-white border border-slate-100 border-dashed rounded-[3rem] p-24 text-center">
+            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 border-dashed rounded-[3rem] p-24 text-center">
               <div className="max-w-xs mx-auto space-y-6">
-                <div className="h-20 w-20 bg-slate-50 rounded-full mx-auto flex items-center justify-center border border-slate-100">
-                  <Package className="h-8 w-8 text-slate-200" />
+                <div className="h-20 w-20 bg-slate-50 dark:bg-slate-800 rounded-full mx-auto flex items-center justify-center border border-slate-100 dark:border-slate-800">
+                  <Package className="h-8 w-8 text-slate-200 dark:text-slate-700" />
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-xl font-black text-slate-900 tracking-tight uppercase">Ready to start selling?</h4>
-                  <p className="text-sm font-medium text-slate-500 leading-relaxed">Your digital storefront is currently empty. List your first product to go live.</p>
+                  <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase">Ready to start selling?</h4>
+                  <p className="text-sm font-medium text-slate-500 dark:text-slate-400 leading-relaxed">Your digital storefront is currently empty. List your first product to go live.</p>
                 </div>
-                <Link to="/vendor/add-product" className="h-14 px-10 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest inline-flex items-center shadow-xl shadow-slate-900/10 hover:bg-slate-800 transition-all active:scale-95">Add First Product</Link>
+                <Link to="/vendor/add-product" className="h-14 px-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest inline-flex items-center shadow-xl shadow-slate-900/10 hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-95">Add First Product</Link>
               </div>
             </div>
           )}

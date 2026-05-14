@@ -125,10 +125,10 @@ const OTPVerification = () => {
           <div className="mx-auto w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 text-primary-600 ring-4 ring-primary-50">
             <ShieldCheck className="h-8 w-8" />
           </div>
-          <h2 className="text-3xl font-bold text-slate-900">Verify Email</h2>
-          <p className="text-slate-600 mt-2">
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Verify Email</h2>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">
             We've sent a 6-digit code to <br />
-            <span className="font-semibold text-slate-900">{email}</span>
+            <span className="font-semibold text-slate-900 dark:text-white">{email}</span>
           </p>
         </div>
 
@@ -145,7 +145,7 @@ const OTPVerification = () => {
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
-                className="w-12 h-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all"
+                className="w-12 h-14 text-center text-2xl font-bold bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all text-slate-900 dark:text-white"
               />
             ))}
           </div>
@@ -167,7 +167,7 @@ const OTPVerification = () => {
         </form>
 
         <div className="mt-8 text-center space-y-4">
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
             Didn't receive the code?
           </div>
           

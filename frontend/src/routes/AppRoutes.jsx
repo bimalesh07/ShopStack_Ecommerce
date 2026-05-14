@@ -24,10 +24,10 @@ import Home from '../features/Home/Home';
 
 const NotFound = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-    <h1 className="text-9xl font-black text-slate-200">404</h1>
+    <h1 className="text-9xl font-black text-slate-200 dark:text-slate-800">404</h1>
     <div className="relative -mt-12">
-      <h2 className="text-3xl font-bold text-slate-900 mb-4">Lost in Space?</h2>
-      <p className="text-xl text-slate-600 mb-8">The page you're looking for has drifted away.</p>
+      <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Lost in Space?</h2>
+      <p className="text-xl text-slate-600 dark:text-slate-400 mb-8">The page you're looking for has drifted away.</p>
       <button className="btn-primary" onClick={() => window.history.back()}>Back to Safety</button>
     </div>
   </div>
